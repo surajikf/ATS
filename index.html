@@ -7,21 +7,64 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            font-family: Arial, sans-serif; 
-            background: #f5f5f5; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: #0f0f23; 
+            color: #e6e6e6;
             line-height: 1.6;
+            overflow-x: hidden;
         }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1a1a2e; }
+        ::-webkit-scrollbar-thumb { background: #16213e; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #0f3460; }
+        
         .header { 
-            background: #333; 
-            color: white; 
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); 
             padding: 2rem; 
             text-align: center; 
+            border-bottom: 2px solid #0f3460;
+            position: relative;
         }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%230f3460" stroke-width="0.5" opacity="0.3"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        }
+        
+        .header h1 { 
+            font-size: 2.5rem; 
+            margin-bottom: 0.5rem; 
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header p { 
+            color: #a8a8a8; 
+            font-size: 1.1rem;
+            position: relative;
+            z-index: 1;
+        }
+        
         .nav { 
-            background: white; 
+            background: #1a1a2e; 
             padding: 1rem; 
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #0f3460;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
+        
         .nav-container { 
             max-width: 1200px; 
             margin: 0 auto; 
@@ -30,193 +73,424 @@
             flex-wrap: wrap; 
             justify-content: center;
         }
+        
         .nav-btn { 
-            background: #f0f0f0; 
-            border: 1px solid #ddd; 
-            padding: 0.5rem 1rem; 
-            border-radius: 4px; 
+            background: #16213e; 
+            border: 1px solid #0f3460; 
+            padding: 0.75rem 1.5rem; 
+            border-radius: 8px; 
             cursor: pointer; 
-            color: #333;
+            color: #e6e6e6;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
+        
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(79, 172, 254, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .nav-btn:hover::before {
+            left: 100%;
+        }
+        
         .nav-btn:hover { 
-            background: #e0e0e0; 
+            background: #0f3460; 
+            border-color: #4facfe;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
         }
+        
         .nav-btn.active { 
-            background: #007bff; 
-            color: white; 
+            background: linear-gradient(45deg, #4facfe, #00f2fe); 
+            color: #0f0f23; 
+            border-color: transparent;
+            box-shadow: 0 4px 20px rgba(79, 172, 254, 0.4);
         }
+        
         .container { 
             max-width: 1200px; 
             margin: 0 auto; 
             padding: 2rem; 
         }
+        
         .page { 
             display: none; 
+            animation: fadeInUp 0.5s ease-out;
         }
+        
         .page.active { 
             display: block; 
         }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
         .card { 
-            background: white; 
-            border-radius: 8px; 
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); 
+            border-radius: 16px; 
             padding: 2rem; 
             margin-bottom: 2rem; 
-            border: 1px solid #ddd;
+            border: 1px solid #0f3460;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
         }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        .card h2, .card h3 { 
+            color: #4facfe; 
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
         .form-group { 
-            margin-bottom: 1rem; 
+            margin-bottom: 1.5rem; 
         }
+        
         .form-group label { 
             display: block; 
             margin-bottom: 0.5rem; 
-            font-weight: bold; 
-            color: #333; 
+            font-weight: 600; 
+            color: #e6e6e6; 
+            font-size: 0.95rem;
         }
+        
         .form-group input, .form-group textarea, .form-group select { 
             width: 100%; 
-            padding: 0.5rem; 
-            border: 1px solid #ddd; 
-            border-radius: 4px; 
+            padding: 0.75rem; 
+            border: 2px solid #0f3460; 
+            border-radius: 8px; 
             font-size: 1rem; 
+            background: #16213e;
+            color: #e6e6e6;
+            transition: all 0.3s ease;
         }
+        
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { 
+            outline: none; 
+            border-color: #4facfe; 
+            box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
+            background: #1a1a2e;
+        }
+        
+        .form-group small {
+            color: #a8a8a8;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
+            display: block;
+        }
+        
         .btn { 
-            background: #007bff; 
-            color: white; 
+            background: linear-gradient(45deg, #4facfe, #00f2fe); 
+            color: #0f0f23; 
             border: none; 
-            padding: 0.75rem 1.5rem; 
-            border-radius: 4px; 
+            padding: 1rem 2rem; 
+            border-radius: 8px; 
             font-size: 1rem; 
+            font-weight: 600;
             cursor: pointer; 
             width: 100%; 
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
         .btn:hover { 
-            background: #0056b3; 
+            transform: translateY(-2px); 
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
         }
+        
         .btn:disabled { 
-            background: #ccc; 
+            background: #2a2a3e; 
+            color: #666; 
             cursor: not-allowed; 
+            transform: none;
         }
+        
         .metrics { 
             display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
-            gap: 1rem; 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 1.5rem; 
             margin-bottom: 2rem; 
         }
+        
         .metric-card { 
-            background: #f8f9fa; 
-            border: 1px solid #dee2e6; 
-            border-radius: 8px; 
+            background: linear-gradient(135deg, #16213e 0%, #0f3460 100%); 
+            border: 1px solid #4facfe;
+            border-radius: 12px; 
             padding: 1.5rem; 
             text-align: center; 
+            position: relative;
+            overflow: hidden;
         }
+        
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(79, 172, 254, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+        
+        .metric-card:hover::before {
+            transform: translateX(100%);
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);
+        }
+        
         .metric-value { 
-            font-size: 2rem; 
-            font-weight: bold; 
-            color: #007bff; 
+            font-size: 2.5rem; 
+            font-weight: 700; 
+            color: #4facfe; 
             margin-bottom: 0.5rem; 
+            text-shadow: 0 2px 10px rgba(79, 172, 254, 0.3);
         }
+        
         .metric-label { 
-            color: #6c757d; 
+            color: #a8a8a8; 
             font-size: 0.9rem; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+        
         .loading { 
             display: none; 
             text-align: center; 
-            padding: 2rem; 
+            padding: 3rem; 
         }
+        
+        .loading h4 {
+            color: #4facfe;
+            margin-bottom: 1rem;
+        }
+        
+        .loading p {
+            color: #a8a8a8;
+        }
+        
         .results { 
             display: none; 
             margin-top: 2rem; 
         }
+        
         .stats-grid { 
             display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
-            gap: 1rem; 
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+            gap: 1.5rem; 
             margin: 2rem 0; 
         }
+        
         .stat-card { 
-            background: #f8f9fa; 
-            border: 1px solid #dee2e6; 
-            border-radius: 8px; 
+            background: linear-gradient(135deg, #16213e 0%, #0f3460 100%); 
+            border: 1px solid #0f3460;
+            border-radius: 12px; 
             padding: 1.5rem; 
             text-align: center; 
+            transition: all 0.3s ease;
         }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: #4facfe;
+            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.2);
+        }
+        
         .stat-number { 
             font-size: 2rem; 
-            font-weight: bold; 
-            color: #007bff; 
+            font-weight: 700; 
+            color: #4facfe; 
             margin-bottom: 0.5rem; 
         }
+        
         .stat-label { 
-            color: #6c757d; 
-            font-size: 0.9rem; 
+            color: #a8a8a8; 
+            font-size: 0.85rem; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+        
         .job-card { 
-            background: white; 
-            border: 1px solid #dee2e6; 
-            border-radius: 8px; 
-            padding: 1rem; 
+            background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%); 
+            border: 1px solid #0f3460; 
+            border-radius: 12px; 
+            padding: 1.5rem; 
             margin-bottom: 1rem; 
+            transition: all 0.3s ease;
         }
+        
+        .job-card:hover {
+            transform: translateY(-3px);
+            border-color: #4facfe;
+            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.2);
+        }
+        
         .job-title { 
-            font-size: 1.1rem; 
-            font-weight: bold; 
-            color: #333; 
+            font-size: 1.2rem; 
+            font-weight: 600; 
+            color: #4facfe; 
             margin-bottom: 0.5rem; 
         }
+        
         .job-details { 
-            color: #6c757d; 
+            color: #a8a8a8; 
             margin-bottom: 1rem; 
+            font-size: 0.9rem;
         }
+        
         .job-status { 
             display: inline-block; 
-            padding: 0.25rem 0.75rem; 
+            padding: 0.4rem 1rem; 
             border-radius: 20px; 
             font-size: 0.8rem; 
-            font-weight: bold; 
+            font-weight: 600; 
+            text-transform: uppercase;
         }
+        
         .status-active { 
-            background: #d4edda; 
-            color: #155724; 
+            background: linear-gradient(45deg, #00d4aa, #00b894); 
+            color: #0f0f23; 
         }
+        
         .status-closed { 
-            background: #f8d7da; 
-            color: #721c24; 
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52); 
+            color: #0f0f23; 
         }
+        
         .company-info { 
-            background: white; 
-            border: 1px solid #dee2e6; 
-            border-radius: 8px; 
+            background: linear-gradient(135deg, #16213e 0%, #0f3460 100%); 
+            border: 1px solid #4facfe;
+            border-radius: 16px; 
             padding: 2rem; 
             text-align: center; 
             margin-top: 2rem;
         }
+        
         .company-info h3 { 
-            color: #333; 
+            color: #4facfe; 
             margin-bottom: 1rem; 
         }
+        
         .company-info p { 
-            color: #6c757d; 
+            color: #a8a8a8; 
             margin-bottom: 0.5rem; 
         }
+        
         .company-info a { 
-            color: #007bff; 
+            color: #4facfe; 
             text-decoration: none; 
+            font-weight: 600;
         }
+        
         .company-info a:hover { 
             text-decoration: underline; 
         }
+        
+        /* Special styling for bulk results */
+        .bulk-result-card {
+            background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
+            border: 1px solid #0f3460;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .bulk-result-card:hover {
+            border-color: #4facfe;
+            transform: translateX(5px);
+        }
+        
+        .bulk-result-score {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #4facfe;
+        }
+        
+        .bulk-result-status {
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-recommended {
+            background: linear-gradient(45deg, #00d4aa, #00b894);
+            color: #0f0f23;
+        }
+        
+        .status-maybe {
+            background: linear-gradient(45deg, #fdcb6e, #e17055);
+            color: #0f0f23;
+        }
+        
+        .status-not-recommended {
+            background: linear-gradient(45deg, #ff6b6b, #ee5a52);
+            color: #0f0f23;
+        }
+        
         @media (max-width: 768px) { 
             .container { padding: 1rem; } 
             .nav-container { flex-direction: column; }
-            .card { padding: 1rem; }
+            .card { padding: 1.5rem; }
+            .header h1 { font-size: 2rem; }
+            .metrics { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>HR Candidate Screening Platform</h1>
-        <p>Professional candidate evaluation for HR teams</p>
+        <p>Advanced AI-powered candidate evaluation for modern HR teams</p>
     </div>
     
     <div class="nav">
@@ -277,26 +551,26 @@
                     
                     <div class="card">
                         <h3>HR Decision Support</h3>
-                        <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
-                            <h4>Candidate Assessment Report</h4>
+                        <div style="background: linear-gradient(135deg, #16213e 0%, #0f3460 100%); border: 1px solid #4facfe; border-radius: 8px; padding: 1.5rem; margin: 1rem 0;">
+                            <h4 style="color: #4facfe; margin-bottom: 1rem;">Candidate Assessment Report</h4>
                             <div style="margin-bottom: 1rem;">
-                                <h5>Key Strengths</h5>
-                                <ul style="margin-left: 1.5rem;">
+                                <h5 style="color: #00d4aa; margin-bottom: 0.5rem;">Key Strengths</h5>
+                                <ul style="margin-left: 1.5rem; color: #e6e6e6;">
                                     <li>Strong technical skills alignment with job requirements</li>
                                     <li>Relevant cloud experience and modern tech stack</li>
                                     <li>Good educational background and certifications</li>
                                 </ul>
                             </div>
                             <div style="margin-bottom: 1rem;">
-                                <h5>Areas of Concern</h5>
-                                <ul style="margin-left: 1.5rem;">
+                                <h5 style="color: #fdcb6e; margin-bottom: 0.5rem;">Areas of Concern</h5>
+                                <ul style="margin-left: 1.5rem; color: #e6e6e6;">
                                     <li>Could benefit from more DevOps experience</li>
                                     <li>Missing specific database technologies mentioned</li>
                                 </ul>
                             </div>
                             <div>
-                                <h5>HR Recommendation</h5>
-                                <p><strong>RECOMMENDED FOR INTERVIEW</strong> - This candidate shows strong potential and would be worth interviewing.</p>
+                                <h5 style="color: #00d4aa; margin-bottom: 0.5rem;">HR Recommendation</h5>
+                                <p style="color: #e6e6e6; margin: 0;"><strong>RECOMMENDED FOR INTERVIEW</strong> - This candidate shows strong potential and would be worth interviewing.</p>
                             </div>
                         </div>
                     </div>
@@ -330,8 +604,8 @@
                 </div>
                 
                 <div id="bulkFileList" style="margin-top: 1rem; display: none;">
-                    <h4>Selected Files:</h4>
-                    <div id="bulkFileNames" style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 1rem; max-height: 200px; overflow-y: auto;"></div>
+                    <h4 style="color: #4facfe; margin-bottom: 0.5rem;">Selected Files:</h4>
+                    <div id="bulkFileNames" style="background: #16213e; border: 1px solid #0f3460; border-radius: 8px; padding: 1rem; max-height: 200px; overflow-y: auto;"></div>
                 </div>
                 
                 <button class="btn" onclick="launchBulkEvaluation()" id="bulkEvaluateBtn" style="margin-top: 1rem;">Launch Bulk Evaluation</button>
@@ -374,9 +648,9 @@
                     
                     <div class="card">
                         <h3>Summary Report</h3>
-                        <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
-                            <h4>Bulk Screening Summary</h4>
-                            <div id="bulkSummary">
+                        <div style="background: linear-gradient(135deg, #16213e 0%, #0f3460 100%); border: 1px solid #4facfe; border-radius: 8px; padding: 1.5rem; margin: 1rem 0;">
+                            <h4 style="color: #4facfe; margin-bottom: 1rem;">Bulk Screening Summary</h4>
+                            <div id="bulkSummary" style="color: #e6e6e6;">
                                 <!-- Summary will be populated here -->
                             </div>
                         </div>
@@ -413,7 +687,7 @@
             
             <div class="card">
                 <h3>Time to Hire Trends</h3>
-                <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 2rem; text-align: center; color: #6c757d;">
+                <div style="background: linear-gradient(135deg, #16213e 0%, #0f3460 100%); border: 1px solid #0f3460; border-radius: 8px; padding: 2rem; text-align: center; color: #a8a8a8;">
                     Time to Hire Chart<br>
                     <small>Shows hiring efficiency over time</small>
                 </div>
@@ -421,7 +695,7 @@
             
             <div class="card">
                 <h3>Candidate Volume by Role</h3>
-                <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 2rem; text-align: center; color: #6c757d;">
+                <div style="background: linear-gradient(135deg, #16213e 0%, #0f3460 100%); border: 1px solid #0f3460; border-radius: 8px; padding: 2rem; text-align: center; color: #a8a8a8;">
                     Candidate Volume Chart<br>
                     <small>Distribution of candidates across job openings</small>
                 </div>
@@ -490,27 +764,27 @@
             
             <div class="card">
                 <h3>Candidate Evaluation Checklist</h3>
-                <ul style="line-height: 1.8; color: #333;">
-                    <li><strong>Technical Skills:</strong> Assess alignment with job requirements</li>
-                    <li><strong>Experience Level:</strong> Verify years and relevance of experience</li>
-                    <li><strong>Cultural Fit:</strong> Evaluate alignment with company values</li>
-                    <li><strong>Growth Potential:</strong> Assess learning ability and career goals</li>
-                    <li><strong>Communication Skills:</strong> Review written and verbal abilities</li>
+                <ul style="line-height: 1.8; color: #e6e6e6;">
+                    <li><strong style="color: #4facfe;">Technical Skills:</strong> Assess alignment with job requirements</li>
+                    <li><strong style="color: #4facfe;">Experience Level:</strong> Verify years and relevance of experience</li>
+                    <li><strong style="color: #4facfe;">Cultural Fit:</strong> Evaluate alignment with company values</li>
+                    <li><strong style="color: #4facfe;">Growth Potential:</strong> Assess learning ability and career goals</li>
+                    <li><strong style="color: #4facfe;">Communication Skills:</strong> Review written and verbal abilities</li>
                 </ul>
             </div>
             
             <div class="card">
                 <h3>HR Features & Capabilities</h3>
-                <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
-                    <h4>Platform Capabilities</h4>
-                    <ul style="line-height: 1.8; color: #333;">
-                        <li><strong>AI-Powered Analysis:</strong> Automated resume parsing and skill matching</li>
-                        <li><strong>Multi-Format Support:</strong> PDF, DOCX, and TXT file processing</li>
-                        <li><strong>Real-time Evaluation:</strong> Instant candidate assessment results</li>
-                        <li><strong>Comprehensive Metrics:</strong> Skills match, experience fit, and overall score</li>
-                        <li><strong>HR Decision Support:</strong> Detailed recommendations and insights</li>
-                        <li><strong>Analytics Dashboard:</strong> Recruitment performance tracking</li>
-                        <li><strong>Job Management:</strong> Create and manage job openings</li>
+                <div style="background: linear-gradient(135deg, #16213e 0%, #0f3460 100%); border: 1px solid #4facfe; border-radius: 8px; padding: 1.5rem; margin: 1rem 0;">
+                    <h4 style="color: #4facfe; margin-bottom: 1rem;">Platform Capabilities</h4>
+                    <ul style="line-height: 1.8; color: #e6e6e6;">
+                        <li><strong style="color: #00d4aa;">AI-Powered Analysis:</strong> Automated resume parsing and skill matching</li>
+                        <li><strong style="color: #00d4aa;">Multi-Format Support:</strong> PDF, DOCX, and TXT file processing</li>
+                        <li><strong style="color: #00d4aa;">Real-time Evaluation:</strong> Instant candidate assessment results</li>
+                        <li><strong style="color: #00d4aa;">Comprehensive Metrics:</strong> Skills match, experience fit, and overall score</li>
+                        <li><strong style="color: #00d4aa;">HR Decision Support:</strong> Detailed recommendations and insights</li>
+                        <li><strong style="color: #00d4aa;">Analytics Dashboard:</strong> Recruitment performance tracking</li>
+                        <li><strong style="color: #00d4aa;">Job Management:</strong> Create and manage job openings</li>
                     </ul>
                 </div>
             </div>
@@ -646,10 +920,10 @@
                     }
                     
                     const fileItem = document.createElement('div');
-                    fileItem.style.cssText = 'padding: 0.5rem; border-bottom: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center;';
+                    fileItem.style.cssText = 'padding: 0.5rem; border-bottom: 1px solid #0f3460; display: flex; justify-content: space-between; align-items: center;';
                     fileItem.innerHTML = `
-                        <span style="color: #333;">${file.name}</span>
-                        <span style="color: #6c757d; font-size: 0.875rem;">${fileSize.toFixed(1)}MB</span>
+                        <span style="color: #e6e6e6;">${file.name}</span>
+                        <span style="color: #a8a8a8; font-size: 0.875rem;">${fileSize.toFixed(1)}MB</span>
                     `;
                     fileNamesDiv.appendChild(fileItem);
                 }
@@ -700,18 +974,18 @@
                 for (let i = 0; i < totalFiles; i++) {
                     const score = Math.floor(Math.random() * 40 + 60);
                     const status = score >= 80 ? '🟢 Recommended' : score >= 65 ? '🟡 Maybe' : '🔴 Not Recommended';
-                    const statusColor = score >= 80 ? '#155724' : score >= 65 ? '#856404' : '#721c24';
+                    const statusClass = score >= 80 ? 'status-recommended' : score >= 65 ? 'status-maybe' : 'status-not-recommended';
                     
                     const candidateCard = document.createElement('div');
-                    candidateCard.style.cssText = 'background: white; border: 1px solid #dee2e6; border-radius: 4px; padding: 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;';
+                    candidateCard.className = 'bulk-result-card';
                     candidateCard.innerHTML = `
                         <div>
-                            <div style="font-weight: bold; color: #333; margin-bottom: 0.25rem;">Candidate ${i + 1}</div>
-                            <div style="color: #6c757d; font-size: 0.875rem;">Resume ${i + 1}.pdf</div>
+                            <div style="font-weight: 600; color: #e6e6e6; margin-bottom: 0.25rem;">Candidate ${i + 1}</div>
+                            <div style="color: #a8a8a8; font-size: 0.875rem;">Resume ${i + 1}.pdf</div>
                         </div>
                         <div style="text-align: right;">
-                            <div style="font-size: 1.5rem; font-weight: bold; color: #007bff; margin-bottom: 0.25rem;">${score}%</div>
-                            <div style="color: ${statusColor}; font-weight: bold;">${status}</div>
+                            <div class="bulk-result-score">${score}%</div>
+                            <div class="bulk-result-status ${statusClass}">${status}</div>
                         </div>
                     `;
                     candidateList.appendChild(candidateCard);
