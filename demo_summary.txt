@@ -1,0 +1,19 @@
+============================================================
+RESUME-JOB DESCRIPTION ANALYSIS SUMMARY
+============================================================
+
+Overall Match Score: 8.73%
+
+TF-IDF Score: 21.83%
+BERT Score: 0.0%
+
+RECOMMENDATIONS:
+1. Consider adding more relevant keywords from the job description
+2. Highlight specific skills and experiences mentioned in the job posting
+3. Review and update your resume to better match the job requirements
+
+Job Description: 114 words
+Resume: 120 words
+
+Report generated: 2025-08-21 18:20:10
+============================================================

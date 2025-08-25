@@ -1,0 +1,51 @@
+<svg width="400" height="300" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f5f5f5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e0e0e0;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3e6ae1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#171a20;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="300" fill="url(#bg)"/>
+  
+  <!-- Abstract geometric shapes representing AI/Technology -->
+  <circle cx="100" cy="80" r="40" fill="url(#accent)" opacity="0.1"/>
+  <circle cx="300" cy="120" r="30" fill="url(#accent)" opacity="0.1"/>
+  <circle cx="80" cy="220" r="25" fill="url(#accent)" opacity="0.1"/>
+  
+  <!-- Main AI brain representation -->
+  <g transform="translate(200, 150)">
+    <!-- Brain outline -->
+    <path d="M-40,-30 Q-50,-20 -50,0 Q-50,20 -40,30 Q-30,40 0,40 Q30,40 40,30 Q50,20 50,0 Q50,-20 40,-30 Q30,-40 0,-40 Q-30,-40 -40,-30 Z" 
+          fill="none" stroke="#3e6ae1" stroke-width="2"/>
+    
+    <!-- Neural connections -->
+    <line x1="-30" y1="-20" x2="30" y2="-20" stroke="#3e6ae1" stroke-width="1" opacity="0.6"/>
+    <line x1="-30" y1="-10" x2="30" y2="-10" stroke="#3e6ae1" stroke-width="1" opacity="0.6"/>
+    <line x1="-30" y1="0" x2="30" y2="0" stroke="#3e6ae1" stroke-width="1" opacity="0.6"/>
+    <line x1="-30" y1="10" x2="30" y2="10" stroke="#3e6ae1" stroke-width="1" opacity="0.6"/>
+    <line x1="-30" y1="20" x2="30" y2="20" stroke="#3e6ae1" stroke-width="1" opacity="0.6"/>
+    
+    <!-- Data points -->
+    <circle cx="-25" cy="-25" r="2" fill="#3e6ae1"/>
+    <circle cx="25" cy="-25" r="2" fill="#3e6ae1"/>
+    <circle cx="-25" cy="25" r="2" fill="#3e6ae1"/>
+    <circle cx="25" cy="25" r="2" fill="#3e6ae1"/>
+  </g>
+  
+  <!-- Floating elements representing data -->
+  <rect x="50" y="50" width="8" height="8" fill="#3e6ae1" opacity="0.7"/>
+  <rect x="340" y="80" width="6" height="6" fill="#3e6ae1" opacity="0.7"/>
+  <rect x="60" y="240" width="10" height="10" fill="#3e6ae1" opacity="0.7"/>
+  
+  <!-- Connection lines -->
+  <line x1="58" y1="58" x2="200" y2="150" stroke="#3e6ae1" stroke-width="1" opacity="0.3"/>
+  <line x1="343" y1="83" x2="200" y2="150" stroke="#3e6ae1" stroke-width="1" opacity="0.3"/>
+  <line x1="65" y1="245" x2="200" y2="150" stroke="#3e6ae1" stroke-width="1" opacity="0.3"/>
+</svg>
+

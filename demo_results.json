@@ -1,0 +1,483 @@
+{
+  "export_timestamp": "2025-08-21T18:20:10.869588",
+  "results": {
+    "overall_score": 8.73,
+    "overall_confidence": "low",
+    "methods": {
+      "tfidf": {
+        "method": "TF-IDF",
+        "similarity_score": 21.83,
+        "raw_score": 0.21831296195088604,
+        "confidence": "low",
+        "important_features": {
+          "common_features": [
+            {
+              "feature": "python",
+              "job_desc_score": 0.2243,
+              "resume_score": 0.1442,
+              "average_score": 0.1842
+            },
+            {
+              "feature": "experience",
+              "job_desc_score": 0.2243,
+              "resume_score": 0.0961,
+              "average_score": 0.1602
+            },
+            {
+              "feature": "development",
+              "job_desc_score": 0.1121,
+              "resume_score": 0.1442,
+              "average_score": 0.1282
+            },
+            {
+              "feature": "web",
+              "job_desc_score": 0.1121,
+              "resume_score": 0.1442,
+              "average_score": 0.1282
+            },
+            {
+              "feature": "django",
+              "job_desc_score": 0.1121,
+              "resume_score": 0.0961,
+              "average_score": 0.1041
+            },
+            {
+              "feature": "django flask",
+              "job_desc_score": 0.1121,
+              "resume_score": 0.0961,
+              "average_score": 0.1041
+            },
+            {
+              "feature": "flask",
+              "job_desc_score": 0.1121,
+              "resume_score": 0.0961,
+              "average_score": 0.1041
+            },
+            {
+              "feature": "developer",
+              "job_desc_score": 0.1121,
+              "resume_score": 0.0481,
+              "average_score": 0.0801
+            },
+            {
+              "feature": "frameworks",
+              "job_desc_score": 0.1121,
+              "resume_score": 0.0481,
+              "average_score": 0.0801
+            },
+            {
+              "feature": "senior",
+              "job_desc_score": 0.1121,
+              "resume_score": 0.0481,
+              "average_score": 0.0801
+            },
+            {
+              "feature": "applications",
+              "job_desc_score": 0.0561,
+              "resume_score": 0.0961,
+              "average_score": 0.0761
+            },
+            {
+              "feature": "aws",
+              "job_desc_score": 0.0561,
+              "resume_score": 0.0961,
+              "average_score": 0.0761
+            },
+            {
+              "feature": "cloud",
+              "job_desc_score": 0.0561,
+              "resume_score": 0.0961,
+              "average_score": 0.0761
+            },
+            {
+              "feature": "docker",
+              "job_desc_score": 0.0561,
+              "resume_score": 0.0961,
+              "average_score": 0.0761
+            },
+            {
+              "feature": "mongodb",
+              "job_desc_score": 0.0561,
+              "resume_score": 0.0961,
+              "average_score": 0.0761
+            },
+            {
+              "feature": "postgresql",
+              "job_desc_score": 0.0561,
+              "resume_score": 0.0961,
+              "average_score": 0.0761
+            },
+            {
+              "feature": "apis",
+              "job_desc_score": 0.0561,
+              "resume_score": 0.0481,
+              "average_score": 0.0521
+            },
+            {
+              "feature": "cloud platforms",
+              "job_desc_score": 0.0561,
+              "resume_score": 0.0481,
+              "average_score": 0.0521
+            },
+            {
+              "feature": "cross",
+              "job_desc_score": 0.0561,
+              "resume_score": 0.0481,
+              "average_score": 0.0521
+            },
+            {
+              "feature": "cross functional",
+              "job_desc_score": 0.0561,
+              "resume_score": 0.0481,
+              "average_score": 0.0521
+            }
+          ],
+          "job_desc_only": [
+            {
+              "feature": "code",
+              "score": 0.1576
+            },
+            {
+              "feature": "database",
+              "score": 0.1576
+            },
+            {
+              "feature": "python developer",
+              "score": 0.1576
+            },
+            {
+              "feature": "python development",
+              "score": 0.1576
+            },
+            {
+              "feature": "senior python",
+              "score": 0.1576
+            },
+            {
+              "feature": "strong",
+              "score": 0.1576
+            },
+            {
+              "feature": "apis microservices",
+              "score": 0.0788
+            },
+            {
+              "feature": "applications design",
+              "score": 0.0788
+            },
+            {
+              "feature": "attention",
+              "score": 0.0788
+            },
+            {
+              "feature": "attention responsibilities",
+              "score": 0.0788
+            }
+          ],
+          "resume_only": [
+            {
+              "feature": "engineer",
+              "score": 0.2027
+            },
+            {
+              "feature": "software",
+              "score": 0.2027
+            },
+            {
+              "feature": "software engineer",
+              "score": 0.2027
+            },
+            {
+              "feature": "using",
+              "score": 0.2027
+            },
+            {
+              "feature": "2018",
+              "score": 0.1351
+            },
+            {
+              "feature": "2020",
+              "score": 0.1351
+            },
+            {
+              "feature": "applications using",
+              "score": 0.1351
+            },
+            {
+              "feature": "databases",
+              "score": 0.1351
+            },
+            {
+              "feature": "javascript",
+              "score": 0.1351
+            },
+            {
+              "feature": "postgresql mongodb",
+              "score": 0.1351
+            }
+          ]
+        },
+        "feature_count": 251,
+        "error": null
+      },
+      "bert": {
+        "method": "BERT",
+        "similarity_score": 0.0,
+        "confidence": "low",
+        "error": "Calculation error: tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.13.3.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main"
+      },
+      "combined": {
+        "method": "Combined (TF-IDF + BERT)",
+        "similarity_score": 8.73,
+        "tfidf_score": 21.83,
+        "bert_score": 0.0,
+        "confidence": "low",
+        "tfidf_results": {
+          "method": "TF-IDF",
+          "similarity_score": 21.83,
+          "raw_score": 0.21831296195088604,
+          "confidence": "low",
+          "important_features": {
+            "common_features": [
+              {
+                "feature": "python",
+                "job_desc_score": 0.2243,
+                "resume_score": 0.1442,
+                "average_score": 0.1842
+              },
+              {
+                "feature": "experience",
+                "job_desc_score": 0.2243,
+                "resume_score": 0.0961,
+                "average_score": 0.1602
+              },
+              {
+                "feature": "development",
+                "job_desc_score": 0.1121,
+                "resume_score": 0.1442,
+                "average_score": 0.1282
+              },
+              {
+                "feature": "web",
+                "job_desc_score": 0.1121,
+                "resume_score": 0.1442,
+                "average_score": 0.1282
+              },
+              {
+                "feature": "django",
+                "job_desc_score": 0.1121,
+                "resume_score": 0.0961,
+                "average_score": 0.1041
+              },
+              {
+                "feature": "django flask",
+                "job_desc_score": 0.1121,
+                "resume_score": 0.0961,
+                "average_score": 0.1041
+              },
+              {
+                "feature": "flask",
+                "job_desc_score": 0.1121,
+                "resume_score": 0.0961,
+                "average_score": 0.1041
+              },
+              {
+                "feature": "developer",
+                "job_desc_score": 0.1121,
+                "resume_score": 0.0481,
+                "average_score": 0.0801
+              },
+              {
+                "feature": "frameworks",
+                "job_desc_score": 0.1121,
+                "resume_score": 0.0481,
+                "average_score": 0.0801
+              },
+              {
+                "feature": "senior",
+                "job_desc_score": 0.1121,
+                "resume_score": 0.0481,
+                "average_score": 0.0801
+              },
+              {
+                "feature": "applications",
+                "job_desc_score": 0.0561,
+                "resume_score": 0.0961,
+                "average_score": 0.0761
+              },
+              {
+                "feature": "aws",
+                "job_desc_score": 0.0561,
+                "resume_score": 0.0961,
+                "average_score": 0.0761
+              },
+              {
+                "feature": "cloud",
+                "job_desc_score": 0.0561,
+                "resume_score": 0.0961,
+                "average_score": 0.0761
+              },
+              {
+                "feature": "docker",
+                "job_desc_score": 0.0561,
+                "resume_score": 0.0961,
+                "average_score": 0.0761
+              },
+              {
+                "feature": "mongodb",
+                "job_desc_score": 0.0561,
+                "resume_score": 0.0961,
+                "average_score": 0.0761
+              },
+              {
+                "feature": "postgresql",
+                "job_desc_score": 0.0561,
+                "resume_score": 0.0961,
+                "average_score": 0.0761
+              },
+              {
+                "feature": "apis",
+                "job_desc_score": 0.0561,
+                "resume_score": 0.0481,
+                "average_score": 0.0521
+              },
+              {
+                "feature": "cloud platforms",
+                "job_desc_score": 0.0561,
+                "resume_score": 0.0481,
+                "average_score": 0.0521
+              },
+              {
+                "feature": "cross",
+                "job_desc_score": 0.0561,
+                "resume_score": 0.0481,
+                "average_score": 0.0521
+              },
+              {
+                "feature": "cross functional",
+                "job_desc_score": 0.0561,
+                "resume_score": 0.0481,
+                "average_score": 0.0521
+              }
+            ],
+            "job_desc_only": [
+              {
+                "feature": "code",
+                "score": 0.1576
+              },
+              {
+                "feature": "database",
+                "score": 0.1576
+              },
+              {
+                "feature": "python developer",
+                "score": 0.1576
+              },
+              {
+                "feature": "python development",
+                "score": 0.1576
+              },
+              {
+                "feature": "senior python",
+                "score": 0.1576
+              },
+              {
+                "feature": "strong",
+                "score": 0.1576
+              },
+              {
+                "feature": "apis microservices",
+                "score": 0.0788
+              },
+              {
+                "feature": "applications design",
+                "score": 0.0788
+              },
+              {
+                "feature": "attention",
+                "score": 0.0788
+              },
+              {
+                "feature": "attention responsibilities",
+                "score": 0.0788
+              }
+            ],
+            "resume_only": [
+              {
+                "feature": "engineer",
+                "score": 0.2027
+              },
+              {
+                "feature": "software",
+                "score": 0.2027
+              },
+              {
+                "feature": "software engineer",
+                "score": 0.2027
+              },
+              {
+                "feature": "using",
+                "score": 0.2027
+              },
+              {
+                "feature": "2018",
+                "score": 0.1351
+              },
+              {
+                "feature": "2020",
+                "score": 0.1351
+              },
+              {
+                "feature": "applications using",
+                "score": 0.1351
+              },
+              {
+                "feature": "databases",
+                "score": 0.1351
+              },
+              {
+                "feature": "javascript",
+                "score": 0.1351
+              },
+              {
+                "feature": "postgresql mongodb",
+                "score": 0.1351
+              }
+            ]
+          },
+          "feature_count": 251,
+          "error": null
+        },
+        "bert_results": {
+          "method": "BERT",
+          "similarity_score": 0.0,
+          "confidence": "low",
+          "error": "Calculation error: tokenizers>=0.21,<0.22 is required for a normal functioning of this module, but found tokenizers==0.13.3.\nTry: `pip install transformers -U` or `pip install -e '.[dev]'` if you're working with git main"
+        },
+        "weights": {
+          "tfidf": 0.4,
+          "bert": 0.6
+        }
+      }
+    },
+    "text_analysis": {
+      "job_description": {
+        "word_count": 114,
+        "sentence_count": 3,
+        "character_count": 902,
+        "average_word_length": 6.09
+      },
+      "resume": {
+        "word_count": 120,
+        "sentence_count": 2,
+        "character_count": 1011,
+        "average_word_length": 6.41
+      }
+    },
+    "recommendations": [
+      "Consider adding more relevant keywords from the job description",
+      "Highlight specific skills and experiences mentioned in the job posting",
+      "Review and update your resume to better match the job requirements"
+    ]
+  }
+}
