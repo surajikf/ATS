@@ -64,6 +64,7 @@
     <div class="nav">
         <div class="nav-container">
             <button class="nav-btn active" onclick="showPage('evaluation')">📋 Single Candidate</button>
+            <button class="nav-btn" onclick="showPage('bulk')">📚 Bulk Screening</button>
             <button class="nav-btn" onclick="showPage('analytics')">📊 Analytics</button>
             <button class="nav-btn" onclick="showPage('jobs')">💼 Job Management</button>
             <button class="nav-btn" onclick="showPage('guidelines')">📚 HR Guidelines</button>
@@ -138,6 +139,87 @@
                             <div>
                                 <h5 style="color: #059669; margin-bottom: 0.25rem;">💡 HR Recommendation</h5>
                                 <p style="color: #374151; margin: 0;"><strong>RECOMMENDED FOR INTERVIEW</strong> - This candidate shows strong potential and would be worth interviewing.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bulk Resume Screening Page -->
+        <div id="bulk" class="page">
+            <div class="card">
+                <h2>📚 Bulk Resume Screening</h2>
+                <p>Upload multiple resumes and job descriptions for batch evaluation and comparison</p>
+            </div>
+            
+            <div class="card">
+                <h3>📋 Upload Job Description</h3>
+                <div class="form-group">
+                    <label for="bulkJobDescription">Job Description (Upload file or paste text):</label>
+                    <input type="file" id="bulkJobDescriptionFile" accept=".pdf,.docx,.txt" style="margin-bottom: 1rem;">
+                    <small style="color: #6b7280; margin-bottom: 1rem; display: block;">Or paste job description below:</small>
+                    <textarea id="bulkJobDescription" rows="6" placeholder="Paste the job description, requirements, skills needed, experience level, and responsibilities here..."></textarea>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>📁 Upload Multiple Resumes</h3>
+                <div class="form-group">
+                    <label for="bulkResumeFiles">Select Multiple Resume Files:</label>
+                    <input type="file" id="bulkResumeFiles" accept=".pdf,.docx,.txt" multiple required>
+                    <small style="color: #6b7280; margin-top: 0.25rem; display: block;">Supported formats: PDF, DOCX, TXT (Max 20 files, 10MB each)</small>
+                </div>
+                
+                <div id="bulkFileList" style="margin-top: 1rem; display: none;">
+                    <h4 style="color: #374151; margin-bottom: 0.5rem;">Selected Files:</h4>
+                    <div id="bulkFileNames" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.5rem; padding: 1rem; max-height: 200px; overflow-y: auto;"></div>
+                </div>
+                
+                <button class="btn" onclick="launchBulkEvaluation()" id="bulkEvaluateBtn" style="margin-top: 1rem;">🚀 Launch Bulk Evaluation</button>
+            </div>
+            
+            <div class="loading" id="bulkLoading">
+                <div class="spinner"></div>
+                <p>Processing multiple resumes...</p>
+            </div>
+            
+            <div class="results" id="bulkResults">
+                <div class="card">
+                    <h2>📊 Bulk Screening Results</h2>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number" id="totalProcessed">0</div>
+                            <div class="stat-label">Total Processed</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="recommendedCount">0</div>
+                            <div class="stat-label">Recommended</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="maybeCount">0</div>
+                            <div class="stat-label">Maybe</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number" id="notRecommendedCount">0</div>
+                            <div class="stat-label">Not Recommended</div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>🎯 Candidate Rankings</h3>
+                        <div id="bulkCandidateList" style="margin-top: 1rem;">
+                            <!-- Candidate results will be populated here -->
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>📈 Summary Report</h3>
+                        <div style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 0.5rem; padding: 1rem; margin: 1rem 0;">
+                            <h4 style="color: #0c4a6e; margin-bottom: 0.5rem;">Bulk Screening Summary</h4>
+                            <div id="bulkSummary" style="color: #374151; line-height: 1.6;">
+                                <!-- Summary will be populated here -->
                             </div>
                         </div>
                     </div>
@@ -375,6 +457,119 @@
                 }
             }
         });
+        
+        // Bulk screening functionality
+        document.getElementById('bulkResumeFiles').addEventListener('change', function(e) {
+            const files = e.target.files;
+            if (files.length > 0) {
+                if (files.length > 20) {
+                    alert('Maximum 20 files allowed. Please select fewer files.');
+                    this.value = '';
+                    return;
+                }
+                
+                // Show file list
+                document.getElementById('bulkFileList').style.display = 'block';
+                const fileNamesDiv = document.getElementById('bulkFileNames');
+                fileNamesDiv.innerHTML = '';
+                
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const fileSize = file.size / 1024 / 1024;
+                    
+                    if (fileSize > 10) {
+                        alert(`File "${file.name}" is too large (${fileSize.toFixed(1)}MB). Maximum size is 10MB.`);
+                        this.value = '';
+                        document.getElementById('bulkFileList').style.display = 'none';
+                        return;
+                    }
+                    
+                    const fileItem = document.createElement('div');
+                    fileItem.style.cssText = 'padding: 0.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;';
+                    fileItem.innerHTML = `
+                        <span style="color: #374151;">${file.name}</span>
+                        <span style="color: #6b7280; font-size: 0.875rem;">${fileSize.toFixed(1)}MB</span>
+                    `;
+                    fileNamesDiv.appendChild(fileItem);
+                }
+            } else {
+                document.getElementById('bulkFileList').style.display = 'none';
+            }
+        });
+        
+        function launchBulkEvaluation() {
+            const jobDescription = document.getElementById('bulkJobDescription').value;
+            const jobDescriptionFile = document.getElementById('bulkJobDescriptionFile').files[0];
+            const resumeFiles = document.getElementById('bulkResumeFiles').files;
+            
+            if (resumeFiles.length === 0) {
+                alert('Please select at least one resume file to proceed.');
+                return;
+            }
+            
+            if (!jobDescription && !jobDescriptionFile) {
+                alert('Please either upload a job description file or paste the job description text to proceed.');
+                return;
+            }
+            
+            document.getElementById('bulkLoading').style.display = 'block';
+            document.getElementById('bulkEvaluateBtn').disabled = true;
+            
+            // Simulate bulk processing
+            setTimeout(() => {
+                document.getElementById('bulkLoading').style.display = 'none';
+                document.getElementById('bulkResults').style.display = 'block';
+                document.getElementById('bulkEvaluateBtn').disabled = false;
+                
+                // Generate sample results
+                const totalFiles = resumeFiles.length;
+                const recommended = Math.floor(totalFiles * 0.3);
+                const maybe = Math.floor(totalFiles * 0.4);
+                const notRecommended = totalFiles - recommended - maybe;
+                
+                document.getElementById('totalProcessed').textContent = totalFiles;
+                document.getElementById('recommendedCount').textContent = recommended;
+                document.getElementById('maybeCount').textContent = maybe;
+                document.getElementById('notRecommendedCount').textContent = notRecommended;
+                
+                // Generate candidate list
+                const candidateList = document.getElementById('bulkCandidateList');
+                candidateList.innerHTML = '';
+                
+                for (let i = 0; i < totalFiles; i++) {
+                    const score = Math.floor(Math.random() * 40 + 60);
+                    const status = score >= 80 ? '🟢 Recommended' : score >= 65 ? '🟡 Maybe' : '🔴 Not Recommended';
+                    const statusColor = score >= 80 ? '#059669' : score >= 65 ? '#d97706' : '#dc2626';
+                    
+                    const candidateCard = document.createElement('div');
+                    candidateCard.style.cssText = 'background: white; border: 1px solid #e2e8f0; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;';
+                    candidateCard.innerHTML = `
+                        <div>
+                            <div style="font-weight: 600; color: #374151; margin-bottom: 0.25rem;">Candidate ${i + 1}</div>
+                            <div style="color: #6b7280; font-size: 0.875rem;">Resume ${i + 1}.pdf</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 1.5rem; font-weight: 700; color: #1e40af; margin-bottom: 0.25rem;">${score}%</div>
+                            <div style="color: ${statusColor}; font-weight: 500;">${status}</div>
+                        </div>
+                    `;
+                    candidateList.appendChild(candidateCard);
+                }
+                
+                // Generate summary
+                const summary = document.getElementById('bulkSummary');
+                summary.innerHTML = `
+                    <p><strong>Total Candidates Processed:</strong> ${totalFiles}</p>
+                    <p><strong>Top Performers:</strong> ${recommended} candidates with scores 80%+</p>
+                    <p><strong>Potential Candidates:</strong> ${maybe} candidates with scores 65-79%</p>
+                    <p><strong>Not Recommended:</strong> ${notRecommended} candidates below 65%</p>
+                    <p><strong>Recommendation:</strong> Focus on the top ${recommended} candidates for immediate interviews.</p>
+                `;
+                
+                // Scroll to results
+                document.getElementById('bulkResults').scrollIntoView({ behavior: 'smooth' });
+            }, 4000);
+        }
     </script>
 </body>
 </html>
