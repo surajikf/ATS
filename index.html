@@ -4,575 +4,261 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HR Candidate Screening Platform</title>
-    <link rel="icon" type="image/svg+xml" href="https://www.ikf.co.in/wp-content/uploads/ikf-white-logo.svg">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); 
-            min-height: 100vh; 
-            background-attachment: fixed;
-            position: relative;
-        }
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
-            pointer-events: none;
-            z-index: -1;
+            font-family: Arial, sans-serif; 
+            background: #f5f5f5; 
+            line-height: 1.6;
         }
         .header { 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); 
+            background: #333; 
             color: white; 
-            padding: 3rem 2rem; 
+            padding: 2rem; 
             text-align: center; 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.1); 
-            position: relative;
-            overflow: hidden;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-        }
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-            opacity: 0.3;
-        }
-        .header::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            right: -50%;
-            bottom: -50%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: float 6s ease-in-out infinite;
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(180deg); }
-        }
-        .header h1 { 
-            font-size: 3rem; 
-            margin-bottom: 0.5rem; 
-            font-weight: 800;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            position: relative;
-            z-index: 1;
-        }
-        .header p { 
-            font-size: 1.25rem; 
-            opacity: 0.95; 
-            font-weight: 300;
-            position: relative;
-            z-index: 1;
         }
         .nav { 
-            background: rgba(255,255,255,0.95); 
-            backdrop-filter: blur(20px);
-            padding: 1.5rem; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1); 
-            border-bottom: 1px solid rgba(255,255,255,0.2);
+            background: white; 
+            padding: 1rem; 
+            border-bottom: 1px solid #ddd;
         }
         .nav-container { 
             max-width: 1200px; 
             margin: 0 auto; 
             display: flex; 
-            gap: 1rem; 
+            gap: 0.5rem; 
             flex-wrap: wrap; 
             justify-content: center;
         }
         .nav-btn { 
-            background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(248,250,252,0.9)); 
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.3); 
-            padding: 1rem 2rem; 
-            border-radius: 1rem; 
+            background: #f0f0f0; 
+            border: 1px solid #ddd; 
+            padding: 0.5rem 1rem; 
+            border-radius: 4px; 
             cursor: pointer; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-            color: #374151; 
-            font-weight: 600;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08), 0 0 0 1px rgba(255,255,255,0.2);
+            color: #333;
         }
         .nav-btn:hover { 
-            transform: translateY(-3px); 
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border-color: transparent;
+            background: #e0e0e0; 
         }
         .nav-btn.active { 
-            background: linear-gradient(135deg, #667eea, #764ba2); 
+            background: #007bff; 
             color: white; 
-            border-color: transparent;
-            box-shadow: 0 8px 25px rgba(102,126,234,0.4);
         }
         .container { 
             max-width: 1200px; 
             margin: 0 auto; 
             padding: 2rem; 
         }
-                 .page { 
-             display: none; 
-             animation: fadeIn 0.5s ease-out;
-             opacity: 0;
-             transform: translateY(20px);
-         }
-         .page.active { 
-             display: block; 
-             opacity: 1;
-             transform: translateY(0);
-         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .page { 
+            display: none; 
+        }
+        .page.active { 
+            display: block; 
         }
         .card { 
-            background: rgba(255,255,255,0.92); 
-            backdrop-filter: blur(25px);
-            border-radius: 1.5rem; 
-            padding: 2.5rem; 
+            background: white; 
+            border-radius: 8px; 
+            padding: 2rem; 
             margin-bottom: 2rem; 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(255,255,255,0.3); 
-            border: 1px solid rgba(255,255,255,0.4);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+            border: 1px solid #ddd;
         }
         .form-group { 
-            margin-bottom: 2rem; 
+            margin-bottom: 1rem; 
         }
         .form-group label { 
             display: block; 
-            margin-bottom: 0.75rem; 
-            font-weight: 700; 
-            color: #1e293b; 
-            font-size: 1.1rem;
+            margin-bottom: 0.5rem; 
+            font-weight: bold; 
+            color: #333; 
         }
-        .form-group select, .form-group input, .form-group textarea { 
+        .form-group input, .form-group textarea, .form-group select { 
             width: 100%; 
-            padding: 1rem; 
-            border: 2px solid rgba(226,232,240,0.8); 
-            border-radius: 1rem; 
+            padding: 0.5rem; 
+            border: 1px solid #ddd; 
+            border-radius: 4px; 
             font-size: 1rem; 
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            background: rgba(255,255,255,0.9);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        .form-group select:focus, .form-group input:focus, .form-group textarea:focus { 
-            outline: none; 
-            border-color: #667eea; 
-            box-shadow: 0 0 0 4px rgba(102,126,234,0.15), 0 8px 25px rgba(102,126,234,0.1);
-            background: white;
-            transform: scale(1.02);
-            border-width: 3px;
         }
         .btn { 
-            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb); 
+            background: #007bff; 
             color: white; 
             border: none; 
-            padding: 1.25rem 2.5rem; 
-            border-radius: 1rem; 
-            font-size: 1.125rem; 
-            font-weight: 700; 
+            padding: 0.75rem 1.5rem; 
+            border-radius: 4px; 
+            font-size: 1rem; 
             cursor: pointer; 
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
             width: 100%; 
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 8px 25px rgba(102,126,234,0.3), 0 0 0 1px rgba(255,255,255,0.2);
         }
         .btn:hover { 
-            transform: translateY(-3px) scale(1.02); 
-            box-shadow: 0 12px 40px rgba(102,126,234,0.4);
-        }
-        .btn {
-            position: relative;
-            overflow: hidden;
-        }
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-        .btn:hover::before {
-            left: 100%;
-        }
-        .btn:active {
-            transform: translateY(-1px) scale(1.01);
+            background: #0056b3; 
         }
         .btn:disabled { 
-            background: linear-gradient(135deg, #9ca3af, #6b7280); 
+            background: #ccc; 
             cursor: not-allowed; 
-            transform: none; 
-            box-shadow: none;
+        }
+        .metrics { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); 
+            gap: 1rem; 
+            margin-bottom: 2rem; 
+        }
+        .metric-card { 
+            background: #f8f9fa; 
+            border: 1px solid #dee2e6; 
+            border-radius: 8px; 
+            padding: 1.5rem; 
+            text-align: center; 
+        }
+        .metric-value { 
+            font-size: 2rem; 
+            font-weight: bold; 
+            color: #007bff; 
+            margin-bottom: 0.5rem; 
+        }
+        .metric-label { 
+            color: #6c757d; 
+            font-size: 0.9rem; 
+        }
+        .loading { 
+            display: none; 
+            text-align: center; 
+            padding: 2rem; 
         }
         .results { 
             display: none; 
             margin-top: 2rem; 
-            animation: slideUp 0.6s ease-out;
-        }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .metrics { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
-            gap: 1.5rem; 
-            margin-bottom: 2rem; 
-        }
-        .metric-card { 
-            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb); 
-            color: white;
-            border-radius: 1.5rem; 
-            padding: 2rem; 
-            text-align: center; 
-            border: none;
-            box-shadow: 0 8px 32px rgba(102,126,234,0.4), 0 0 0 1px rgba(255,255,255,0.2);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-        .metric-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
-            transform: translateX(-100%);
-            transition: transform 0.6s ease;
-        }
-        .metric-card:hover::before {
-            transform: translateX(100%);
-        }
-        .metric-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 16px 48px rgba(102,126,234,0.4);
-        }
-        .metric-card {
-            animation: pulse-glow 2s ease-in-out infinite alternate;
-        }
-        @keyframes pulse-glow {
-            from { box-shadow: 0 8px 32px rgba(102,126,234,0.3); }
-            to { box-shadow: 0 8px 32px rgba(102,126,234,0.5), 0 0 20px rgba(102,126,234,0.3); }
-        }
-        .metric-value { 
-            font-size: 3rem; 
-            font-weight: 800; 
-            margin-bottom: 0.5rem; 
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .metric-label { 
-            font-size: 1rem; 
-            opacity: 0.9; 
-            text-transform: uppercase; 
-            letter-spacing: 0.1em;
-            font-weight: 600;
-        }
-                 .loading { 
-             display: none; 
-             text-align: center; 
-             padding: 3rem; 
-         }
-         
-         .progress-container {
-             background: rgba(255,255,255,0.9);
-             border-radius: 1rem;
-             padding: 2rem;
-             margin: 1rem 0;
-             text-align: center;
-             box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-         }
-         
-         .progress-bar-container {
-             width: 100%;
-             height: 8px;
-             background: #e2e8f0;
-             border-radius: 4px;
-             overflow: hidden;
-             margin: 1rem 0;
-         }
-         
-         .progress-bar-fill {
-             height: 100%;
-             background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
-             border-radius: 4px;
-             transition: width 0.3s ease;
-             width: 0%;
-         }
-         
-         .status-indicator {
-             display: inline-block;
-             padding: 0.5rem 1rem;
-             border-radius: 9999px;
-             font-size: 0.875rem;
-             font-weight: 600;
-             margin: 0.5rem;
-         }
-         
-         .status-processing {
-             background: linear-gradient(135deg, #fbbf24, #f59e0b);
-             color: white;
-         }
-         
-         .status-complete {
-             background: linear-gradient(135deg, #10b981, #059669);
-             color: white;
-         }
-        .spinner { 
-            border: 4px solid rgba(102,126,234,0.2); 
-            border-top: 4px solid #667eea; 
-            border-radius: 50%; 
-            width: 50px; 
-            height: 50px; 
-            animation: spin 1s linear infinite; 
-            margin: 0 auto 1.5rem;
-            box-shadow: 0 4px 16px rgba(102,126,234,0.3);
-        }
-        @keyframes spin { 
-            0% { transform: rotate(0deg); } 
-            100% { transform: rotate(360deg); } 
-        }
-        .company-info { 
-            background: linear-gradient(135deg, rgba(255,255,255,0.92), rgba(248,250,252,0.92)); 
-            backdrop-filter: blur(25px);
-            border: 1px solid rgba(255,255,255,0.4); 
-            border-radius: 1.5rem; 
-            padding: 2rem; 
-            text-align: center; 
-            margin-top: 2rem;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(255,255,255,0.3);
-        }
-        .company-info h3 { 
-            color: #1e293b; 
-            margin-bottom: 1rem; 
-            font-weight: 700;
-        }
-        .company-info p { 
-            color: #475569; 
-            margin-bottom: 0.5rem; 
-            font-weight: 500;
-        }
-        .company-info a { 
-            color: #667eea; 
-            text-decoration: none; 
-            font-weight: 600;
-            transition: color 0.3s ease;
-        }
-        .company-info a:hover { 
-            color: #764ba2; 
-            text-decoration: underline; 
-        }
-        .job-card { 
-            background: rgba(255,255,255,0.92); 
-            backdrop-filter: blur(25px);
-            border: 1px solid rgba(255,255,255,0.4); 
-            border-radius: 1rem; 
-            padding: 1.5rem; 
-            margin-bottom: 1rem; 
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08), 0 0 0 1px rgba(255,255,255,0.2);
-        }
-        .job-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-            border-color: #667eea;
-        }
-        .job-title { 
-            font-size: 1.25rem; 
-            font-weight: 700; 
-            color: #1e293b; 
-            margin-bottom: 0.5rem; 
-        }
-        .job-details { 
-            color: #64748b; 
-            margin-bottom: 1rem; 
-            font-weight: 500;
-        }
-        .job-status { 
-            display: inline-block; 
-            padding: 0.5rem 1rem; 
-            border-radius: 9999px; 
-            font-size: 0.875rem; 
-            font-weight: 600; 
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        .status-active { 
-            background: linear-gradient(135deg, #10b981, #059669); 
-            color: white;
-            box-shadow: 0 4px 16px rgba(16,185,129,0.3);
-        }
-        .status-closed { 
-            background: linear-gradient(135deg, #ef4444, #dc2626); 
-            color: white;
-            box-shadow: 0 4px 16px rgba(239,68,68,0.3);
-        }
-        .chart-container { 
-            background: rgba(255,255,255,0.92); 
-            backdrop-filter: blur(25px);
-            border-radius: 1.5rem; 
-            padding: 2.5rem; 
-            margin: 2rem 0; 
-            text-align: center; 
-            border: 1px solid rgba(255,255,255,0.4);
-            box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 0 0 1px rgba(255,255,255,0.3);
-        }
-        .chart-placeholder { 
-            width: 100%; 
-            height: 300px; 
-            background: linear-gradient(135deg, #f8fafc, #f1f5f9, #e2e8f0); 
-            border-radius: 1rem; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            color: #64748b; 
-            font-size: 1.125rem;
-            border: 2px dashed rgba(203,213,225,0.6);
-            position: relative;
-            overflow: hidden;
-        }
-        .chart-placeholder::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.3), transparent);
-            animation: shimmer 2s ease-in-out infinite;
-        }
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
         }
         .stats-grid { 
             display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
-            gap: 1.5rem; 
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
+            gap: 1rem; 
             margin: 2rem 0; 
         }
         .stat-card { 
-            background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(248,250,252,0.9)); 
-            backdrop-filter: blur(20px);
-            border-radius: 1rem; 
-            padding: 2rem; 
+            background: #f8f9fa; 
+            border: 1px solid #dee2e6; 
+            border-radius: 8px; 
+            padding: 1.5rem; 
             text-align: center; 
-            border: 1px solid rgba(255,255,255,0.4);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08), 0 0 0 1px rgba(255,255,255,0.2);
-        }
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 32px rgba(0,0,0,0.1);
-            border-color: #667eea;
         }
         .stat-number { 
-            font-size: 3rem; 
-            font-weight: 800; 
-            color: #667eea; 
+            font-size: 2rem; 
+            font-weight: bold; 
+            color: #007bff; 
             margin-bottom: 0.5rem; 
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .stat-label { 
-            font-size: 0.875rem; 
-            color: #64748b; 
-            text-transform: uppercase; 
-            letter-spacing: 0.1em;
-            font-weight: 600;
+            color: #6c757d; 
+            font-size: 0.9rem; 
+        }
+        .job-card { 
+            background: white; 
+            border: 1px solid #dee2e6; 
+            border-radius: 8px; 
+            padding: 1rem; 
+            margin-bottom: 1rem; 
+        }
+        .job-title { 
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            color: #333; 
+            margin-bottom: 0.5rem; 
+        }
+        .job-details { 
+            color: #6c757d; 
+            margin-bottom: 1rem; 
+        }
+        .job-status { 
+            display: inline-block; 
+            padding: 0.25rem 0.75rem; 
+            border-radius: 20px; 
+            font-size: 0.8rem; 
+            font-weight: bold; 
+        }
+        .status-active { 
+            background: #d4edda; 
+            color: #155724; 
+        }
+        .status-closed { 
+            background: #f8d7da; 
+            color: #721c24; 
+        }
+        .company-info { 
+            background: white; 
+            border: 1px solid #dee2e6; 
+            border-radius: 8px; 
+            padding: 2rem; 
+            text-align: center; 
+            margin-top: 2rem;
+        }
+        .company-info h3 { 
+            color: #333; 
+            margin-bottom: 1rem; 
+        }
+        .company-info p { 
+            color: #6c757d; 
+            margin-bottom: 0.5rem; 
+        }
+        .company-info a { 
+            color: #007bff; 
+            text-decoration: none; 
+        }
+        .company-info a:hover { 
+            text-decoration: underline; 
         }
         @media (max-width: 768px) { 
             .container { padding: 1rem; } 
-            .header h1 { font-size: 2rem; } 
-            .metrics { grid-template-columns: 1fr; } 
             .nav-container { flex-direction: column; }
-            .card { padding: 1.5rem; }
-            .header { padding: 2rem 1rem; }
+            .card { padding: 1rem; }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
-            <img src="https://www.ikf.co.in/wp-content/uploads/ikf-white-logo.svg" alt="IKF Logo" style="height: 50px; margin-right: 1rem; filter: brightness(0) invert(1);">
-            <div>
-                <h1 style="margin: 0; font-size: 2.5rem;">HR Candidate Screening</h1>
-                <p style="margin: 0; font-size: 1.125rem; opacity: 0.9;">Professional AI-powered candidate evaluation for HR teams</p>
-            </div>
-        </div>
+        <h1>HR Candidate Screening Platform</h1>
+        <p>Professional candidate evaluation for HR teams</p>
     </div>
     
-             <div class="nav">
-             <div class="nav-container">
-                 <button class="nav-btn active" onclick="showPage('evaluation', this)">📋 Single Candidate</button>
-                 <button class="nav-btn" onclick="showPage('bulk', this)">📚 Bulk Screening</button>
-                 <button class="nav-btn" onclick="showPage('analytics', this)">📊 Analytics</button>
-                 <button class="nav-btn" onclick="showPage('jobs', this)">💼 Job Management</button>
-                 <button class="nav-btn" onclick="showPage('guidelines', this)">📚 HR Guidelines</button>
-                 <button class="nav-btn" onclick="showPage('advanced', this)">🚀 Advanced Analytics</button>
-                 <button class="nav-btn" onclick="showPage('settings', this)">⚙️ Settings</button>
-                 <button class="nav-btn" onclick="showPage('help', this)">❓ Help</button>
-                 <button class="nav-btn" onclick="testNavigation()" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white;">🧪 Test</button>
-             </div>
-         </div>
+    <div class="nav">
+        <div class="nav-container">
+            <button class="nav-btn active" onclick="showPage('evaluation', this)">Single Candidate</button>
+            <button class="nav-btn" onclick="showPage('bulk', this)">Bulk Screening</button>
+            <button class="nav-btn" onclick="showPage('analytics', this)">Analytics</button>
+            <button class="nav-btn" onclick="showPage('jobs', this)">Job Management</button>
+            <button class="nav-btn" onclick="showPage('guidelines', this)">HR Guidelines</button>
+        </div>
+    </div>
     
     <div class="container">
         <!-- Single Candidate Evaluation Page -->
         <div id="evaluation" class="page active">
             <div class="card">
-                <h2>📋 Candidate Evaluation</h2>
+                <h2>Candidate Evaluation</h2>
                 
                 <div class="form-group">
                     <label for="resumeFile">Upload Candidate Resume:</label>
                     <input type="file" id="resumeFile" accept=".pdf,.docx,.txt" required>
-                    <small style="color: #6b7280; margin-top: 0.25rem; display: block;">Supported formats: PDF, DOCX, TXT</small>
+                    <small>Supported formats: PDF, DOCX, TXT</small>
                 </div>
                 
                 <div class="form-group">
                     <label for="jobDescription">Job Description (Upload file or paste text):</label>
                     <input type="file" id="jobDescriptionFile" accept=".pdf,.docx,.txt" style="margin-bottom: 1rem;">
-                    <small style="color: #6b7280; margin-bottom: 1rem; display: block;">Or paste job description below:</small>
+                    <small style="margin-bottom: 1rem; display: block;">Or paste job description below:</small>
                     <textarea id="jobDescription" rows="6" placeholder="Paste the job description, requirements, skills needed, experience level, and responsibilities here..."></textarea>
                 </div>
                 
-                <button class="btn" onclick="launchEvaluation()" id="evaluateBtn">🚀 Launch Evaluation</button>
+                <button class="btn" onclick="launchEvaluation()" id="evaluateBtn">Launch Evaluation</button>
             </div>
             
-                         <div class="loading" id="loading">
-                 <div class="progress-container">
-                     <h4 style="color: #1e293b; margin-bottom: 1rem;">🚀 AI Analysis in Progress</h4>
-                     <div class="progress-bar-container">
-                         <div class="progress-bar-fill" id="progressBar"></div>
-                     </div>
-                     <div class="status-indicator status-processing" id="statusIndicator">Processing Resume...</div>
-                     <p style="color: #64748b; margin-top: 1rem;">Please wait while our AI analyzes the candidate profile...</p>
-                 </div>
-             </div>
+            <div class="loading" id="loading">
+                <h4>AI Analysis in Progress</h4>
+                <p>Please wait while our AI analyzes the candidate profile...</p>
+            </div>
             
             <div class="results" id="results">
                 <div class="card">
-                    <h2>📊 Candidate Assessment Results</h2>
+                    <h2>Candidate Assessment Results</h2>
                     
                     <div class="metrics">
                         <div class="metric-card">
@@ -590,27 +276,27 @@
                     </div>
                     
                     <div class="card">
-                        <h3>🎯 HR Decision Support</h3>
-                        <div style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 0.5rem; padding: 1rem; margin: 1rem 0;">
-                            <h4 style="color: #0c4a6e; margin-bottom: 0.5rem;">Candidate Assessment Report</h4>
+                        <h3>HR Decision Support</h3>
+                        <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+                            <h4>Candidate Assessment Report</h4>
                             <div style="margin-bottom: 1rem;">
-                                <h5 style="color: #1e40af; margin-bottom: 0.25rem;">🎯 Key Strengths</h5>
-                                <ul style="color: #374151; line-height: 1.6; margin-left: 1.5rem;">
+                                <h5>Key Strengths</h5>
+                                <ul style="margin-left: 1.5rem;">
                                     <li>Strong technical skills alignment with job requirements</li>
                                     <li>Relevant cloud experience and modern tech stack</li>
                                     <li>Good educational background and certifications</li>
                                 </ul>
                             </div>
                             <div style="margin-bottom: 1rem;">
-                                <h5 style="color: #d97706; margin-bottom: 0.25rem;">⚠️ Areas of Concern</h5>
-                                <ul style="color: #374151; line-height: 1.6; margin-left: 1.5rem;">
+                                <h5>Areas of Concern</h5>
+                                <ul style="margin-left: 1.5rem;">
                                     <li>Could benefit from more DevOps experience</li>
                                     <li>Missing specific database technologies mentioned</li>
                                 </ul>
                             </div>
                             <div>
-                                <h5 style="color: #059669; margin-bottom: 0.25rem;">💡 HR Recommendation</h5>
-                                <p style="color: #374151; margin: 0;"><strong>RECOMMENDED FOR INTERVIEW</strong> - This candidate shows strong potential and would be worth interviewing.</p>
+                                <h5>HR Recommendation</h5>
+                                <p><strong>RECOMMENDED FOR INTERVIEW</strong> - This candidate shows strong potential and would be worth interviewing.</p>
                             </div>
                         </div>
                     </div>
@@ -621,50 +307,44 @@
         <!-- Bulk Resume Screening Page -->
         <div id="bulk" class="page">
             <div class="card">
-                <h2>📚 Bulk Resume Screening</h2>
+                <h2>Bulk Resume Screening</h2>
                 <p>Upload multiple resumes and job descriptions for batch evaluation and comparison</p>
             </div>
             
             <div class="card">
-                <h3>📋 Upload Job Description</h3>
+                <h3>Upload Job Description</h3>
                 <div class="form-group">
                     <label for="bulkJobDescription">Job Description (Upload file or paste text):</label>
                     <input type="file" id="bulkJobDescriptionFile" accept=".pdf,.docx,.txt" style="margin-bottom: 1rem;">
-                    <small style="color: #6b7280; margin-bottom: 1rem; display: block;">Or paste job description below:</small>
+                    <small style="margin-bottom: 1rem; display: block;">Or paste job description below:</small>
                     <textarea id="bulkJobDescription" rows="6" placeholder="Paste the job description, requirements, skills needed, experience level, and responsibilities here..."></textarea>
                 </div>
             </div>
             
             <div class="card">
-                <h3>📁 Upload Multiple Resumes</h3>
+                <h3>Upload Multiple Resumes</h3>
                 <div class="form-group">
                     <label for="bulkResumeFiles">Select Multiple Resume Files:</label>
                     <input type="file" id="bulkResumeFiles" accept=".pdf,.docx,.txt" multiple required>
-                    <small style="color: #6b7280; margin-top: 0.25rem; display: block;">Supported formats: PDF, DOCX, TXT (Max 20 files, 10MB each)</small>
+                    <small>Supported formats: PDF, DOCX, TXT (Max 20 files, 10MB each)</small>
                 </div>
                 
                 <div id="bulkFileList" style="margin-top: 1rem; display: none;">
-                    <h4 style="color: #374151; margin-bottom: 0.5rem;">Selected Files:</h4>
-                    <div id="bulkFileNames" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.5rem; padding: 1rem; max-height: 200px; overflow-y: auto;"></div>
+                    <h4>Selected Files:</h4>
+                    <div id="bulkFileNames" style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 1rem; max-height: 200px; overflow-y: auto;"></div>
                 </div>
                 
-                <button class="btn" onclick="launchBulkEvaluation()" id="bulkEvaluateBtn" style="margin-top: 1rem;">🚀 Launch Bulk Evaluation</button>
+                <button class="btn" onclick="launchBulkEvaluation()" id="bulkEvaluateBtn" style="margin-top: 1rem;">Launch Bulk Evaluation</button>
             </div>
             
-                         <div class="loading" id="bulkLoading">
-                 <div class="progress-container">
-                     <h4 style="color: #1e293b; margin-bottom: 1rem;">📚 Bulk Processing in Progress</h4>
-                     <div class="progress-bar-container">
-                         <div class="progress-bar-fill" id="bulkProgressBar"></div>
-                     </div>
-                     <div class="status-indicator status-processing" id="bulkStatusIndicator">Processing Resumes...</div>
-                     <p style="color: #64748b; margin-top: 1rem;">Please wait while our AI processes multiple candidate profiles...</p>
-                 </div>
-             </div>
+            <div class="loading" id="bulkLoading">
+                <h4>Bulk Processing in Progress</h4>
+                <p>Please wait while our AI processes multiple candidate profiles...</p>
+            </div>
             
             <div class="results" id="bulkResults">
                 <div class="card">
-                    <h2>📊 Bulk Screening Results</h2>
+                    <h2>Bulk Screening Results</h2>
                     
                     <div class="stats-grid">
                         <div class="stat-card">
@@ -686,17 +366,17 @@
                     </div>
                     
                     <div class="card">
-                        <h3>🎯 Candidate Rankings</h3>
+                        <h3>Candidate Rankings</h3>
                         <div id="bulkCandidateList" style="margin-top: 1rem;">
                             <!-- Candidate results will be populated here -->
                         </div>
                     </div>
                     
                     <div class="card">
-                        <h3>📈 Summary Report</h3>
-                        <div style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 0.5rem; padding: 1rem; margin: 1rem 0;">
-                            <h4 style="color: #0c4a6e; margin-bottom: 0.5rem;">Bulk Screening Summary</h4>
-                            <div id="bulkSummary" style="color: #374151; line-height: 1.6;">
+                        <h3>Summary Report</h3>
+                        <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+                            <h4>Bulk Screening Summary</h4>
+                            <div id="bulkSummary">
                                 <!-- Summary will be populated here -->
                             </div>
                         </div>
@@ -708,7 +388,7 @@
         <!-- Analytics Dashboard Page -->
         <div id="analytics" class="page">
             <div class="card">
-                <h2>📊 Recruitment Analytics Dashboard</h2>
+                <h2>Recruitment Analytics Dashboard</h2>
                 <p>Comprehensive insights into your recruitment performance and candidate pipeline</p>
             </div>
             
@@ -731,18 +411,18 @@
                 </div>
             </div>
             
-            <div class="chart-container">
-                <h3>📈 Time to Hire Trends</h3>
-                <div class="chart-placeholder">
-                    📊 Time to Hire Chart<br>
+            <div class="card">
+                <h3>Time to Hire Trends</h3>
+                <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 2rem; text-align: center; color: #6c757d;">
+                    Time to Hire Chart<br>
                     <small>Shows hiring efficiency over time</small>
                 </div>
             </div>
             
-            <div class="chart-container">
-                <h3>🎯 Candidate Volume by Role</h3>
-                <div class="chart-placeholder">
-                    📊 Candidate Volume Chart<br>
+            <div class="card">
+                <h3>Candidate Volume by Role</h3>
+                <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 2rem; text-align: center; color: #6c757d;">
+                    Candidate Volume Chart<br>
                     <small>Distribution of candidates across job openings</small>
                 </div>
             </div>
@@ -751,12 +431,12 @@
         <!-- Job Opening Management Page -->
         <div id="jobs" class="page">
             <div class="card">
-                <h2>💼 Job Opening Management</h2>
+                <h2>Job Opening Management</h2>
                 <p>Create, manage, and track all your current job openings</p>
             </div>
             
             <div class="card">
-                <h3>➕ Create New Job Opening</h3>
+                <h3>Create New Job Opening</h3>
                 <div class="form-group">
                     <label for="newJobTitle">Job Title:</label>
                     <input type="text" id="newJobTitle" placeholder="e.g., Senior Software Engineer">
@@ -776,11 +456,11 @@
                     <label for="newJobDescription">Job Description:</label>
                     <textarea id="newJobDescription" rows="4" placeholder="Detailed job description, requirements, and responsibilities..."></textarea>
                 </div>
-                <button class="btn" onclick="createJob()">🚀 Create Job Opening</button>
+                <button class="btn" onclick="createJob()">Create Job Opening</button>
             </div>
             
             <div class="card">
-                <h3>📋 Current Job Openings</h3>
+                <h3>Current Job Openings</h3>
                 <div id="jobListings">
                     <div class="job-card">
                         <div class="job-title">Software Engineer - Full Stack</div>
@@ -804,13 +484,13 @@
         <!-- HR Guidelines Page -->
         <div id="guidelines" class="page">
             <div class="card">
-                <h2>📚 HR Guidelines & Best Practices</h2>
+                <h2>HR Guidelines & Best Practices</h2>
                 <p>Essential guidelines for effective candidate evaluation and recruitment processes</p>
             </div>
             
             <div class="card">
-                <h3>🎯 Candidate Evaluation Checklist</h3>
-                <ul style="line-height: 1.8; color: #374151;">
+                <h3>Candidate Evaluation Checklist</h3>
+                <ul style="line-height: 1.8; color: #333;">
                     <li><strong>Technical Skills:</strong> Assess alignment with job requirements</li>
                     <li><strong>Experience Level:</strong> Verify years and relevance of experience</li>
                     <li><strong>Cultural Fit:</strong> Evaluate alignment with company values</li>
@@ -820,10 +500,10 @@
             </div>
             
             <div class="card">
-                <h3>⚡ HR Features & Capabilities</h3>
-                <div style="background: #f0fdf4; border: 1px solid #059669; border-radius: 0.5rem; padding: 1rem; margin: 1rem 0;">
-                    <h4 style="color: #065f46; margin-bottom: 1rem;">Platform Capabilities</h4>
-                    <ul style="line-height: 1.8; color: #374151;">
+                <h3>HR Features & Capabilities</h3>
+                <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 1rem; margin: 1rem 0;">
+                    <h4>Platform Capabilities</h4>
+                    <ul style="line-height: 1.8; color: #333;">
                         <li><strong>AI-Powered Analysis:</strong> Automated resume parsing and skill matching</li>
                         <li><strong>Multi-Format Support:</strong> PDF, DOCX, and TXT file processing</li>
                         <li><strong>Real-time Evaluation:</strong> Instant candidate assessment results</li>
@@ -834,454 +514,40 @@
                     </ul>
                 </div>
             </div>
-                 </div>
-         
-         <!-- Advanced Analytics Page -->
-         <div id="advanced" class="page">
-             <div class="card">
-                 <h2>🚀 Advanced Analytics & Insights</h2>
-                 <p>Deep dive into recruitment metrics with AI-powered insights and predictive analytics</p>
-             </div>
-             
-             <div class="card">
-                 <h3>📈 Predictive Hiring Trends</h3>
-                 <div class="chart-container">
-                     <div class="chart-placeholder" id="predictiveChart">
-                         <div style="text-align: center;">
-                             <h4 style="color: #1e293b; margin-bottom: 1rem;">AI-Powered Hiring Predictions</h4>
-                             <div style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe); padding: 1.5rem; border-radius: 0.75rem; margin: 1rem 0;">
-                                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
-                                     <div style="text-align: center; padding: 1rem; background: white; border-radius: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                                         <div style="font-size: 2rem; font-weight: 700; color: #0ea5e9;">87%</div>
-                                         <div style="font-size: 0.875rem; color: #64748b;">Success Rate</div>
-                                     </div>
-                                     <div style="text-align: center; padding: 1rem; background: white; border-radius: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                                         <div style="font-size: 2rem; font-weight: 700; color: #10b981;">23 days</div>
-                                         <div style="font-size: 0.875rem; color: #64748b;">Avg. Time to Hire</div>
-                                     </div>
-                                     <div style="text-align: center; padding: 1rem; background: white; border-radius: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                                         <div style="font-size: 2rem; font-weight: 700; color: #f59e0b;">92%</div>
-                                         <div style="font-size: 0.875rem; color: #64748b;">Retention Rate</div>
-                                     </div>
-                                 </div>
-                                 <button class="btn" onclick="generatePredictions()" style="width: auto; padding: 0.75rem 2rem;">🔮 Generate AI Predictions</button>
-                             </div>
-                         </div>
-                     </div>
-                 </div>
-             </div>
-             
-             <div class="card">
-                 <h3>🎯 Skill Gap Analysis</h3>
-                 <div class="chart-container">
-                     <div class="chart-placeholder" id="skillGapChart">
-                         <div style="text-align: center;">
-                             <h4 style="color: #1e293b; margin-bottom: 1rem;">Current vs. Required Skills</h4>
-                             <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); padding: 1.5rem; border-radius: 0.75rem; margin: 1rem 0;">
-                                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
-                                     <div style="text-align: center; padding: 1rem; background: white; border-radius: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                                         <div style="font-size: 1.5rem; font-weight: 700; color: #d97706;">Python</div>
-                                         <div style="font-size: 0.875rem; color: #64748b;">Gap: 15%</div>
-                                     </div>
-                                     <div style="text-align: center; padding: 1rem; background: white; border-radius: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                                         <div style="font-size: 1.5rem; font-weight: 700; color: #059669;">React</div>
-                                         <div style="font-size: 0.875rem; color: #64748b;">Gap: 8%</div>
-                                     </div>
-                                     <div style="text-align: center; padding: 1rem; background: white; border-radius: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                                         <div style="font-size: 1.5rem; font-weight: 700; color: #dc2626;">DevOps</div>
-                                         <div style="font-size: 0.875rem; color: #64748b;">Gap: 32%</div>
-                                     </div>
-                                 </div>
-                                 <button class="btn" onclick="analyzeSkillGaps()" style="width: auto; padding: 0.75rem 2rem;">🔍 Analyze Skill Gaps</button>
-                             </div>
-                         </div>
-                     </div>
-                 </div>
-             </div>
-             
-             <div class="card">
-                 <h3>📊 Market Intelligence Dashboard</h3>
-                 <div class="stats-grid">
-                     <div class="stat-card">
-                         <div class="stat-number">$85K</div>
-                         <div class="stat-label">Avg. Salary</div>
-                     </div>
-                     <div class="stat-card">
-                         <div class="stat-number">+12%</div>
-                         <div class="stat-label">Salary Growth</div>
-                     </div>
-                     <div class="stat-card">
-                         <div class="stat-number">156</div>
-                         <div class="stat-label">Active Jobs</div>
-                     </div>
-                     <div class="stat-card">
-                         <div class="stat-number">2.3K</div>
-                         <div class="stat-label">Candidates</div>
-                     </div>
-                 </div>
-                 <button class="btn" onclick="refreshMarketData()" style="width: auto; padding: 0.75rem 2rem; margin-top: 1rem;">🔄 Refresh Data</button>
-             </div>
-         </div>
-         
-         <!-- Settings & Configuration Page -->
-         <div id="settings" class="page">
-             <div class="card">
-                 <h2>⚙️ Settings & Configuration</h2>
-                 <p>Customize your HR screening platform settings and preferences</p>
-             </div>
-             
-             <div class="card">
-                 <h3>🔧 Platform Configuration</h3>
-                 <div class="form-group">
-                     <label for="companyName">Company Name:</label>
-                     <input type="text" id="companyName" value="I Knowledge Factory Pvt. Ltd." placeholder="Enter your company name">
-                 </div>
-                 <div class="form-group">
-                     <label for="defaultLanguage">Default Language:</label>
-                     <select id="defaultLanguage">
-                         <option value="en">English</option>
-                         <option value="es">Spanish</option>
-                         <option value="fr">French</option>
-                         <option value="de">German</option>
-                         <option value="hi">Hindi</option>
-                     </select>
-                 </div>
-                 <div class="form-group">
-                     <label for="timezone">Timezone:</label>
-                     <select id="timezone">
-                         <option value="UTC">UTC</option>
-                         <option value="IST">India Standard Time (IST)</option>
-                         <option value="EST">Eastern Standard Time (EST)</option>
-                         <option value="PST">Pacific Standard Time (PST)</option>
-                         <option value="GMT">Greenwich Mean Time (GMT)</option>
-                     </select>
-                 </div>
-                 <button class="btn" onclick="saveSettings()">💾 Save Settings</button>
-             </div>
-             
-             <div class="card">
-                 <h3>🎨 Appearance & Theme</h3>
-                 <div class="form-group">
-                     <label for="theme">Theme:</label>
-                     <select id="theme" onchange="changeTheme(this.value)">
-                         <option value="default">Default Theme</option>
-                         <option value="dark">Dark Mode</option>
-                         <option value="light">Light Mode</option>
-                         <option value="high-contrast">High Contrast</option>
-                     </select>
-                 </div>
-                 <div class="form-group">
-                     <label for="fontSize">Font Size:</label>
-                     <select id="fontSize" onchange="changeFontSize(this.value)">
-                         <option value="small">Small</option>
-                         <option value="medium" selected>Medium</option>
-                         <option value="large">Large</option>
-                         <option value="extra-large">Extra Large</option>
-                     </select>
-                 </div>
-                 <div class="form-group">
-                     <label for="animations">Animations:</label>
-                     <select id="animations" onchange="toggleAnimations(this.value)">
-                         <option value="enabled" selected>Enabled</option>
-                         <option value="disabled">Disabled</option>
-                         <option value="reduced">Reduced Motion</option>
-                     </select>
-                 </div>
-             </div>
-             
-             <div class="card">
-                 <h3>🔐 Security & Privacy</h3>
-                 <div class="form-group">
-                     <label for="sessionTimeout">Session Timeout (minutes):</label>
-                     <input type="number" id="sessionTimeout" value="30" min="5" max="480">
-                 </div>
-                 <div class="form-group">
-                     <label for="twoFactorAuth">Two-Factor Authentication:</label>
-                     <select id="twoFactorAuth">
-                         <option value="enabled">Enabled</option>
-                         <option value="disabled" selected>Disabled</option>
-                     </select>
-                 </div>
-                 <div class="form-group">
-                     <label for="dataRetention">Data Retention Period (days):</label>
-                     <input type="number" id="dataRetention" value="365" min="30" max="2555">
-                 </div>
-                 <button class="btn" onclick="updateSecuritySettings()">🔒 Update Security</button>
-             </div>
-             
-             <div class="card">
-                 <h3>📧 Notifications & Alerts</h3>
-                 <div class="form-group">
-                     <label for="emailNotifications">Email Notifications:</label>
-                     <select id="emailNotifications">
-                         <option value="all" selected>All Notifications</option>
-                         <option value="important">Important Only</option>
-                         <option value="none">None</option>
-                     </select>
-                 </div>
-                 <div class="form-group">
-                     <label for="smsNotifications">SMS Notifications:</label>
-                     <select id="smsNotifications">
-                         <option value="urgent">Urgent Only</option>
-                         <option value="none" selected>None</option>
-                     </select>
-                 </div>
-                 <div class="form-group">
-                     <label for="notificationSound">Notification Sound:</label>
-                     <select id="notificationSound">
-                         <option value="default" selected>Default</option>
-                         <option value="chime">Chime</option>
-                         <option value="bell">Bell</option>
-                         <option value="none">None</option>
-                     </select>
-                 </div>
-                 <button class="btn" onclick="testNotifications()">🔔 Test Notifications</button>
-             </div>
-         </div>
-         
-         <!-- Help & Documentation Page -->
-         <div id="help" class="page">
-             <div class="card">
-                 <h2>❓ Help & Documentation</h2>
-                 <p>Comprehensive guide to using the HR Candidate Screening Platform</p>
-             </div>
-             
-             <div class="card">
-                 <h3>🚀 Getting Started</h3>
-                 <div style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe); padding: 1.5rem; border-radius: 0.75rem; margin: 1rem 0;">
-                     <h4 style="color: #0c4a6e; margin-bottom: 1rem;">Quick Start Guide</h4>
-                     <ol style="color: #374151; line-height: 1.8; margin-left: 1.5rem;">
-                         <li><strong>Upload Resume:</strong> Select a candidate's resume file (PDF, DOCX, or TXT)</li>
-                         <li><strong>Add Job Description:</strong> Either upload a job description file or paste the text</li>
-                         <li><strong>Launch Evaluation:</strong> Click the evaluation button to start AI analysis</li>
-                         <li><strong>Review Results:</strong> Analyze the comprehensive assessment report</li>
-                         <li><strong>Make Decision:</strong> Use the insights to make informed hiring decisions</li>
-                     </ol>
-                 </div>
-             </div>
-             
-             <div class="card">
-                 <h3>📚 Feature Guide</h3>
-                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
-                     <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); padding: 1.5rem; border-radius: 0.75rem;">
-                         <h4 style="color: #92400e; margin-bottom: 1rem;">📋 Single Candidate Evaluation</h4>
-                         <p style="color: #374151; margin-bottom: 1rem;">Evaluate individual candidates with detailed skill matching and recommendations.</p>
-                         <ul style="color: #374151; line-height: 1.6; margin-left: 1rem;">
-                             <li>Resume parsing and analysis</li>
-                             <li>Skills gap identification</li>
-                             <li>Experience level assessment</li>
-                             <li>HR decision support</li>
-                         </ul>
-                     </div>
-                     <div style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); padding: 1.5rem; border-radius: 0.75rem;">
-                         <h4 style="color: #065f46; margin-bottom: 1rem;">📚 Bulk Screening</h4>
-                         <p style="color: #374151; margin-bottom: 1rem;">Process multiple resumes simultaneously for efficient batch evaluation.</p>
-                         <ul style="color: #374151; line-height: 1.6; margin-left: 1rem;">
-                             <li>Batch processing (up to 20 files)</li>
-                             <li>Comparative analysis</li>
-                             <li>Ranking and scoring</li>
-                             <li>Summary reports</li>
-                         </ul>
-                     </div>
-                     <div style="background: linear-gradient(135deg, #fef2f2, #fee2e2); padding: 1.5rem; border-radius: 0.75rem;">
-                         <h4 style="color: #991b1b; margin-bottom: 1rem;">📊 Analytics Dashboard</h4>
-                         <p style="color: #374151; margin-bottom: 1rem;">Track recruitment performance with comprehensive metrics and insights.</p>
-                         <ul style="color: #374151; line-height: 1.6; margin-left: 1rem;">
-                             <li>Hiring metrics</li>
-                             <li>Time-to-hire tracking</li>
-                             <li>Candidate pipeline analysis</li>
-                             <li>Performance trends</li>
-                         </ul>
-                     </div>
-                 </div>
-             </div>
-             
-             <div class="card">
-                 <h3>🔧 Troubleshooting</h3>
-                 <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); padding: 1.5rem; border-radius: 0.75rem; margin: 1rem 0;">
-                     <h4 style="color: #92400e; margin-bottom: 1rem;">Common Issues & Solutions</h4>
-                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1rem;">
-                         <div>
-                             <h5 style="color: #92400e; margin-bottom: 0.5rem;">❌ File Upload Issues</h5>
-                             <ul style="color: #374151; line-height: 1.6; margin-left: 1rem;">
-                                 <li>Ensure file size is under 10MB</li>
-                                 <li>Use supported formats: PDF, DOCX, TXT</li>
-                                 <li>Check file permissions and try again</li>
-                             </ul>
-                         </div>
-                         <div>
-                             <h5 style="color: #92400e; margin-bottom: 0.5rem;">❌ Analysis Not Working</h5>
-                             <ul style="color: #374151; line-height: 1.6; margin-left: 1rem;">
-                                 <li>Verify both resume and job description are provided</li>
-                                 <li>Check internet connection</li>
-                                 <li>Try refreshing the page</li>
-                             </ul>
-                         </div>
-                     </div>
-                 </div>
-             </div>
-             
-             <div class="card">
-                 <h3>📞 Support & Contact</h3>
-                 <div style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe); padding: 1.5rem; border-radius: 0.75rem; margin: 1rem 0;">
-                     <h4 style="color: #0c4a6e; margin-bottom: 1rem;">Get Help When You Need It</h4>
-                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
-                         <div>
-                             <h5 style="color: #0c4a6e; margin-bottom: 0.5rem;">📧 Email Support</h5>
-                             <p style="color: #374151; margin: 0;">enquiry@ikf.co.in</p>
-                             <p style="color: #64748b; font-size: 0.875rem; margin: 0.5rem 0 0 0;">Response within 24 hours</p>
-                         </div>
-                         <div>
-                             <h5 style="color: #0c4a6e; margin-bottom: 0.5rem;">📱 Phone Support</h5>
-                             <p style="color: #374151; margin: 0;">+91 95039 39911</p>
-                             <p style="color: #64748b; font-size: 0.875rem; margin: 0.5rem 0 0 0;">Mon-Fri, 9 AM - 6 PM IST</p>
-                         </div>
-                         <div>
-                             <h5 style="color: #0c4a6e; margin-bottom: 0.5rem;">🌐 Website</h5>
-                             <p style="color: #374151; margin: 0;">www.ikf.co.in</p>
-                             <p style="color: #64748b; font-size: 0.875rem; margin: 0.5rem 0 0 0;">Visit for more information</p>
-                         </div>
-                     </div>
-                     <button class="btn" onclick="contactSupport()" style="width: auto; padding: 0.75rem 2rem; margin-top: 1rem;">💬 Contact Support</button>
-                 </div>
-             </div>
-         </div>
-         
-         <div class="company-info">
-            <h3 style="color: #1e40af; margin-bottom: 1rem;">Contact Information</h3>
+        </div>
+        
+        <div class="company-info">
+            <h3>Contact Information</h3>
             <p><strong>Email:</strong> <a href="mailto:enquiry@ikf.co.in">enquiry@ikf.co.in</a></p>
             <p><strong>Phone:</strong> +91 95039 39911</p>
         </div>
-        
-        <!-- Enhanced Footer with Additional Features -->
-        <div style="background: linear-gradient(135deg, #667eea, #764ba2, #f093fb); color: white; padding: 2rem; border-radius: 0.75rem; margin-top: 2rem; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.15), 0 0 0 1px rgba(255,255,255,0.1);">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-bottom: 1.5rem;">
-                <div>
-                    <h4 style="margin-bottom: 1rem; color: rgba(255,255,255,0.9);">Quick Actions</h4>
-                    <button class="btn" style="width: auto; padding: 0.75rem 1.5rem; margin: 0.25rem;" onclick="exportResults()">📊 Export Results</button>
-                    <button class="btn" style="width: auto; padding: 0.75rem 1.5rem; margin: 0.25rem;" onclick="generateReport()">📋 Generate Report</button>
-                </div>
-                <div>
-                    <h4 style="margin-bottom: 1rem; color: rgba(255,255,255,0.9);">Platform Status</h4>
-                    <div style="background: rgba(255,255,255,0.1); padding: 0.75rem; border-radius: 0.5rem; margin: 0.5rem 0;">
-                        <span style="color: #10b981;">🟢</span> System Online
-                    </div>
-                    <div style="background: rgba(255,255,255,0.1); padding: 0.75rem; border-radius: 0.5rem; margin: 0.5rem 0;">
-                        <span style="color: #10b981;">🟢</span> AI Analysis Active
-                    </div>
-                </div>
-                <div>
-                    <h4 style="margin-bottom: 1rem; color: rgba(255,255,255,0.9);">Support</h4>
-                    <p style="margin: 0.5rem 0; font-size: 0.875rem;">Need help? Contact our support team</p>
-                    <button class="btn" style="width: auto; padding: 0.75rem 1.5rem; margin: 0.25rem;" onclick="contactSupport()">💬 Get Support</button>
-                </div>
-            </div>
-            <div style="border-top: 1px solid rgba(255,255,255,0.2); padding-top: 1.5rem;">
-                <p style="margin: 0; opacity: 0.9; font-size: 0.875rem;">
-                    Professional HR candidate screening platform | Powered by Advanced AI Technology
-                </p>
-            </div>
-                 </div>
-     </div>
-     
-     <!-- Floating Action Button -->
-     <div id="fab" style="position: fixed; bottom: 2rem; right: 2rem; z-index: 1000;">
-         <button onclick="toggleFabMenu()" style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2, #f093fb); border: none; color: white; font-size: 1.5rem; cursor: pointer; box-shadow: 0 8px 25px rgba(0,0,0,0.3); transition: all 0.3s ease;">
-             ➕
-         </button>
-         <div id="fabMenu" style="position: absolute; bottom: 70px; right: 0; background: white; border-radius: 1rem; padding: 1rem; box-shadow: 0 8px 25px rgba(0,0,0,0.2); display: none; min-width: 200px;">
-             <div style="margin-bottom: 0.5rem;">
-                 <button onclick="quickAction('evaluation')" style="width: 100%; padding: 0.75rem; background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border: 1px solid #0ea5e9; border-radius: 0.5rem; color: #0c4a6e; cursor: pointer; margin-bottom: 0.5rem; transition: all 0.3s ease;">
-                     📋 Quick Evaluation
-                 </button>
-             </div>
-             <div style="margin-bottom: 0.5rem;">
-                 <button onclick="quickAction('bulk')" style="width: 100%; padding: 0.75rem; background: linear-gradient(135deg, #fef3c7, #fde68a); border: 1px solid #f59e0b; border-radius: 0.5rem; color: #92400e; cursor: pointer; margin-bottom: 0.5rem; transition: all 0.3s ease;">
-                     📚 Bulk Screening
-                 </button>
-             </div>
-             <div style="margin-bottom: 0.5rem;">
-                 <button onclick="quickAction('analytics')" style="width: 100%; padding: 0.75rem; background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 1px solid #10b981; border-radius: 0.5rem; color: #065f46; cursor: pointer; margin-bottom: 0.5rem; transition: all 0.3s ease;">
-                     📊 View Analytics
-                 </button>
-             </div>
-             <div>
-                 <button onclick="quickAction('help')" style="width: 100%; padding: 0.75rem; background: linear-gradient(135deg, #fef2f2, #fee2e2); border: 1px solid #ef4444; border-radius: 0.5rem; color: #991b1b; cursor: pointer; transition: all 0.3s ease;">
-                     ❓ Get Help
-                 </button>
-             </div>
-         </div>
-     </div>
-     
-     <script>
+    </div>
+    
+    <script>
         function showPage(pageId, clickedButton) {
-            console.log('showPage called with:', pageId, clickedButton);
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
             
-            try {
-                // Hide all pages
-                const allPages = document.querySelectorAll('.page');
-                console.log('Found pages:', allPages.length);
-                allPages.forEach(page => {
-                    page.classList.remove('active');
-                    console.log('Removed active from:', page.id);
-                });
-                
-                // Remove active class from all nav buttons
-                const allButtons = document.querySelectorAll('.nav-btn');
-                console.log('Found buttons:', allButtons.length);
-                allButtons.forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                
-                // Show selected page
-                const targetPage = document.getElementById(pageId);
-                if (targetPage) {
-                    targetPage.classList.add('active');
-                    console.log('Page activated:', pageId);
-                    
-                    // Scroll to top
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                } else {
-                    console.error('Page not found:', pageId);
-                    alert('Page not found: ' + pageId);
-                }
-                
-                // Add active class to clicked button
-                if (clickedButton) {
-                    clickedButton.classList.add('active');
-                    console.log('Button activated:', clickedButton.textContent);
-                }
-            } catch (error) {
-                console.error('Error in showPage:', error);
-                alert('Navigation error: ' + error.message);
+            // Remove active class from all nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected page
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
             }
-         }
-         
-         function testNavigation() {
-             console.log('Testing navigation...');
-             
-             // Test if pages exist
-             const pages = ['evaluation', 'bulk', 'analytics', 'jobs', 'guidelines', 'advanced', 'settings', 'help'];
-             pages.forEach(pageId => {
-                 const page = document.getElementById(pageId);
-                 if (page) {
-                     console.log('✅ Page found:', pageId);
-                 } else {
-                     console.error('❌ Page missing:', pageId);
-                 }
-             });
-             
-             // Test if buttons exist
-             const buttons = document.querySelectorAll('.nav-btn');
-             console.log('Found navigation buttons:', buttons.length);
-             
-             // Test showPage function
-             showPage('bulk', null);
-             setTimeout(() => showPage('analytics', null), 1000);
-             setTimeout(() => showPage('evaluation', null), 2000);
-         }
-         
-         function launchEvaluation() {
+            
+            // Add active class to clicked button
+            if (clickedButton) {
+                clickedButton.classList.add('active');
+            }
+        }
+        
+        function launchEvaluation() {
             const resumeFile = document.getElementById('resumeFile').files[0];
             const jobDescription = document.getElementById('jobDescription').value;
             const jobDescriptionFile = document.getElementById('jobDescriptionFile').files[0];
@@ -1296,49 +562,19 @@
                 return;
             }
             
-                         document.getElementById('loading').style.display = 'block';
-             document.getElementById('evaluateBtn').disabled = true;
-             
-             // Simulate progress
-             let progress = 0;
-             const progressBar = document.getElementById('progressBar');
-             const statusIndicator = document.getElementById('statusIndicator');
-             const statuses = [
-                 'Processing Resume...',
-                 'Extracting Skills...',
-                 'Analyzing Experience...',
-                 'Matching Requirements...',
-                 'Generating Report...',
-                 'Complete!'
-             ];
-             
-             const progressInterval = setInterval(() => {
-                 progress += Math.random() * 20;
-                 if (progress > 100) progress = 100;
-                 
-                 progressBar.style.width = progress + '%';
-                 
-                 const statusIndex = Math.floor((progress / 100) * (statuses.length - 1));
-                 statusIndicator.textContent = statuses[statusIndex];
-                 
-                 if (progress >= 100) {
-                     clearInterval(progressInterval);
-                     statusIndicator.textContent = 'Complete!';
-                     statusIndicator.className = 'status-indicator status-complete';
-                     
-                     setTimeout(() => {
-                         document.getElementById('loading').style.display = 'none';
-                         document.getElementById('results').style.display = 'block';
-                         document.getElementById('evaluateBtn').disabled = false;
-                         
-                         document.getElementById('overallFit').textContent = Math.floor(Math.random() * 30 + 70) + '%';
-                         document.getElementById('skillsMatch').textContent = Math.floor(Math.random() * 20 + 80) + '%';
-                         document.getElementById('experienceFit').textContent = Math.floor(Math.random() * 30 + 60) + '%';
-                         
-                         document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
-                     }, 1000);
-                 }
-             }, 500);
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('evaluateBtn').disabled = true;
+            
+            // Simulate processing
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('results').style.display = 'block';
+                document.getElementById('evaluateBtn').disabled = false;
+                
+                document.getElementById('overallFit').textContent = Math.floor(Math.random() * 30 + 70) + '%';
+                document.getElementById('skillsMatch').textContent = Math.floor(Math.random() * 20 + 80) + '%';
+                document.getElementById('experienceFit').textContent = Math.floor(Math.random() * 30 + 60) + '%';
+            }, 3000);
         }
         
         function createJob() {
@@ -1371,6 +607,7 @@
             alert('Job opening created successfully!');
         }
         
+        // File size validation
         document.getElementById('resumeFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
@@ -1409,10 +646,10 @@
                     }
                     
                     const fileItem = document.createElement('div');
-                    fileItem.style.cssText = 'padding: 0.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;';
+                    fileItem.style.cssText = 'padding: 0.5rem; border-bottom: 1px solid #dee2e6; display: flex; justify-content: space-between; align-items: center;';
                     fileItem.innerHTML = `
-                        <span style="color: #374151;">${file.name}</span>
-                        <span style="color: #6b7280; font-size: 0.875rem;">${fileSize.toFixed(1)}MB</span>
+                        <span style="color: #333;">${file.name}</span>
+                        <span style="color: #6c757d; font-size: 0.875rem;">${fileSize.toFixed(1)}MB</span>
                     `;
                     fileNamesDiv.appendChild(fileItem);
                 }
@@ -1436,40 +673,14 @@
                 return;
             }
             
-                         document.getElementById('bulkLoading').style.display = 'block';
-             document.getElementById('bulkEvaluateBtn').disabled = true;
-             
-             // Simulate bulk processing with progress
-             let bulkProgress = 0;
-             const bulkProgressBar = document.getElementById('bulkProgressBar');
-             const bulkStatusIndicator = document.getElementById('bulkStatusIndicator');
-             const bulkStatuses = [
-                 'Processing Files...',
-                 'Analyzing Candidates...',
-                 'Comparing Skills...',
-                 'Generating Rankings...',
-                 'Creating Summary...',
-                 'Complete!'
-             ];
-             
-             const bulkProgressInterval = setInterval(() => {
-                 bulkProgress += Math.random() * 15;
-                 if (bulkProgress > 100) bulkProgress = 100;
-                 
-                 bulkProgressBar.style.width = bulkProgress + '%';
-                 
-                 const statusIndex = Math.floor((bulkProgress / 100) * (bulkStatuses.length - 1));
-                 bulkStatusIndicator.textContent = bulkStatuses[statusIndex];
-                 
-                 if (bulkProgress >= 100) {
-                     clearInterval(bulkProgressInterval);
-                     bulkStatusIndicator.textContent = 'Complete!';
-                     bulkStatusIndicator.className = 'status-indicator status-complete';
-                     
-                     setTimeout(() => {
-                         document.getElementById('bulkLoading').style.display = 'none';
-                         document.getElementById('bulkResults').style.display = 'block';
-                         document.getElementById('bulkEvaluateBtn').disabled = false;
+            document.getElementById('bulkLoading').style.display = 'block';
+            document.getElementById('bulkEvaluateBtn').disabled = true;
+            
+            // Simulate bulk processing
+            setTimeout(() => {
+                document.getElementById('bulkLoading').style.display = 'none';
+                document.getElementById('bulkResults').style.display = 'block';
+                document.getElementById('bulkEvaluateBtn').disabled = false;
                 
                 // Generate sample results
                 const totalFiles = resumeFiles.length;
@@ -1489,18 +700,18 @@
                 for (let i = 0; i < totalFiles; i++) {
                     const score = Math.floor(Math.random() * 40 + 60);
                     const status = score >= 80 ? '🟢 Recommended' : score >= 65 ? '🟡 Maybe' : '🔴 Not Recommended';
-                    const statusColor = score >= 80 ? '#059669' : score >= 65 ? '#d97706' : '#dc2626';
+                    const statusColor = score >= 80 ? '#155724' : score >= 65 ? '#856404' : '#721c24';
                     
                     const candidateCard = document.createElement('div');
-                    candidateCard.style.cssText = 'background: white; border: 1px solid #e2e8f0; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;';
+                    candidateCard.style.cssText = 'background: white; border: 1px solid #dee2e6; border-radius: 4px; padding: 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;';
                     candidateCard.innerHTML = `
                         <div>
-                            <div style="font-weight: 600; color: #374151; margin-bottom: 0.25rem;">Candidate ${i + 1}</div>
-                            <div style="color: #6b7280; font-size: 0.875rem;">Resume ${i + 1}.pdf</div>
+                            <div style="font-weight: bold; color: #333; margin-bottom: 0.25rem;">Candidate ${i + 1}</div>
+                            <div style="color: #6c757d; font-size: 0.875rem;">Resume ${i + 1}.pdf</div>
                         </div>
                         <div style="text-align: right;">
-                            <div style="font-size: 1.5rem; font-weight: 700; color: #1e40af; margin-bottom: 0.25rem;">${score}%</div>
-                            <div style="color: ${statusColor}; font-weight: 500;">${status}</div>
+                            <div style="font-size: 1.5rem; font-weight: bold; color: #007bff; margin-bottom: 0.25rem;">${score}%</div>
+                            <div style="color: ${statusColor}; font-weight: bold;">${status}</div>
                         </div>
                     `;
                     candidateList.appendChild(candidateCard);
@@ -1515,324 +726,8 @@
                     <p><strong>Not Recommended:</strong> ${notRecommended} candidates below 65%</p>
                     <p><strong>Recommendation:</strong> Focus on the top ${recommended} candidates for immediate interviews.</p>
                 `;
-                
-                                 // Scroll to results
-                 document.getElementById('bulkResults').scrollIntoView({ behavior: 'smooth' });
-             }, 4000);
-         }
-         
-         // Advanced Analytics Functions
-         function generatePredictions() {
-             const button = event.target;
-             const originalText = button.textContent;
-             button.textContent = '🔮 Generating...';
-             button.disabled = true;
-             
-             setTimeout(() => {
-                 button.textContent = '✅ Predictions Generated!';
-                 button.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-                 
-                 // Simulate AI prediction generation
-                 const predictiveChart = document.getElementById('predictiveChart');
-                 predictiveChart.innerHTML = `
-                     <div style="text-align: center;">
-                         <h4 style="color: #1e293b; margin-bottom: 1rem;">🎯 AI Predictions Generated Successfully</h4>
-                         <div style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe); padding: 1.5rem; border-radius: 0.75rem; margin: 1rem 0;">
-                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
-                                 <div style="text-align: center; padding: 1rem; background: white; border-radius: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                                     <div style="font-size: 2rem; font-weight: 700; color: #0ea5e9;">91%</div>
-                                     <div style="font-size: 0.875rem; color: #64748b;">Success Rate</div>
-                                 </div>
-                                 <div style="text-align: center; padding: 1rem; background: white; border-radius: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                                     <div style="font-size: 2rem; font-weight: 700; color: #10b981;">19 days</div>
-                                     <div style="font-size: 0.875rem; color: #64748b;">Avg. Time to Hire</div>
-                                 </div>
-                                 <div style="text-align: center; padding: 1rem; background: white; border-radius: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                                     <div style="font-size: 2rem; font-weight: 700; color: #f59e0b;">94%</div>
-                                     <div style="font-size: 0.875rem; color: #64748b;">Retention Rate</div>
-                                 </div>
-                             </div>
-                             <p style="color: #0c4a6e; margin: 1rem 0; font-weight: 600;">AI Analysis: Hiring success rate expected to improve by 4% in Q2</p>
-                         </div>
-                     </div>
-                 `;
-                 
-                 setTimeout(() => {
-                     button.textContent = originalText;
-                     button.disabled = false;
-                     button.style.background = 'linear-gradient(135deg, #667eea, #764ba2, #f093fb)';
-                 }, 3000);
-             }, 2000);
-         }
-         
-         function analyzeSkillGaps() {
-             const button = event.target;
-             const originalText = button.textContent;
-             button.textContent = '🔍 Analyzing...';
-             button.disabled = true;
-             
-             setTimeout(() => {
-                 button.textContent = '✅ Analysis Complete!';
-                 button.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-                 
-                 // Simulate skill gap analysis
-                 const skillGapChart = document.getElementById('skillGapChart');
-                 skillGapChart.innerHTML = `
-                     <div style="text-align: center;">
-                         <h4 style="color: #1e293b; margin-bottom: 1rem;">📊 Skill Gap Analysis Results</h4>
-                         <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); padding: 1.5rem; border-radius: 0.75rem; margin: 1rem 0;">
-                             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 1rem;">
-                                 <div style="text-align: center; padding: 1rem; background: white; border-radius: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                                     <div style="font-size: 1.5rem; font-weight: 700; color: #d97706;">Python</div>
-                                     <div style="font-size: 0.875rem; color: #64748b;">Gap: 12%</div>
-                                     <div style="font-size: 0.75rem; color: #059669;">↓ 3%</div>
-                                 </div>
-                                 <div style="text-align: center; padding: 1rem; background: white; border-radius: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                                     <div style="font-size: 1.5rem; font-weight: 700; color: #059669;">React</div>
-                                     <div style="font-size: 0.875rem; color: #64748b;">Gap: 5%</div>
-                                     <div style="font-size: 0.75rem; color: #059669;">↓ 3%</div>
-                                 </div>
-                                 <div style="text-align: center; padding: 1rem; background: white; border-radius: 0.5rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-                                     <div style="font-size: 1.5rem; font-weight: 700; color: #dc2626;">DevOps</div>
-                                     <div style="font-size: 0.875rem; color: #64748b;">Gap: 28%</div>
-                                     <div style="font-size: 0.75rem; color: #059669;">↓ 4%</div>
-                                 </div>
-                             </div>
-                             <p style="color: #92400e; margin: 1rem 0; font-weight: 600;">Recommendation: Focus on DevOps training programs to reduce skill gaps</p>
-                         </div>
-                     </div>
-                 `;
-                 
-                 setTimeout(() => {
-                     button.textContent = originalText;
-                     button.disabled = false;
-                     button.style.background = 'linear-gradient(135deg, #667eea, #764ba2, #f093fb)';
-                 }, 3000);
-             }, 2000);
-         }
-         
-         function refreshMarketData() {
-             const button = event.target;
-             const originalText = button.textContent;
-             button.textContent = '🔄 Refreshing...';
-             button.disabled = true;
-             
-             setTimeout(() => {
-                 button.textContent = '✅ Data Updated!';
-                 button.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-                 
-                 // Simulate market data refresh
-                 const statNumbers = document.querySelectorAll('#advanced .stat-number');
-                 statNumbers[0].textContent = '$87K';
-                 statNumbers[1].textContent = '+14%';
-                 statNumbers[2].textContent = '162';
-                 statNumbers[3].textContent = '2.4K';
-                 
-                 setTimeout(() => {
-                     button.textContent = originalText;
-                     button.disabled = false;
-                     button.style.background = 'linear-gradient(135deg, #667eea, #764ba2, #f093fb)';
-                 }, 2000);
-             }, 1500);
-         }
-         
-         // Settings Functions
-         function saveSettings() {
-             const button = event.target;
-             const originalText = button.textContent;
-             button.textContent = '💾 Saving...';
-             button.disabled = true;
-             
-             setTimeout(() => {
-                 button.textContent = '✅ Settings Saved!';
-                 button.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-                 
-                 setTimeout(() => {
-                     button.textContent = originalText;
-                     button.disabled = false;
-                     button.style.background = 'linear-gradient(135deg, #667eea, #764ba2, #f093fb)';
-                 }, 2000);
-             }, 1000);
-         }
-         
-         function changeTheme(theme) {
-             document.body.className = theme;
-             localStorage.setItem('selectedTheme', theme);
-             showNotification('Theme changed to ' + theme);
-         }
-         
-         function changeFontSize(size) {
-             const sizes = {
-                 'small': '0.875rem',
-                 'medium': '1rem',
-                 'large': '1.125rem',
-                 'extra-large': '1.25rem'
-             };
-             document.body.style.fontSize = sizes[size];
-             localStorage.setItem('selectedFontSize', size);
-             showNotification('Font size changed to ' + size);
-         }
-         
-         function toggleAnimations(setting) {
-             if (setting === 'disabled') {
-                 document.body.style.setProperty('--animation-duration', '0s');
-             } else if (setting === 'reduced') {
-                 document.body.style.setProperty('--animation-duration', '0.5s');
-             } else {
-                 document.body.style.setProperty('--animation-duration', '1s');
-             }
-             localStorage.setItem('animations', setting);
-             showNotification('Animations ' + setting);
-         }
-         
-         function updateSecuritySettings() {
-             const button = event.target;
-             const originalText = button.textContent;
-             button.textContent = '🔒 Updating...';
-             button.disabled = true;
-             
-             setTimeout(() => {
-                 button.textContent = '✅ Security Updated!';
-                 button.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-                 
-                 setTimeout(() => {
-                     button.textContent = originalText;
-                     button.disabled = false;
-                     button.style.background = 'linear-gradient(135deg, #667eea, #764ba2, #f093fb)';
-                 }, 2000);
-             }, 1000);
-         }
-         
-         function testNotifications() {
-             showNotification('🔔 Test notification sent successfully!');
-         }
-         
-         // Footer Functions
-         function exportResults() {
-             showNotification('📊 Exporting results to CSV...');
-             setTimeout(() => {
-                 showNotification('✅ Results exported successfully!');
-             }, 2000);
-         }
-         
-         function generateReport() {
-             showNotification('📋 Generating comprehensive report...');
-             setTimeout(() => {
-                 showNotification('✅ Report generated and ready for download!');
-             }, 3000);
-         }
-         
-         function contactSupport() {
-             showNotification('💬 Redirecting to support portal...');
-             setTimeout(() => {
-                 window.open('mailto:enquiry@ikf.co.in?subject=Support%20Request', '_blank');
-             }, 1000);
-         }
-         
-         // Utility Functions
-         function showNotification(message) {
-             const notification = document.createElement('div');
-             notification.style.cssText = `
-                 position: fixed;
-                 top: 20px;
-                 right: 20px;
-                 background: linear-gradient(135deg, #667eea, #764ba2);
-                 color: white;
-                 padding: 1rem 1.5rem;
-                 border-radius: 0.5rem;
-                 box-shadow: 0 4px 16px rgba(0,0,0,0.2);
-                 z-index: 1000;
-                 animation: slideIn 0.3s ease-out;
-                 max-width: 300px;
-             `;
-             notification.textContent = message;
-             
-             document.body.appendChild(notification);
-             
-             setTimeout(() => {
-                 notification.style.animation = 'slideOut 0.3s ease-in';
-                 setTimeout(() => {
-                     document.body.removeChild(notification);
-                 }, 300);
-             }, 3000);
-         }
-         
-         // Add CSS animations for notifications
-         const style = document.createElement('style');
-         style.textContent = `
-             @keyframes slideIn {
-                 from { transform: translateX(100%); opacity: 0; }
-                 to { transform: translateX(0); opacity: 1; }
-             }
-             @keyframes slideOut {
-                 from { transform: translateX(0); opacity: 1; }
-                 to { transform: translateX(100%); opacity: 0; }
-             }
-         `;
-         document.head.appendChild(style);
-         
-         // Initialize settings from localStorage
-         document.addEventListener('DOMContentLoaded', function() {
-             const savedTheme = localStorage.getItem('selectedTheme');
-             const savedFontSize = localStorage.getItem('selectedFontSize');
-             const savedAnimations = localStorage.getItem('animations');
-             
-             if (savedTheme) changeTheme(savedTheme);
-             if (savedFontSize) changeFontSize(savedFontSize);
-             if (savedAnimations) toggleAnimations(savedAnimations);
-             
-             // Ensure the first page is properly displayed
-             console.log('DOM loaded, initializing pages...');
-             const firstPage = document.getElementById('evaluation');
-             if (firstPage) {
-                 firstPage.classList.add('active');
-                 console.log('First page activated');
-             }
-             
-             // Test navigation on load
-             console.log('Testing navigation system...');
-             const pages = ['evaluation', 'bulk', 'analytics', 'jobs', 'guidelines', 'advanced', 'settings', 'help'];
-             pages.forEach(pageId => {
-                 const page = document.getElementById(pageId);
-                 if (page) {
-                     console.log('✅ Page found:', pageId);
-                 } else {
-                     console.error('❌ Page missing:', pageId);
-                 }
-             });
-             
-             const buttons = document.querySelectorAll('.nav-btn');
-             console.log('Found navigation buttons:', buttons.length);
-         });
-         
-         // Floating Action Button Functions
-         function toggleFabMenu() {
-             const menu = document.getElementById('fabMenu');
-             if (menu.style.display === 'none' || menu.style.display === '') {
-                 menu.style.display = 'block';
-                 menu.style.animation = 'slideIn 0.3s ease-out';
-             } else {
-                 menu.style.animation = 'slideOut 0.3s ease-in';
-                 setTimeout(() => {
-                     menu.style.display = 'none';
-                 }, 300);
-             }
-         }
-         
-         function quickAction(action) {
-             showPage(action, null);
-             toggleFabMenu();
-             showNotification('🚀 Quick action: ' + action + ' activated!');
-         }
-         
-         // Close FAB menu when clicking outside
-         document.addEventListener('click', function(event) {
-             const fab = document.getElementById('fab');
-             const fabMenu = document.getElementById('fabMenu');
-             if (!fab.contains(event.target)) {
-                 fabMenu.style.display = 'none';
-             }
-         });
+            }, 4000);
+        }
     </script>
 </body>
 </html>
