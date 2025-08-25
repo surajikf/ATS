@@ -523,18 +523,19 @@
         </div>
     </div>
     
-    <div class="nav">
-        <div class="nav-container">
-                         <button class="nav-btn active" onclick="showPage('evaluation', this)">📋 Single Candidate</button>
-             <button class="nav-btn" onclick="showPage('bulk', this)">📚 Bulk Screening</button>
-             <button class="nav-btn" onclick="showPage('analytics', this)">📊 Analytics</button>
-             <button class="nav-btn" onclick="showPage('jobs', this)">💼 Job Management</button>
-             <button class="nav-btn" onclick="showPage('guidelines', this)">📚 HR Guidelines</button>
-             <button class="nav-btn" onclick="showPage('advanced', this)">🚀 Advanced Analytics</button>
-             <button class="nav-btn" onclick="showPage('settings', this)">⚙️ Settings</button>
-             <button class="nav-btn" onclick="showPage('help', this)">❓ Help</button>
-        </div>
-    </div>
+             <div class="nav">
+             <div class="nav-container">
+                 <button class="nav-btn active" onclick="showPage('evaluation', this)">📋 Single Candidate</button>
+                 <button class="nav-btn" onclick="showPage('bulk', this)">📚 Bulk Screening</button>
+                 <button class="nav-btn" onclick="showPage('analytics', this)">📊 Analytics</button>
+                 <button class="nav-btn" onclick="showPage('jobs', this)">💼 Job Management</button>
+                 <button class="nav-btn" onclick="showPage('guidelines', this)">📚 HR Guidelines</button>
+                 <button class="nav-btn" onclick="showPage('advanced', this)">🚀 Advanced Analytics</button>
+                 <button class="nav-btn" onclick="showPage('settings', this)">⚙️ Settings</button>
+                 <button class="nav-btn" onclick="showPage('help', this)">❓ Help</button>
+                 <button class="nav-btn" onclick="testNavigation()" style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white;">🧪 Test</button>
+             </div>
+         </div>
     
     <div class="container">
         <!-- Single Candidate Evaluation Page -->
@@ -1216,33 +1217,71 @@
         function showPage(pageId, clickedButton) {
             console.log('showPage called with:', pageId, clickedButton);
             
-            // Hide all pages
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            
-            // Remove active class from all nav buttons
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            
-            // Show selected page
-            const targetPage = document.getElementById(pageId);
-            if (targetPage) {
-                targetPage.classList.add('active');
-                console.log('Page activated:', pageId);
-            } else {
-                console.error('Page not found:', pageId);
+            try {
+                // Hide all pages
+                const allPages = document.querySelectorAll('.page');
+                console.log('Found pages:', allPages.length);
+                allPages.forEach(page => {
+                    page.classList.remove('active');
+                    console.log('Removed active from:', page.id);
+                });
+                
+                // Remove active class from all nav buttons
+                const allButtons = document.querySelectorAll('.nav-btn');
+                console.log('Found buttons:', allButtons.length);
+                allButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Show selected page
+                const targetPage = document.getElementById(pageId);
+                if (targetPage) {
+                    targetPage.classList.add('active');
+                    console.log('Page activated:', pageId);
+                    
+                    // Scroll to top
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    console.error('Page not found:', pageId);
+                    alert('Page not found: ' + pageId);
+                }
+                
+                // Add active class to clicked button
+                if (clickedButton) {
+                    clickedButton.classList.add('active');
+                    console.log('Button activated:', clickedButton.textContent);
+                }
+            } catch (error) {
+                console.error('Error in showPage:', error);
+                alert('Navigation error: ' + error.message);
             }
-            
-            // Add active class to clicked button
-            if (clickedButton) {
-                clickedButton.classList.add('active');
-                console.log('Button activated:', clickedButton.textContent);
-            }
-        }
-        
-        function launchEvaluation() {
+                 }
+         
+         function testNavigation() {
+             console.log('Testing navigation...');
+             
+             // Test if pages exist
+             const pages = ['evaluation', 'bulk', 'analytics', 'jobs', 'guidelines', 'advanced', 'settings', 'help'];
+             pages.forEach(pageId => {
+                 const page = document.getElementById(pageId);
+                 if (page) {
+                     console.log('✅ Page found:', pageId);
+                 } else {
+                     console.error('❌ Page missing:', pageId);
+                 }
+             });
+             
+             // Test if buttons exist
+             const buttons = document.querySelectorAll('.nav-btn');
+             console.log('Found navigation buttons:', buttons.length);
+             
+             // Test showPage function
+             showPage('bulk', null);
+             setTimeout(() => showPage('analytics', null), 1000);
+             setTimeout(() => showPage('evaluation', null), 2000);
+         }
+         
+         function launchEvaluation() {
             const resumeFile = document.getElementById('resumeFile').files[0];
             const jobDescription = document.getElementById('jobDescription').value;
             const jobDescriptionFile = document.getElementById('jobDescriptionFile').files[0];
