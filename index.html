@@ -74,18 +74,7 @@
         <!-- Single Candidate Evaluation Page -->
         <div id="evaluation" class="page active">
             <div class="card">
-                <h2>💼 Select Job Opening</h2>
-                <div class="form-group">
-                    <label for="jobOpening">Choose the job opening to evaluate against:</label>
-                    <select id="jobOpening" required>
-                        <option value="">Select a job opening...</option>
-                        <option value="Software Engineer - Full Stack">Software Engineer - Full Stack</option>
-                        <option value="Data Scientist">Data Scientist</option>
-                        <option value="DevOps Engineer">DevOps Engineer</option>
-                        <option value="Product Manager">Product Manager</option>
-                        <option value="UX Designer">UX Designer</option>
-                    </select>
-                </div>
+                <h2>📋 Candidate Evaluation</h2>
                 
                 <div class="form-group">
                     <label for="resumeFile">Upload Candidate Resume:</label>
@@ -94,8 +83,10 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="jobDescription">Additional Job Requirements:</label>
-                    <textarea id="jobDescription" rows="4" placeholder="Add specific skills, experience levels, or requirements for this job opening..."></textarea>
+                    <label for="jobDescription">Job Description (Upload file or paste text):</label>
+                    <input type="file" id="jobDescriptionFile" accept=".pdf,.docx,.txt" style="margin-bottom: 1rem;">
+                    <small style="color: #6b7280; margin-bottom: 1rem; display: block;">Or paste job description below:</small>
+                    <textarea id="jobDescription" rows="6" placeholder="Paste the job description, requirements, skills needed, experience level, and responsibilities here..."></textarea>
                 </div>
                 
                 <button class="btn" onclick="launchEvaluation()" id="evaluateBtn">🚀 Launch Evaluation</button>
@@ -314,11 +305,17 @@
         }
         
         function launchEvaluation() {
-            const jobOpening = document.getElementById('jobOpening').value;
             const resumeFile = document.getElementById('resumeFile').files[0];
+            const jobDescription = document.getElementById('jobDescription').value;
+            const jobDescriptionFile = document.getElementById('jobDescriptionFile').files[0];
             
-            if (!jobOpening || !resumeFile) {
-                alert('Please select a job opening and upload a resume to proceed.');
+            if (!resumeFile) {
+                alert('Please upload a candidate resume to proceed.');
+                return;
+            }
+            
+            if (!jobDescription && !jobDescriptionFile) {
+                alert('Please either upload a job description file or paste the job description text to proceed.');
                 return;
             }
             
