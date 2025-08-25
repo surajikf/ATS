@@ -10,7 +10,13 @@
         .header { background: linear-gradient(135deg, #1e40af, #1e3a8a); color: white; padding: 2rem; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .header h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
         .header p { font-size: 1.125rem; opacity: 0.9; }
+        .nav { background: white; padding: 1rem; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; gap: 1rem; flex-wrap: wrap; }
+        .nav-btn { background: #f8fafc; border: 1px solid #e2e8f0; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; transition: all 0.2s; color: #374151; }
+        .nav-btn:hover, .nav-btn.active { background: #3b82f6; color: white; border-color: #3b82f6; }
         .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
+        .page { display: none; }
+        .page.active { display: block; }
         .card { background: white; border-radius: 0.75rem; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
         .form-group { margin-bottom: 1.5rem; }
         .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #374151; }
@@ -19,6 +25,8 @@
         .btn { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border: none; padding: 1rem 2rem; border-radius: 0.5rem; font-size: 1.125rem; font-weight: 600; cursor: pointer; transition: transform 0.2s; width: 100%; }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
         .btn:disabled { background: #9ca3af; cursor: not-allowed; transform: none; }
+        .btn-secondary { background: linear-gradient(135deg, #6b7280, #4b5563); }
+        .btn-secondary:hover { box-shadow: 0 4px 12px rgba(107,114,128,0.3); }
         .results { display: none; margin-top: 2rem; }
         .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
         .metric-card { background: white; border-radius: 0.5rem; padding: 1.5rem; text-align: center; border: 1px solid #e2e8f0; }
@@ -32,7 +40,19 @@
         .company-info p { color: #6b7280; margin-bottom: 0.5rem; }
         .company-info a { color: #3b82f6; text-decoration: none; }
         .company-info a:hover { text-decoration: underline; }
-        @media (max-width: 768px) { .container { padding: 1rem; } .header h1 { font-size: 2rem; } .metrics { grid-template-columns: 1fr; } }
+        .job-card { background: white; border: 1px solid #e2e8f0; border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 1rem; }
+        .job-title { font-size: 1.25rem; font-weight: 600; color: #1e40af; margin-bottom: 0.5rem; }
+        .job-details { color: #6b7280; margin-bottom: 1rem; }
+        .job-status { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 500; }
+        .status-active { background: #dcfce7; color: #166534; }
+        .status-closed { background: #fee2e2; color: #991b1b; }
+        .chart-container { background: white; border-radius: 0.75rem; padding: 2rem; margin: 2rem 0; text-align: center; border: 1px solid #e2e8f0; }
+        .chart-placeholder { width: 100%; height: 300px; background: linear-gradient(135deg, #f3f4f6, #e5e7eb); border-radius: 0.5rem; display: flex; align-items: center; justify-content: center; color: #6b7280; font-size: 1.125rem; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin: 2rem 0; }
+        .stat-card { background: white; border-radius: 0.5rem; padding: 1.5rem; text-align: center; border: 1px solid #e2e8f0; }
+        .stat-number { font-size: 2.5rem; font-weight: 700; color: #1e40af; margin-bottom: 0.5rem; }
+        .stat-label { font-size: 0.875rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; }
+        @media (max-width: 768px) { .container { padding: 1rem; } .header h1 { font-size: 2rem; } .metrics { grid-template-columns: 1fr; } .nav-container { flex-direction: column; } }
     </style>
 </head>
 <body>
@@ -41,83 +61,226 @@
         <p>Professional AI-powered candidate evaluation for HR teams</p>
     </div>
     
+    <div class="nav">
+        <div class="nav-container">
+            <button class="nav-btn active" onclick="showPage('evaluation')">📋 Single Candidate</button>
+            <button class="nav-btn" onclick="showPage('analytics')">📊 Analytics</button>
+            <button class="nav-btn" onclick="showPage('jobs')">💼 Job Management</button>
+            <button class="nav-btn" onclick="showPage('guidelines')">📚 HR Guidelines</button>
+        </div>
+    </div>
+    
     <div class="container">
-        <div class="card">
-            <h2>💼 Select Job Opening</h2>
-            <div class="form-group">
-                <label for="jobOpening">Choose the job opening to evaluate against:</label>
-                <select id="jobOpening" required>
-                    <option value="">Select a job opening...</option>
-                    <option value="Software Engineer - Full Stack">Software Engineer - Full Stack</option>
-                    <option value="Data Scientist">Data Scientist</option>
-                    <option value="DevOps Engineer">DevOps Engineer</option>
-                    <option value="Product Manager">Product Manager</option>
-                    <option value="UX Designer">UX Designer</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="resumeFile">Upload Candidate Resume:</label>
-                <input type="file" id="resumeFile" accept=".pdf,.docx,.txt" required>
-                <small style="color: #6b7280; margin-top: 0.25rem; display: block;">Supported formats: PDF, DOCX, TXT</small>
-            </div>
-            
-            <div class="form-group">
-                <label for="jobDescription">Additional Job Requirements:</label>
-                <textarea id="jobDescription" rows="4" placeholder="Add specific skills, experience levels, or requirements for this job opening..."></textarea>
-            </div>
-            
-            <button class="btn" onclick="launchEvaluation()" id="evaluateBtn">🚀 Launch Evaluation</button>
-        </div>
-        
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>Analyzing candidate profile...</p>
-        </div>
-        
-        <div class="results" id="results">
+        <!-- Single Candidate Evaluation Page -->
+        <div id="evaluation" class="page active">
             <div class="card">
-                <h2>📊 Candidate Assessment Results</h2>
-                
-                <div class="metrics">
-                    <div class="metric-card">
-                        <div class="metric-value" id="overallFit">87%</div>
-                        <div class="metric-label">Overall Fit</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value" id="skillsMatch">92%</div>
-                        <div class="metric-label">Skills Match</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value" id="experienceFit">78%</div>
-                        <div class="metric-label">Experience Fit</div>
-                    </div>
+                <h2>💼 Select Job Opening</h2>
+                <div class="form-group">
+                    <label for="jobOpening">Choose the job opening to evaluate against:</label>
+                    <select id="jobOpening" required>
+                        <option value="">Select a job opening...</option>
+                        <option value="Software Engineer - Full Stack">Software Engineer - Full Stack</option>
+                        <option value="Data Scientist">Data Scientist</option>
+                        <option value="DevOps Engineer">DevOps Engineer</option>
+                        <option value="Product Manager">Product Manager</option>
+                        <option value="UX Designer">UX Designer</option>
+                    </select>
                 </div>
                 
+                <div class="form-group">
+                    <label for="resumeFile">Upload Candidate Resume:</label>
+                    <input type="file" id="resumeFile" accept=".pdf,.docx,.txt" required>
+                    <small style="color: #6b7280; margin-top: 0.25rem; display: block;">Supported formats: PDF, DOCX, TXT</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="jobDescription">Additional Job Requirements:</label>
+                    <textarea id="jobDescription" rows="4" placeholder="Add specific skills, experience levels, or requirements for this job opening..."></textarea>
+                </div>
+                
+                <button class="btn" onclick="launchEvaluation()" id="evaluateBtn">🚀 Launch Evaluation</button>
+            </div>
+            
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Analyzing candidate profile...</p>
+            </div>
+            
+            <div class="results" id="results">
                 <div class="card">
-                    <h3>🎯 HR Decision Support</h3>
-                    <div style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 0.5rem; padding: 1rem; margin: 1rem 0;">
-                        <h4 style="color: #0c4a6e; margin-bottom: 0.5rem;">Candidate Assessment Report</h4>
-                        <div style="margin-bottom: 1rem;">
-                            <h5 style="color: #1e40af; margin-bottom: 0.25rem;">🎯 Key Strengths</h5>
-                            <ul style="color: #374151; line-height: 1.6; margin-left: 1.5rem;">
-                                <li>Strong technical skills alignment with job requirements</li>
-                                <li>Relevant cloud experience and modern tech stack</li>
-                                <li>Good educational background and certifications</li>
-                            </ul>
+                    <h2>📊 Candidate Assessment Results</h2>
+                    
+                    <div class="metrics">
+                        <div class="metric-card">
+                            <div class="metric-value" id="overallFit">87%</div>
+                            <div class="metric-label">Overall Fit</div>
                         </div>
-                        <div style="margin-bottom: 1rem;">
-                            <h5 style="color: #d97706; margin-bottom: 0.25rem;">⚠️ Areas of Concern</h5>
-                            <ul style="color: #374151; line-height: 1.6; margin-left: 1.5rem;">
-                                <li>Could benefit from more DevOps experience</li>
-                                <li>Missing specific database technologies mentioned</li>
-                            </ul>
+                        <div class="metric-card">
+                            <div class="metric-value" id="skillsMatch">92%</div>
+                            <div class="metric-label">Skills Match</div>
                         </div>
-                        <div>
-                            <h5 style="color: #059669; margin-bottom: 0.25rem;">💡 HR Recommendation</h5>
-                            <p style="color: #374151; margin: 0;"><strong>RECOMMENDED FOR INTERVIEW</strong> - This candidate shows strong potential and would be worth interviewing.</p>
+                        <div class="metric-card">
+                            <div class="metric-value" id="experienceFit">78%</div>
+                            <div class="metric-label">Experience Fit</div>
                         </div>
                     </div>
+                    
+                    <div class="card">
+                        <h3>🎯 HR Decision Support</h3>
+                        <div style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 0.5rem; padding: 1rem; margin: 1rem 0;">
+                            <h4 style="color: #0c4a6e; margin-bottom: 0.5rem;">Candidate Assessment Report</h4>
+                            <div style="margin-bottom: 1rem;">
+                                <h5 style="color: #1e40af; margin-bottom: 0.25rem;">🎯 Key Strengths</h5>
+                                <ul style="color: #374151; line-height: 1.6; margin-left: 1.5rem;">
+                                    <li>Strong technical skills alignment with job requirements</li>
+                                    <li>Relevant cloud experience and modern tech stack</li>
+                                    <li>Good educational background and certifications</li>
+                                </ul>
+                            </div>
+                            <div style="margin-bottom: 1rem;">
+                                <h5 style="color: #d97706; margin-bottom: 0.25rem;">⚠️ Areas of Concern</h5>
+                                <ul style="color: #374151; line-height: 1.6; margin-left: 1.5rem;">
+                                    <li>Could benefit from more DevOps experience</li>
+                                    <li>Missing specific database technologies mentioned</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h5 style="color: #059669; margin-bottom: 0.25rem;">💡 HR Recommendation</h5>
+                                <p style="color: #374151; margin: 0;"><strong>RECOMMENDED FOR INTERVIEW</strong> - This candidate shows strong potential and would be worth interviewing.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Dashboard Page -->
+        <div id="analytics" class="page">
+            <div class="card">
+                <h2>📊 Recruitment Analytics Dashboard</h2>
+                <p>Comprehensive insights into your recruitment performance and candidate pipeline</p>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">Total Openings</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">8</div>
+                    <div class="stat-label">Active Openings</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">1,247</div>
+                    <div class="stat-label">Total Candidates</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">18</div>
+                    <div class="stat-label">Avg. Days to Fill</div>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <h3>📈 Time to Hire Trends</h3>
+                <div class="chart-placeholder">
+                    📊 Time to Hire Chart<br>
+                    <small>Shows hiring efficiency over time</small>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <h3>🎯 Candidate Volume by Role</h3>
+                <div class="chart-placeholder">
+                    📊 Candidate Volume Chart<br>
+                    <small>Distribution of candidates across job openings</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Job Opening Management Page -->
+        <div id="jobs" class="page">
+            <div class="card">
+                <h2>💼 Job Opening Management</h2>
+                <p>Create, manage, and track all your current job openings</p>
+            </div>
+            
+            <div class="card">
+                <h3>➕ Create New Job Opening</h3>
+                <div class="form-group">
+                    <label for="newJobTitle">Job Title:</label>
+                    <input type="text" id="newJobTitle" placeholder="e.g., Senior Software Engineer">
+                </div>
+                <div class="form-group">
+                    <label for="newJobDepartment">Department:</label>
+                    <select id="newJobDepartment">
+                        <option value="">Select Department...</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Data Science">Data Science</option>
+                        <option value="Product">Product</option>
+                        <option value="Design">Design</option>
+                        <option value="Marketing">Marketing</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="newJobDescription">Job Description:</label>
+                    <textarea id="newJobDescription" rows="4" placeholder="Detailed job description, requirements, and responsibilities..."></textarea>
+                </div>
+                <button class="btn" onclick="createJob()">🚀 Create Job Opening</button>
+            </div>
+            
+            <div class="card">
+                <h3>📋 Current Job Openings</h3>
+                <div id="jobListings">
+                    <div class="job-card">
+                        <div class="job-title">Software Engineer - Full Stack</div>
+                        <div class="job-details">Engineering • 5+ years experience • Remote/Hybrid</div>
+                        <div class="job-status status-active">Active</div>
+                    </div>
+                    <div class="job-card">
+                        <div class="job-title">Data Scientist</div>
+                        <div class="job-details">Data Science • 3+ years experience • On-site</div>
+                        <div class="job-status status-active">Active</div>
+                    </div>
+                    <div class="job-card">
+                        <div class="job-title">Product Manager</div>
+                        <div class="job-details">Product • 4+ years experience • Hybrid</div>
+                        <div class="job-status status-closed">Closed</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HR Guidelines Page -->
+        <div id="guidelines" class="page">
+            <div class="card">
+                <h2>📚 HR Guidelines & Best Practices</h2>
+                <p>Essential guidelines for effective candidate evaluation and recruitment processes</p>
+            </div>
+            
+            <div class="card">
+                <h3>🎯 Candidate Evaluation Checklist</h3>
+                <ul style="line-height: 1.8; color: #374151;">
+                    <li><strong>Technical Skills:</strong> Assess alignment with job requirements</li>
+                    <li><strong>Experience Level:</strong> Verify years and relevance of experience</li>
+                    <li><strong>Cultural Fit:</strong> Evaluate alignment with company values</li>
+                    <li><strong>Growth Potential:</strong> Assess learning ability and career goals</li>
+                    <li><strong>Communication Skills:</strong> Review written and verbal abilities</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <h3>⚡ HR Features & Capabilities</h3>
+                <div style="background: #f0fdf4; border: 1px solid #059669; border-radius: 0.5rem; padding: 1rem; margin: 1rem 0;">
+                    <h4 style="color: #065f46; margin-bottom: 1rem;">Platform Capabilities</h4>
+                    <ul style="line-height: 1.8; color: #374151;">
+                        <li><strong>AI-Powered Analysis:</strong> Automated resume parsing and skill matching</li>
+                        <li><strong>Multi-Format Support:</strong> PDF, DOCX, and TXT file processing</li>
+                        <li><strong>Real-time Evaluation:</strong> Instant candidate assessment results</li>
+                        <li><strong>Comprehensive Metrics:</strong> Skills match, experience fit, and overall score</li>
+                        <li><strong>HR Decision Support:</strong> Detailed recommendations and insights</li>
+                        <li><strong>Analytics Dashboard:</strong> Recruitment performance tracking</li>
+                        <li><strong>Job Management:</strong> Create and manage job openings</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -132,6 +295,24 @@
     </div>
     
     <script>
+        function showPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Remove active class from all nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+        
         function launchEvaluation() {
             const jobOpening = document.getElementById('jobOpening').value;
             const resumeFile = document.getElementById('resumeFile').files[0];
@@ -155,6 +336,36 @@
                 
                 document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
             }, 3000);
+        }
+        
+        function createJob() {
+            const title = document.getElementById('newJobTitle').value;
+            const department = document.getElementById('newJobDepartment').value;
+            const description = document.getElementById('newJobDescription').value;
+            
+            if (!title || !department || !description) {
+                alert('Please fill in all fields to create a job opening.');
+                return;
+            }
+            
+            // Add new job to the list
+            const jobListings = document.getElementById('jobListings');
+            const newJob = document.createElement('div');
+            newJob.className = 'job-card';
+            newJob.innerHTML = `
+                <div class="job-title">${title}</div>
+                <div class="job-details">${department} • New Opening</div>
+                <div class="job-status status-active">Active</div>
+            `;
+            
+            jobListings.insertBefore(newJob, jobListings.firstChild);
+            
+            // Clear form
+            document.getElementById('newJobTitle').value = '';
+            document.getElementById('newJobDepartment').value = '';
+            document.getElementById('newJobDescription').value = '';
+            
+            alert('Job opening created successfully!');
         }
         
         document.getElementById('resumeFile').addEventListener('change', function(e) {
