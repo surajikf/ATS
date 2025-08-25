@@ -122,13 +122,17 @@
             margin: 0 auto; 
             padding: 2rem; 
         }
-        .page { 
-            display: none; 
-            animation: fadeIn 0.5s ease-out;
-        }
-        .page.active { 
-            display: block; 
-        }
+                 .page { 
+             display: none; 
+             animation: fadeIn 0.5s ease-out;
+             opacity: 0;
+             transform: translateY(20px);
+         }
+         .page.active { 
+             display: block; 
+             opacity: 1;
+             transform: translateY(0);
+         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -521,14 +525,14 @@
     
     <div class="nav">
         <div class="nav-container">
-            <button class="nav-btn active" onclick="showPage('evaluation')">📋 Single Candidate</button>
-            <button class="nav-btn" onclick="showPage('bulk')">📚 Bulk Screening</button>
-            <button class="nav-btn" onclick="showPage('analytics')">📊 Analytics</button>
-            <button class="nav-btn" onclick="showPage('jobs')">💼 Job Management</button>
-                         <button class="nav-btn" onclick="showPage('guidelines')">📚 HR Guidelines</button>
-             <button class="nav-btn" onclick="showPage('advanced')">🚀 Advanced Analytics</button>
-             <button class="nav-btn" onclick="showPage('settings')">⚙️ Settings</button>
-             <button class="nav-btn" onclick="showPage('help')">❓ Help</button>
+                         <button class="nav-btn active" onclick="showPage('evaluation', this)">📋 Single Candidate</button>
+             <button class="nav-btn" onclick="showPage('bulk', this)">📚 Bulk Screening</button>
+             <button class="nav-btn" onclick="showPage('analytics', this)">📊 Analytics</button>
+             <button class="nav-btn" onclick="showPage('jobs', this)">💼 Job Management</button>
+             <button class="nav-btn" onclick="showPage('guidelines', this)">📚 HR Guidelines</button>
+             <button class="nav-btn" onclick="showPage('advanced', this)">🚀 Advanced Analytics</button>
+             <button class="nav-btn" onclick="showPage('settings', this)">⚙️ Settings</button>
+             <button class="nav-btn" onclick="showPage('help', this)">❓ Help</button>
         </div>
     </div>
     
@@ -1209,7 +1213,9 @@
      </div>
      
      <script>
-        function showPage(pageId) {
+        function showPage(pageId, clickedButton) {
+            console.log('showPage called with:', pageId, clickedButton);
+            
             // Hide all pages
             document.querySelectorAll('.page').forEach(page => {
                 page.classList.remove('active');
@@ -1221,10 +1227,19 @@
             });
             
             // Show selected page
-            document.getElementById(pageId).classList.add('active');
+            const targetPage = document.getElementById(pageId);
+            if (targetPage) {
+                targetPage.classList.add('active');
+                console.log('Page activated:', pageId);
+            } else {
+                console.error('Page not found:', pageId);
+            }
             
             // Add active class to clicked button
-            event.target.classList.add('active');
+            if (clickedButton) {
+                clickedButton.classList.add('active');
+                console.log('Button activated:', clickedButton.textContent);
+            }
         }
         
         function launchEvaluation() {
@@ -1726,6 +1741,14 @@
              if (savedTheme) changeTheme(savedTheme);
              if (savedFontSize) changeFontSize(savedFontSize);
              if (savedAnimations) toggleAnimations(savedAnimations);
+             
+             // Ensure the first page is properly displayed
+             console.log('DOM loaded, initializing pages...');
+             const firstPage = document.getElementById('evaluation');
+             if (firstPage) {
+                 firstPage.classList.add('active');
+                 console.log('First page activated');
+             }
          });
          
          // Floating Action Button Functions
@@ -1743,7 +1766,7 @@
          }
          
          function quickAction(action) {
-             showPage(action);
+             showPage(action, null);
              toggleFabMenu();
              showNotification('🚀 Quick action: ' + action + ' activated!');
          }
