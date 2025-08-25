@@ -1255,7 +1255,7 @@
                 console.error('Error in showPage:', error);
                 alert('Navigation error: ' + error.message);
             }
-                 }
+         }
          
          function testNavigation() {
              console.log('Testing navigation...');
@@ -1788,6 +1788,21 @@
                  firstPage.classList.add('active');
                  console.log('First page activated');
              }
+             
+             // Test navigation on load
+             console.log('Testing navigation system...');
+             const pages = ['evaluation', 'bulk', 'analytics', 'jobs', 'guidelines', 'advanced', 'settings', 'help'];
+             pages.forEach(pageId => {
+                 const page = document.getElementById(pageId);
+                 if (page) {
+                     console.log('✅ Page found:', pageId);
+                 } else {
+                     console.error('❌ Page missing:', pageId);
+                 }
+             });
+             
+             const buttons = document.querySelectorAll('.nav-btn');
+             console.log('Found navigation buttons:', buttons.length);
          });
          
          // Floating Action Button Functions
