@@ -22,7 +22,7 @@
 ```bash
 # Clone repository
 git clone <your-repo-url>
-cd ATS
+cd ATSuse this as application logo and add I knowledge Factory Pvt. Ltd. branding 
 
 # Install dependencies
 pip install -r requirements.txt
