@@ -428,52 +428,7 @@
             letter-spacing: 0.5px;
         }
         
-        .job-card { 
-            background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%); 
-            border: 1px solid #0f3460; 
-            border-radius: 12px; 
-            padding: 1.5rem; 
-            margin-bottom: 1rem; 
-            transition: all 0.3s ease;
-        }
-        
-        .job-card:hover {
-            transform: translateY(-3px);
-            border-color: #4facfe;
-            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.2);
-        }
-        
-        .job-title { 
-            font-size: 1.2rem; 
-            font-weight: 600; 
-            color: #4facfe; 
-            margin-bottom: 0.5rem; 
-        }
-        
-        .job-details { 
-            color: #a8a8a8; 
-            margin-bottom: 1rem; 
-            font-size: 0.9rem;
-        }
-        
-        .job-status { 
-            display: inline-block; 
-            padding: 0.4rem 1rem; 
-            border-radius: 20px; 
-            font-size: 0.8rem; 
-            font-weight: 600; 
-            text-transform: uppercase;
-        }
-        
-        .status-active { 
-            background: linear-gradient(45deg, #00d4aa, #00b894); 
-            color: #0f0f23; 
-        }
-        
-        .status-closed { 
-            background: linear-gradient(45deg, #ff6b6b, #ee5a52); 
-            color: #0f0f23; 
-        }
+
         
         .company-info { 
             background: linear-gradient(135deg, #16213e 0%, #0f3460 100%); 
@@ -654,12 +609,6 @@
             <button class="nav-btn" onclick="showPage('bulk', this)">
                 <i class="fas fa-users"></i> Bulk Screening
             </button>
-            <button class="nav-btn" onclick="showPage('jobs', this)">
-                <i class="fas fa-briefcase"></i> Job Management
-            </button>
-            <button class="nav-btn" onclick="showPage('guidelines', this)">
-                <i class="fas fa-book-open"></i> HR Guidelines
-            </button>
         </div>
     </div>
     
@@ -821,94 +770,9 @@
 
 
 
-        <!-- Job Opening Management Page -->
-        <div id="jobs" class="page">
-            <div class="card">
-                <h2>Job Opening Management</h2>
-                <p>Create, manage, and track all your current job openings</p>
-            </div>
-            
-            <div class="card">
-                <h3>Create New Job Opening</h3>
-                <div class="form-group">
-                    <label for="newJobTitle">Job Title:</label>
-                    <input type="text" id="newJobTitle" placeholder="e.g., Senior Software Engineer">
-                </div>
-                <div class="form-group">
-                    <label for="newJobDepartment">Department:</label>
-                    <select id="newJobDepartment">
-                        <option value="">Select Department...</option>
-                        <option value="Engineering">Engineering</option>
-                        <option value="Data Science">Data Science</option>
-                        <option value="Product">Product</option>
-                        <option value="Design">Design</option>
-                        <option value="Marketing">Marketing</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="newJobDescription">Job Description:</label>
-                    <textarea id="newJobDescription" rows="4" placeholder="Detailed job description, requirements, and responsibilities..."></textarea>
-                </div>
-                <button class="btn" onclick="createJob()">Create Job Opening</button>
-            </div>
-            
-            <div class="card">
-                <h3>Current Job Openings</h3>
-                <div id="jobListings">
-                    <div class="job-card">
-                        <div class="job-title">Software Engineer - Full Stack</div>
-                        <div class="job-details">Engineering • 5+ years experience • Remote/Hybrid</div>
-                        <div class="job-status status-active">Active</div>
-                    </div>
-                    <div class="job-card">
-                        <div class="job-title">Data Scientist</div>
-                        <div class="job-details">Data Science • 3+ years experience • On-site</div>
-                        <div class="job-status status-active">Active</div>
-                    </div>
-                    <div class="job-card">
-                        <div class="job-title">Product Manager</div>
-                        <div class="job-details">Product • 4+ years experience • Hybrid</div>
-                        <div class="job-status status-closed">Closed</div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- HR Guidelines Page -->
-        <div id="guidelines" class="page">
-            <div class="card">
-                <h2>HR Guidelines & Best Practices</h2>
-                <p>Essential guidelines for effective candidate evaluation and recruitment processes</p>
-            </div>
-            
-            <div class="card">
-                <h3>Candidate Evaluation Checklist</h3>
-                <ul style="line-height: 1.8; color: #e6e6e6;">
-                    <li><strong style="color: #4facfe;">Technical Skills:</strong> Assess alignment with job requirements</li>
-                    <li><strong style="color: #4facfe;">Experience Level:</strong> Verify years and relevance of experience</li>
-                    <li><strong style="color: #4facfe;">Cultural Fit:</strong> Evaluate alignment with company values</li>
-                    <li><strong style="color: #4facfe;">Growth Potential:</strong> Assess learning ability and career goals</li>
-                    <li><strong style="color: #4facfe;">Communication Skills:</strong> Review written and verbal abilities</li>
-                </ul>
-            </div>
-            
-            <div class="card">
-                <h3>HR Features & Capabilities</h3>
-                <div style="background: linear-gradient(135deg, #16213e 0%, #0f3460 100%); border: 1px solid #4facfe; border-radius: 8px; padding: 1.5rem; margin: 1rem 0;">
-                    <h4 style="color: #4facfe; margin-bottom: 1rem;">Platform Capabilities</h4>
-                    <ul style="line-height: 1.8; color: #e6e6e6;">
-                        <li><strong style="color: #00d4aa;">AI-Powered Analysis:</strong> Automated resume parsing and skill matching</li>
-                        <li><strong style="color: #00d4aa;">Multi-Format Support:</strong> PDF, DOCX, and TXT file processing</li>
-                        <li><strong style="color: #00d4aa;">Real-time Evaluation:</strong> Instant candidate assessment results</li>
-                        <li><strong style="color: #00d4aa;">Comprehensive Metrics:</strong> Skills match, experience fit, and overall score</li>
-                        <li><strong style="color: #00d4aa;">HR Decision Support:</strong> Detailed recommendations and insights</li>
-                        <li><strong style="color: #00d4aa;">Analytics Dashboard:</strong> Recruitment performance tracking</li>
-                        <li><strong style="color: #00d4aa;">Job Management:</strong> Create and manage job openings</li>
 
-                    </ul>
-                </div>
-            </div>
-        </div>
+        
 
 
 
@@ -977,35 +841,7 @@
             }, 3000);
         }
         
-        function createJob() {
-            const title = document.getElementById('newJobTitle').value;
-            const department = document.getElementById('newJobDepartment').value;
-            const description = document.getElementById('newJobDescription').value;
-            
-            if (!title || !department || !description) {
-                alert('Please fill in all fields to create a job opening.');
-                return;
-            }
-            
-            // Add new job to the list
-            const jobListings = document.getElementById('jobListings');
-            const newJob = document.createElement('div');
-            newJob.className = 'job-card';
-            newJob.innerHTML = `
-                <div class="job-title">${title}</div>
-                <div class="job-details">${department} • New Opening</div>
-                <div class="job-status status-active">Active</div>
-            `;
-            
-            jobListings.insertBefore(newJob, jobListings.firstChild);
-            
-            // Clear form
-            document.getElementById('newJobTitle').value = '';
-            document.getElementById('newJobDepartment').value = '';
-            document.getElementById('newJobDescription').value = '';
-            
-            alert('Job opening created successfully!');
-        }
+
         
         // File size validation
         document.getElementById('resumeFile').addEventListener('change', function(e) {
