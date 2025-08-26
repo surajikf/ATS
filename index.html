@@ -648,12 +648,13 @@
 
         // File upload functionality
         function triggerFileUpload(inputId) {
+            console.log('triggerFileUpload called with:', inputId);
             const fileInput = document.getElementById(inputId);
             if (fileInput) {
-                console.log('Triggering file upload for:', inputId);
+                console.log('✓ File input found, triggering click');
                 fileInput.click();
             } else {
-                console.error('File input not found:', inputId);
+                console.error('✗ File input not found:', inputId);
                 alert('Error: File input not found. Please refresh the page.');
             }
         }
@@ -858,6 +859,9 @@
         window.addEventListener('load', function() {
             console.log('IKF HR Platform loaded successfully!');
             console.log('File upload areas are ready and clickable.');
+            
+            // Initialize all file handlers
+            initializeFileHandlers();
             
             // Verify all file inputs are present
             const fileInputs = ['resumeFile', 'jobDescriptionFile', 'bulkJobDescriptionFile', 'bulkResumeFiles'];
