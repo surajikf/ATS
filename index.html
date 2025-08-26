@@ -4,34 +4,31 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IKF HR Intelligence Platform</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; 
-            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3a 50%, #2a2a5a 100%);
-            color: #ffffff;
-            line-height: 1.6;
-            overflow-x: hidden;
-            min-height: 100vh;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        
-        /* Custom scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #1a1a2e; }
-        ::-webkit-scrollbar-thumb { background: #16213e; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #0f3460; }
-        
-        .header { 
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 3rem 2rem; 
-            text-align: center; 
+            padding: 3rem 2rem;
+            text-align: center;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
-        
+
         .header::before {
             content: '';
             position: absolute;
@@ -39,163 +36,130 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse"><path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            background: radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            animation: float 6s ease-in-out infinite;
         }
-        
-        .header::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-            animation: float 20s ease-in-out infinite;
-        }
-        
+
         @keyframes float {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            25% { transform: translate(10px, -10px) rotate(1deg); }
-            50% { transform: translate(-5px, 5px) rotate(-1deg); }
-            75% { transform: translate(-10px, -5px) rotate(0.5deg); }
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
         }
-        
-        .header h1 { 
-            font-size: 3.5rem; 
-            font-weight: 800;
-            margin-bottom: 1rem; 
-            background: linear-gradient(45deg, #ffffff, #f0f0f0);
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #ffffff, #e0e7ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
             position: relative;
-            z-index: 2;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 1;
         }
-        
-        .header p { 
-            color: rgba(255,255,255,0.9); 
-            font-size: 1.3rem;
-            font-weight: 300;
+
+        .header p {
+            font-size: 1.2rem;
+            color: #e0e7ff;
+            margin-bottom: 1.5rem;
             position: relative;
-            z-index: 2;
-            max-width: 600px;
-            margin: 0 auto;
+            z-index: 1;
         }
-        
+
         .header-badge {
             display: inline-block;
-            background: rgba(255,255,255,0.2);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 50px;
-            padding: 0.5rem 1.5rem;
-            margin-top: 1rem;
+            background: linear-gradient(45deg, #00d4aa, #00b894);
+            color: #0f0f23;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
             font-size: 0.9rem;
-            font-weight: 500;
-            color: white;
             position: relative;
-            z-index: 2;
+            z-index: 1;
         }
-        
-        .nav { 
-            background: rgba(255, 255, 255, 0.1);
+
+        .nav {
+            background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem 0;
             position: sticky;
             top: 0;
             z-index: 100;
-            padding: 1.5rem 0;
         }
-        
-        .nav-container { 
-            max-width: 1400px; 
-            margin: 0 auto; 
-            display: flex; 
-            gap: 1rem; 
-            flex-wrap: wrap; 
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
             justify-content: center;
+            gap: 1rem;
             padding: 0 2rem;
         }
-        
-        .nav-btn { 
+
+        .nav-btn {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 1rem 1.5rem; 
-            border-radius: 15px; 
-            cursor: pointer; 
-            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            color: #ffffff;
             font-weight: 500;
-            font-size: 0.95rem;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        
-        .nav-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(79, 172, 254, 0.2), transparent);
-            transition: left 0.5s;
-        }
-        
-        .nav-btn:hover::before {
-            left: 100%;
-        }
-        
-        .nav-btn:hover { 
-            background: #0f3460; 
-            border-color: #4facfe;
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.4);
             transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
-        
-        .nav-btn.active { 
-            background: linear-gradient(45deg, #4facfe, #00f2fe); 
-            color: #0f0f23; 
+
+        .nav-btn.active {
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            color: #0f0f23;
             border-color: transparent;
-            box-shadow: 0 4px 20px rgba(79, 172, 254, 0.4);
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
         }
-        
-        .container { 
-            max-width: 1200px; 
-            margin: 0 auto; 
-            padding: 2rem; 
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
         }
-        
-        .page { 
-            display: none; 
-            animation: fadeInUp 0.5s ease-out;
+
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
         }
-        
-        .page.active { 
-            display: block; 
+
+        .page.active {
+            display: block;
         }
-        
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        
-        .card { 
-            background: rgba(255, 255, 255, 0.08);
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(20px);
-            border-radius: 24px; 
-            padding: 2.5rem; 
-            margin-bottom: 2rem; 
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
             border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        
+
         .card::before {
             content: '';
             position: absolute;
@@ -207,471 +171,268 @@
             opacity: 0;
             transition: opacity 0.4s ease;
         }
-        
+
         .card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 35px 70px rgba(0, 0, 0, 0.4);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
             border-color: rgba(255, 255, 255, 0.2);
         }
-        
+
         .card:hover::before {
             opacity: 1;
         }
-        
-        .card::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-        
-        .card:hover::after {
-            opacity: 1;
-        }
-        
-        .card h2, .card h3 { 
-            color: #4facfe; 
+
+        .card h2, .card h3 {
+            color: #4facfe;
             margin-bottom: 1rem;
             font-weight: 600;
         }
-        
-        .form-group { 
-            margin-bottom: 1.5rem; 
+
+        .form-group {
+            margin-bottom: 1.5rem;
         }
-        
-        .form-group label { 
-            display: block; 
-            margin-bottom: 0.5rem; 
-            font-weight: 600; 
-            color: #e6e6e6; 
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #e6e6e6;
             font-size: 0.95rem;
         }
-        
-        .form-group input, .form-group textarea, .form-group select { 
-            width: 100%; 
-            padding: 0.75rem; 
-            border: 2px solid #0f3460; 
-            border-radius: 8px; 
-            font-size: 1rem; 
+
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #0f3460;
+            border-radius: 8px;
+            font-size: 1rem;
             background: #16213e;
             color: #e6e6e6;
             transition: all 0.3s ease;
         }
-        
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { 
-            outline: none; 
-            border-color: #4facfe; 
+
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none;
+            border-color: #4facfe;
             box-shadow: 0 0 0 3px rgba(79, 172, 254, 0.1);
             background: #1a1a2e;
         }
-        
-        /* File upload styling */
-        .file-upload-area {
-            border: 2px dashed #4facfe;
-            border-radius: 12px;
-            padding: 2rem;
-            text-align: center;
-            background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
-            cursor: pointer !important;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            user-select: none;
-        }
-        
-        .file-upload-area:hover {
-            border-color: #00f2fe;
-            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.2);
-        }
-        
-        .file-upload-area::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(79, 172, 254, 0.1), transparent);
-            transition: left 0.5s ease;
-        }
-        
-        .file-upload-area:hover::before {
-            left: 100%;
-        }
-        
-        .file-upload-area i {
-            font-size: 3rem;
-            color: #4facfe;
-            margin-bottom: 1rem;
-            display: block;
-        }
-        
-        .file-upload-area p {
-            color: #e6e6e6;
-            font-size: 1.1rem;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-        }
-        
-        .file-upload-area::after {
-            content: '📁 Click to Browse Files';
-            position: absolute;
-            bottom: 1rem;
-            right: 1rem;
-            background: linear-gradient(45deg, #4facfe, #00f2fe);
-            color: #0f0f23;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            opacity: 0.8;
-            transition: opacity 0.3s ease;
-        }
-        
-        .file-upload-area:hover::after {
-            opacity: 1;
-        }
-        
-        .file-upload-area .file-info {
-            color: #a8a8a8;
-            font-size: 0.9rem;
-            font-style: italic;
-        }
-        
-        .file-upload-area input[type="file"] {
-            position: absolute;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-        }
-        
+
         .form-group small {
             color: #a8a8a8;
             font-size: 0.85rem;
             margin-top: 0.25rem;
             display: block;
         }
-        
-        .btn { 
-            background: linear-gradient(45deg, #4facfe, #00f2fe); 
-            color: #0f0f23; 
-            border: none; 
-            padding: 1rem 2rem; 
-            border-radius: 8px; 
-            font-size: 1rem; 
+
+        .file-upload-area {
+            border: 2px dashed #4facfe;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .file-upload-area:hover {
+            border-color: #00f2fe;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.2);
+        }
+
+        .file-upload-area i {
+            font-size: 3rem;
+            color: #4facfe;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .file-upload-area p {
+            color: #e6e6e6;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .file-upload-area .file-info {
+            color: #a8a8a8;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            color: #0f0f23;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1rem;
             font-weight: 600;
-            cursor: pointer; 
-            width: 100%; 
+            cursor: pointer;
+            width: 100%;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
-        
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-        
-        .btn:hover::before {
-            left: 100%;
-        }
-        
-        .btn:hover { 
-            transform: translateY(-2px); 
+
+        .btn:hover {
+            transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(79, 172, 254, 0.4);
         }
-        
-        .btn:disabled { 
-            background: #2a2a3e; 
-            color: #666; 
-            cursor: not-allowed; 
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
             transform: none;
         }
-        
-        .metrics { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
-            gap: 1.5rem; 
-            margin-bottom: 2rem; 
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 3rem;
         }
-        
-        .metric-card { 
-            background: linear-gradient(135deg, #16213e 0%, #0f3460 100%); 
-            border: 1px solid #4facfe;
-            border-radius: 12px; 
-            padding: 1.5rem; 
-            text-align: center; 
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .metric-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg, transparent, rgba(79, 172, 254, 0.1), transparent);
-            transform: translateX(-100%);
-            transition: transform 0.6s ease;
-        }
-        
-        .metric-card:hover::before {
-            transform: translateX(100%);
-        }
-        
-        .metric-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.3);
-        }
-        
-        .metric-value { 
-            font-size: 2.5rem; 
-            font-weight: 700; 
-            color: #4facfe; 
-            margin-bottom: 0.5rem; 
-            text-shadow: 0 2px 10px rgba(79, 172, 254, 0.3);
-        }
-        
-        .metric-label { 
-            color: #a8a8a8; 
-            font-size: 0.9rem; 
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .loading { 
-            display: none; 
-            text-align: center; 
-            padding: 3rem; 
-        }
-        
+
         .loading h4 {
             color: #4facfe;
             margin-bottom: 1rem;
         }
-        
+
         .loading p {
             color: #a8a8a8;
         }
-        
-        .results { 
-            display: none; 
-            margin-top: 2rem; 
+
+        .results {
+            display: none;
         }
-        
-        .stats-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
-            gap: 1.5rem; 
-            margin: 2rem 0; 
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
         }
-        
-        .stat-card { 
-            background: linear-gradient(135deg, #16213e 0%, #0f3460 100%); 
-            border: 1px solid #0f3460;
-            border-radius: 12px; 
-            padding: 1.5rem; 
-            text-align: center; 
+
+        .metric-card {
+            background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
             transition: all 0.3s ease;
         }
-        
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #00d4aa;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            color: #a8a8a8;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
         .stat-card:hover {
             transform: translateY(-3px);
-            border-color: #4facfe;
-            box-shadow: 0 6px 20px rgba(79, 172, 254, 0.2);
+            border-color: rgba(255, 255, 255, 0.2);
         }
-        
-        .stat-number { 
-            font-size: 2rem; 
-            font-weight: 700; 
-            color: #4facfe; 
-            margin-bottom: 0.5rem; 
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #4facfe;
+            margin-bottom: 0.5rem;
         }
-        
-        .stat-label { 
-            color: #a8a8a8; 
-            font-size: 0.85rem; 
+
+        .stat-label {
+            color: #a8a8a8;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        
 
-        
-        .company-info { 
-            background: linear-gradient(135deg, #16213e 0%, #0f3460 100%); 
-            border: 1px solid #4facfe;
-            border-radius: 16px; 
-            padding: 2rem; 
-            text-align: center; 
-            margin-top: 2rem;
-        }
-        
-        .company-info h3 { 
-            color: #4facfe; 
-            margin-bottom: 1rem; 
-        }
-        
-        .company-info p { 
-            color: #a8a8a8; 
-            margin-bottom: 0.5rem; 
-        }
-        
-        .company-info a { 
-            color: #4facfe; 
-            text-decoration: none; 
-            font-weight: 600;
-        }
-        
-        .company-info a:hover { 
-            text-decoration: underline; 
-        }
-        
-        /* Special styling for bulk results */
         .bulk-result-card {
-            background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
-            border: 1px solid #0f3460;
-            border-radius: 8px;
-            padding: 1rem;
+            background: linear-gradient(135deg, #16213e 0%, #0f3460 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
             margin-bottom: 1rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             transition: all 0.3s ease;
         }
-        
+
         .bulk-result-card:hover {
-            border-color: #4facfe;
-            transform: translateX(5px);
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.2);
         }
-        
+
         .bulk-result-score {
             font-size: 1.5rem;
             font-weight: 700;
-            color: #4facfe;
+            color: #00d4aa;
         }
-        
+
         .bulk-result-status {
-            padding: 0.3rem 0.8rem;
-            border-radius: 15px;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 600;
+            text-transform: uppercase;
         }
-        
+
         .status-recommended {
             background: linear-gradient(45deg, #00d4aa, #00b894);
             color: #0f0f23;
         }
-        
+
         .status-maybe {
             background: linear-gradient(45deg, #fdcb6e, #e17055);
             color: #0f0f23;
         }
-        
+
         .status-not-recommended {
             background: linear-gradient(45deg, #ff6b6b, #ee5a52);
             color: #0f0f23;
         }
-        
-        /* Enhanced button effects */
-        .nav-btn:hover { 
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.4);
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-        }
-        
-        .nav-btn.active { 
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border-color: transparent;
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-            transform: translateY(-2px);
-        }
-        
-        /* Enhanced form styling */
-        .form-group input, .form-group textarea, .form-group select { 
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
-            backdrop-filter: blur(10px);
-        }
-        
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { 
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
-            background: rgba(255, 255, 255, 0.08);
-        }
-        
-        /* Enhanced button styling */
-        .btn { 
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            border: none;
-            padding: 1.2rem 2.5rem;
-            border-radius: 15px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
-        }
-        
-        .btn:hover { 
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
-        }
-        
-        /* Enhanced metrics styling */
-        .metric-card {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-        }
-        
-        .metric-card:hover {
-            transform: translateY(-5px) scale(1.05);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-        
-        /* Responsive design */
-        @media (max-width: 768px) { 
-            .container { padding: 1rem; } 
+
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
             .nav-container { flex-direction: column; }
             .card { padding: 1.5rem; }
             .header h1 { font-size: 2.5rem; }
             .metrics { grid-template-columns: 1fr; }
             .nav-btn { padding: 0.8rem 1.2rem; font-size: 0.9rem; }
-        }
-        
-        /* Loading animation */
-        .loading {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        /* Results styling */
-        .results {
-            animation: slideInUp 0.6s ease-out;
-        }
-        
-        @keyframes slideInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -852,101 +613,40 @@
                     </div>
                     
                     <div class="card">
-                        <h3>Candidate Rankings</h3>
+                        <h3>Individual Candidate Results</h3>
                         <div id="bulkCandidateList" style="margin-top: 1rem;">
                             <!-- Candidate results will be populated here -->
                         </div>
                     </div>
                     
                     <div class="card">
-                        <h3>Summary Report</h3>
-                        <div style="background: linear-gradient(135deg, #16213e 0%, #0f3460 100%); border: 1px solid #4facfe; border-radius: 8px; padding: 1.5rem; margin: 1rem 0;">
-                            <h4 style="color: #4facfe; margin-bottom: 1rem;">Bulk Screening Summary</h4>
-                            <div id="bulkSummary" style="color: #e6e6e6;">
-                                <!-- Summary will be populated here -->
-                            </div>
+                        <h3>Summary & Recommendations</h3>
+                        <div id="bulkSummary" style="color: #e6e6e6;">
+                            <!-- Summary will be populated here -->
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-
-
-
-
-        
-
-
-
-
-
-
-        
-        <div class="company-info">
-            <h3>Contact Information</h3>
-            <p><strong>Email:</strong> <a href="mailto:enquiry@ikf.co.in">enquiry@ikf.co.in</a></p>
-            <p><strong>Phone:</strong> +91 95039 39911</p>
-        </div>
     </div>
-    
+
     <script>
-        function showPage(pageId, clickedButton) {
+        // Page navigation
+        function showPage(pageId, buttonElement) {
             // Hide all pages
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
             
             // Remove active class from all nav buttons
-            document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(btn => btn.classList.remove('active'));
             
-            // Show selected page
-            const targetPage = document.getElementById(pageId);
-            if (targetPage) {
-                targetPage.classList.add('active');
-            }
-            
-            // Add active class to clicked button
-            if (clickedButton) {
-                clickedButton.classList.add('active');
-            }
+            // Show selected page and activate button
+            document.getElementById(pageId).classList.add('active');
+            buttonElement.classList.add('active');
         }
-        
-        function launchEvaluation() {
-            const resumeFile = document.getElementById('resumeFile').files[0];
-            const jobDescription = document.getElementById('jobDescription').value;
-            const jobDescriptionFile = document.getElementById('jobDescriptionFile').files[0];
-            
-            if (!resumeFile) {
-                alert('Please upload a candidate resume to proceed.');
-                return;
-            }
-            
-            if (!jobDescription && !jobDescriptionFile) {
-                alert('Please either upload a job description file or paste the job description text to proceed.');
-                return;
-            }
-            
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('evaluateBtn').disabled = true;
-            
-            // Simulate processing
-            setTimeout(() => {
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('results').style.display = 'block';
-                document.getElementById('evaluateBtn').disabled = false;
-                
-                document.getElementById('overallFit').textContent = Math.floor(Math.random() * 30 + 70) + '%';
-                document.getElementById('skillsMatch').textContent = Math.floor(Math.random() * 20 + 80) + '%';
-                document.getElementById('experienceFit').textContent = Math.floor(Math.random() * 30 + 60) + '%';
-            }, 3000);
-        }
-        
 
-        
-        // File upload trigger function
+        // File upload functionality
         function triggerFileUpload(inputId) {
             const fileInput = document.getElementById(inputId);
             if (fileInput) {
@@ -957,56 +657,35 @@
                 alert('Error: File input not found. Please refresh the page.');
             }
         }
-        
-        // Test file upload functionality on page load
-        window.addEventListener('load', function() {
-            console.log('Page loaded, checking file inputs...');
-            const fileInputs = ['resumeFile', 'jobDescriptionFile', 'bulkJobDescriptionFile', 'bulkResumeFiles'];
-            fileInputs.forEach(id => {
-                const input = document.getElementById(id);
-                if (input) {
-                    console.log('✓ File input found:', id);
-                } else {
-                    console.error('✗ File input missing:', id);
-                }
-            });
-        });
-        
-        // File info update handlers
+
+        // File change handlers
         document.getElementById('resumeFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
                 document.getElementById('resumeFileInfo').textContent = `Selected: ${file.name}`;
                 document.getElementById('resumeFileInfo').style.color = '#00d4aa';
-                const fileSize = file.size / 1024 / 1024;
-                if (fileSize > 10) {
-                    alert('File size should be less than 10MB');
-                    this.value = '';
-                    document.getElementById('resumeFileInfo').textContent = 'No file selected';
-                    document.getElementById('resumeFileInfo').style.color = '#a8a8a8';
-                }
+                validateFileSize(file, this, 'resumeFileInfo');
             }
         });
-        
+
         document.getElementById('jobDescriptionFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
                 document.getElementById('jobFileInfo').textContent = `Selected: ${file.name}`;
                 document.getElementById('jobFileInfo').style.color = '#00d4aa';
+                validateFileSize(file, this, 'jobFileInfo');
             }
         });
-        
+
         document.getElementById('bulkJobDescriptionFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
                 document.getElementById('bulkJobFileInfo').textContent = `Selected: ${file.name}`;
                 document.getElementById('bulkJobFileInfo').style.color = '#00d4aa';
+                validateFileSize(file, this, 'bulkJobFileInfo');
             }
         });
-        
-        // File size validation
-        
-        // Bulk screening functionality
+
         document.getElementById('bulkResumeFiles').addEventListener('change', function(e) {
             const files = e.target.files;
             if (files.length > 0) {
@@ -1016,28 +695,20 @@
                     return;
                 }
                 
-                // Update file info display
                 document.getElementById('bulkResumeFileInfo').textContent = `Selected: ${files.length} file(s)`;
                 document.getElementById('bulkResumeFileInfo').style.color = '#00d4aa';
                 
-                // Show file list
                 document.getElementById('bulkFileList').style.display = 'block';
                 const fileNamesDiv = document.getElementById('bulkFileNames');
                 fileNamesDiv.innerHTML = '';
                 
                 for (let i = 0; i < files.length; i++) {
                     const file = files[i];
-                    const fileSize = file.size / 1024 / 1024;
-                    
-                    if (fileSize > 10) {
-                        alert(`File "${file.name}" is too large (${fileSize.toFixed(1)}MB). Maximum size is 10MB.`);
-                        this.value = '';
-                        document.getElementById('bulkFileList').style.display = 'none';
-                        document.getElementById('bulkResumeFileInfo').textContent = 'No files selected';
-                        document.getElementById('bulkResumeFileInfo').style.color = '#a8a8a8';
+                    if (!validateFileSize(file, this, 'bulkResumeFileInfo')) {
                         return;
                     }
                     
+                    const fileSize = file.size / 1024 / 1024;
                     const fileItem = document.createElement('div');
                     fileItem.style.cssText = 'padding: 0.5rem; border-bottom: 1px solid #0f3460; display: flex; justify-content: space-between; align-items: center;';
                     fileItem.innerHTML = `
@@ -1052,7 +723,53 @@
                 document.getElementById('bulkResumeFileInfo').style.color = '#a8a8a8';
             }
         });
-        
+
+        // File validation
+        function validateFileSize(file, inputElement, infoElementId) {
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            if (file.size > maxSize) {
+                alert(`File "${file.name}" is too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum size is 10MB.`);
+                inputElement.value = '';
+                document.getElementById(infoElementId).textContent = 'No file selected';
+                document.getElementById(infoElementId).style.color = '#a8a8a8';
+                return false;
+            }
+            return true;
+        }
+
+        // Single candidate evaluation
+        function launchEvaluation() {
+            const resumeFile = document.getElementById('resumeFile').files[0];
+            const jobDescription = document.getElementById('jobDescription').value;
+            const jobDescriptionFile = document.getElementById('jobDescriptionFile').files[0];
+            
+            if (!resumeFile) {
+                alert('Please select a resume file to proceed.');
+                return;
+            }
+            
+            if (!jobDescription && !jobDescriptionFile) {
+                alert('Please either upload a job description file or paste the job description text to proceed.');
+                return;
+            }
+            
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('evaluateBtn').disabled = true;
+            
+            // Simulate AI analysis
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('results').style.display = 'block';
+                document.getElementById('evaluateBtn').disabled = false;
+                
+                // Generate sample results
+                document.getElementById('overallFit').textContent = Math.floor(Math.random() * 30 + 70) + '%';
+                document.getElementById('skillsMatch').textContent = Math.floor(Math.random() * 20 + 80) + '%';
+                document.getElementById('experienceFit').textContent = Math.floor(Math.random() * 30 + 60) + '%';
+            }, 3000);
+        }
+
+        // Bulk evaluation
         function launchBulkEvaluation() {
             const jobDescription = document.getElementById('bulkJobDescription').value;
             const jobDescriptionFile = document.getElementById('bulkJobDescriptionFile').files[0];
@@ -1094,17 +811,27 @@
                 
                 for (let i = 0; i < totalFiles; i++) {
                     const score = Math.floor(Math.random() * 40 + 60);
-                    const status = score >= 80 ? '🟢 Recommended' : score >= 65 ? '🟡 Maybe' : '🔴 Not Recommended';
-                    const statusClass = score >= 80 ? 'status-recommended' : score >= 65 ? 'status-maybe' : 'status-not-recommended';
+                    let status, statusClass;
+                    
+                    if (score >= 80) {
+                        status = 'Recommended';
+                        statusClass = 'status-recommended';
+                    } else if (score >= 65) {
+                        status = 'Maybe';
+                        statusClass = 'status-maybe';
+                    } else {
+                        status = 'Not Recommended';
+                        statusClass = 'status-not-recommended';
+                    }
                     
                     const candidateCard = document.createElement('div');
                     candidateCard.className = 'bulk-result-card';
                     candidateCard.innerHTML = `
                         <div>
-                            <div style="font-weight: 600; color: #e6e6e6; margin-bottom: 0.25rem;">Candidate ${i + 1}</div>
-                            <div style="color: #a8a8a8; font-size: 0.875rem;">Resume ${i + 1}.pdf</div>
+                            <div style="color: #e6e6e6; font-weight: 600; margin-bottom: 0.5rem;">Candidate ${i + 1}</div>
+                            <div style="color: #a8a8a8; font-size: 0.9rem;">${resumeFiles[i].name}</div>
                         </div>
-                        <div style="text-align: right;">
+                        <div style="display: flex; align-items: center; gap: 1rem;">
                             <div class="bulk-result-score">${score}%</div>
                             <div class="bulk-result-status ${statusClass}">${status}</div>
                         </div>
@@ -1116,13 +843,33 @@
                 const summary = document.getElementById('bulkSummary');
                 summary.innerHTML = `
                     <p><strong>Total Candidates Processed:</strong> ${totalFiles}</p>
-                    <p><strong>Top Performers:</strong> ${recommended} candidates with scores 80%+</p>
-                    <p><strong>Potential Candidates:</strong> ${maybe} candidates with scores 65-79%</p>
-                    <p><strong>Not Recommended:</strong> ${notRecommended} candidates below 65%</p>
-                    <p><strong>Recommendation:</strong> Focus on the top ${recommended} candidates for immediate interviews.</p>
+                    <p><strong>Recommendation Breakdown:</strong></p>
+                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                        <li><span style="color: #00d4aa;">Recommended (${recommended}):</span> Strong candidates for immediate interview consideration</li>
+                        <li><span style="color: #fdcb6e;">Maybe (${maybe}):</span> Potential candidates for further review</li>
+                        <li><span style="color: #ff6b6b;">Not Recommended (${notRecommended}):</span> Candidates who don't meet current requirements</li>
+                    </ul>
+                    <p style="margin-top: 1rem;"><strong>Next Steps:</strong> Focus on scheduling interviews with recommended candidates while reviewing 'maybe' candidates for potential fit.</p>
                 `;
-            }, 4000);
+            }, 3000);
         }
+
+        // Initialize page on load
+        window.addEventListener('load', function() {
+            console.log('IKF HR Platform loaded successfully!');
+            console.log('File upload areas are ready and clickable.');
+            
+            // Verify all file inputs are present
+            const fileInputs = ['resumeFile', 'jobDescriptionFile', 'bulkJobDescriptionFile', 'bulkResumeFiles'];
+            fileInputs.forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    console.log('✓ File input ready:', id);
+                } else {
+                    console.error('✗ File input missing:', id);
+                }
+            });
+        });
     </script>
 </body>
 </html>
