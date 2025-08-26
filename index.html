@@ -270,6 +270,69 @@
             background: #1a1a2e;
         }
         
+        /* File upload styling */
+        .file-upload-area {
+            border: 2px dashed #4facfe;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .file-upload-area:hover {
+            border-color: #00f2fe;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 172, 254, 0.2);
+        }
+        
+        .file-upload-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(79, 172, 254, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .file-upload-area:hover::before {
+            left: 100%;
+        }
+        
+        .file-upload-area i {
+            font-size: 3rem;
+            color: #4facfe;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        
+        .file-upload-area p {
+            color: #e6e6e6;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .file-upload-area .file-info {
+            color: #a8a8a8;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+        
+        .file-upload-area input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        
         .form-group small {
             color: #a8a8a8;
             font-size: 0.85rem;
@@ -620,13 +683,23 @@
                 
                 <div class="form-group">
                     <label for="resumeFile">Upload Candidate Resume:</label>
-                    <input type="file" id="resumeFile" accept=".pdf,.docx,.txt" required>
+                    <div class="file-upload-area" onclick="document.getElementById('resumeFile').click()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Click to upload resume (PDF, DOCX, TXT)</p>
+                        <span class="file-info" id="resumeFileInfo">No file selected</span>
+                    </div>
+                    <input type="file" id="resumeFile" accept=".pdf,.docx,.txt" required style="display: none;">
                     <small>Supported formats: PDF, DOCX, TXT</small>
                 </div>
                 
                 <div class="form-group">
                     <label for="jobDescription">Job Description (Upload file or paste text):</label>
-                    <input type="file" id="jobDescriptionFile" accept=".pdf,.docx,.txt" style="margin-bottom: 1rem;">
+                    <div class="file-upload-area" onclick="document.getElementById('jobDescriptionFile').click()" style="margin-bottom: 1rem;">
+                        <i class="fas fa-file-alt"></i>
+                        <p>Click to upload job description (PDF, DOCX, TXT)</p>
+                        <span class="file-info" id="jobFileInfo">No file selected</span>
+                    </div>
+                    <input type="file" id="jobDescriptionFile" accept=".pdf,.docx,.txt" style="display: none;">
                     <small style="margin-bottom: 1rem; display: block;">Or paste job description below:</small>
                     <textarea id="jobDescription" rows="6" placeholder="Paste the job description, requirements, skills needed, experience level, and responsibilities here..."></textarea>
                 </div>
@@ -698,7 +771,12 @@
                 <h3>Upload Job Description</h3>
                 <div class="form-group">
                     <label for="bulkJobDescription">Job Description (Upload file or paste text):</label>
-                    <input type="file" id="bulkJobDescriptionFile" accept=".pdf,.docx,.txt" style="margin-bottom: 1rem;">
+                    <div class="file-upload-area" onclick="document.getElementById('bulkJobDescriptionFile').click()" style="margin-bottom: 1rem;">
+                        <i class="fas fa-file-alt"></i>
+                        <p>Click to upload job description (PDF, DOCX, TXT)</p>
+                        <span class="file-info" id="bulkJobFileInfo">No file selected</span>
+                    </div>
+                    <input type="file" id="bulkJobDescriptionFile" accept=".pdf,.docx,.txt" style="display: none;">
                     <small style="margin-bottom: 1rem; display: block;">Or paste job description below:</small>
                     <textarea id="bulkJobDescription" rows="6" placeholder="Paste the job description, requirements, skills needed, experience level, and responsibilities here..."></textarea>
                 </div>
@@ -708,7 +786,12 @@
                 <h3>Upload Multiple Resumes</h3>
                 <div class="form-group">
                     <label for="bulkResumeFiles">Select Multiple Resume Files:</label>
-                    <input type="file" id="bulkResumeFiles" accept=".pdf,.docx,.txt" multiple required>
+                    <div class="file-upload-area" onclick="document.getElementById('bulkResumeFiles').click()">
+                        <i class="fas fa-folder-open"></i>
+                        <p>Click to select multiple resume files (PDF, DOCX, TXT)</p>
+                        <span class="file-info" id="bulkResumeFileInfo">No files selected</span>
+                    </div>
+                    <input type="file" id="bulkResumeFiles" accept=".pdf,.docx,.txt" multiple required style="display: none;">
                     <small>Supported formats: PDF, DOCX, TXT (Max 20 files, 10MB each)</small>
                 </div>
                 
@@ -843,17 +926,39 @@
         
 
         
-        // File size validation
+        // File info update handlers
         document.getElementById('resumeFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
+                document.getElementById('resumeFileInfo').textContent = `Selected: ${file.name}`;
+                document.getElementById('resumeFileInfo').style.color = '#00d4aa';
                 const fileSize = file.size / 1024 / 1024;
                 if (fileSize > 10) {
                     alert('File size should be less than 10MB');
                     this.value = '';
+                    document.getElementById('resumeFileInfo').textContent = 'No file selected';
+                    document.getElementById('resumeFileInfo').style.color = '#a8a8a8';
                 }
             }
         });
+        
+        document.getElementById('jobDescriptionFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                document.getElementById('jobFileInfo').textContent = `Selected: ${file.name}`;
+                document.getElementById('jobFileInfo').style.color = '#00d4aa';
+            }
+        });
+        
+        document.getElementById('bulkJobDescriptionFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                document.getElementById('bulkJobFileInfo').textContent = `Selected: ${file.name}`;
+                document.getElementById('bulkJobFileInfo').style.color = '#00d4aa';
+            }
+        });
+        
+        // File size validation
         
         // Bulk screening functionality
         document.getElementById('bulkResumeFiles').addEventListener('change', function(e) {
@@ -864,6 +969,10 @@
                     this.value = '';
                     return;
                 }
+                
+                // Update file info display
+                document.getElementById('bulkResumeFileInfo').textContent = `Selected: ${files.length} file(s)`;
+                document.getElementById('bulkResumeFileInfo').style.color = '#00d4aa';
                 
                 // Show file list
                 document.getElementById('bulkFileList').style.display = 'block';
@@ -878,6 +987,8 @@
                         alert(`File "${file.name}" is too large (${fileSize.toFixed(1)}MB). Maximum size is 10MB.`);
                         this.value = '';
                         document.getElementById('bulkFileList').style.display = 'none';
+                        document.getElementById('bulkResumeFileInfo').textContent = 'No files selected';
+                        document.getElementById('bulkResumeFileInfo').style.color = '#a8a8a8';
                         return;
                     }
                     
@@ -891,6 +1002,8 @@
                 }
             } else {
                 document.getElementById('bulkFileList').style.display = 'none';
+                document.getElementById('bulkResumeFileInfo').textContent = 'No files selected';
+                document.getElementById('bulkResumeFileInfo').style.color = '#a8a8a8';
             }
         });
         
