@@ -35,7 +35,7 @@ st.set_page_config(
 st.markdown(CompanyBranding.get_css_styles(), unsafe_allow_html=True)
 
 # HR-focused header
-st.markdown("""
+    st.markdown("""
 <div style="background: linear-gradient(135deg, #1e40af, #1e3a8a); color: white; padding: 2rem; border-radius: 0.75rem; margin-bottom: 2rem;">
     <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
         <div style="font-size: 3rem;">👥</div>
@@ -49,17 +49,17 @@ st.markdown("""
         <span style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem;">⚡ Fast Screening</span>
         <span style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem;">📊 Data-Driven</span>
         <span style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem;">🤖 AI-Powered</span>
+        </div>
     </div>
-</div>
-""", unsafe_allow_html=True)
-
+    """, unsafe_allow_html=True)
+    
 # Welcome message for HR users
 if 'first_visit' not in st.session_state:
     st.session_state.first_visit = True
     st.success("🎉 Welcome to IKF HR Candidate Screening Platform - Your AI-powered recruitment assistant!")
 
 # HR-focused sidebar
-with st.sidebar:
+    with st.sidebar:
     st.markdown("""
     <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1rem;">
         <div style="text-align: center; margin-bottom: 1rem;">
@@ -98,7 +98,7 @@ with st.sidebar:
     
     st.markdown("### 📚 HR Guidelines")
     with st.expander("🔧 How to Use", expanded=False):
-        st.markdown("""
+            st.markdown("""
         **Single Evaluation:**
         1. Upload candidate resume
         2. Select job opening
@@ -128,7 +128,7 @@ with st.sidebar:
     
     st.markdown("### 🏢 Company Information")
     company_info = CompanyBranding.get_company_info()
-    st.markdown(f"""
+        st.markdown(f"""
     <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem;">
         <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem;">
             <img src="{company_info['logo']}" alt="IKF Logo" style="height: 32px; width: auto; filter: brightness(0) invert(1);">
@@ -137,9 +137,9 @@ with st.sidebar:
         <p style="margin: 0.25rem 0; font-size: 0.875rem;"><strong>Website:</strong> <a href="{company_info['website']}" target="_blank">{company_info['website']}</a></p>
         <p style="margin: 0.25rem 0; font-size: 0.875rem;"><strong>Email:</strong> <a href="mailto:{company_info['email']}">{company_info['email']}</a></p>
         <p style="margin: 0.25rem 0; font-size: 0.875rem;"><strong>Phone:</strong> {company_info['phone']}</p>
-    </div>
-    """, unsafe_allow_html=True)
-
+        </div>
+        """, unsafe_allow_html=True)
+    
 # AI Personality Analysis Functions
 def analyze_candidate_personality(resume_text):
     """Analyze candidate personality and cultural fit using AI"""
@@ -251,27 +251,27 @@ if page == "Single Candidate Evaluation":
     st.markdown("---")
     
     # Compact hero section
-    st.markdown("""
+        st.markdown("""
     <div style="background: linear-gradient(135deg, #1e40af, #1e3a8a); color: white; border-radius: 0.75rem; padding: 2rem; margin: 1rem 0; position: relative; overflow: hidden;">
         <h1 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.75rem; position: relative; z-index: 2;">
             IKF Candidate Evaluation Platform
-        </h1>
+                </h1>
         <p style="font-size: 1rem; opacity: 0.9; margin-bottom: 1.5rem; position: relative; z-index: 2; line-height: 1.6;">
             Evaluate candidates with AI-powered insights for informed hiring decisions.
-        </p>
+                </p>
         <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; position: relative; z-index: 2;">
             <span style="background: #dcfce7; color: #059669; padding: 0.25rem 0.5rem; border-radius: 0.375rem; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">🎯 Smart Matching</span>
             <span style="background: #dbeafe; color: #1e40af; padding: 0.25rem 0.5rem; border-radius: 0.375rem; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">📊 Detailed Insights</span>
             <span style="background: #dcfce7; color: #059669; padding: 0.25rem 0.5rem; border-radius: 0.375rem; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">⚡ Fast Evaluation</span>
+            </div>
         </div>
-    </div>
-    """, unsafe_allow_html=True)
-    
+        """, unsafe_allow_html=True)
+        
     # File upload section
     st.markdown("### 📁 Candidate Resume Upload")
     col1, col2 = st.columns(2)
-    
-    with col1:
+        
+        with col1:
         st.markdown("#### Candidate Resume")
         resume_file = st.file_uploader(
             "Upload Candidate Resume (PDF, DOCX, TXT)",
@@ -290,14 +290,14 @@ if page == "Single Candidate Evaluation":
     # Manual job description input
     if not job_desc_file:
         st.markdown("### 📝 Additional Job Requirements")
-        job_description = st.text_area(
+                job_description = st.text_area(
             "Add specific requirements or criteria:",
             height=150,
             placeholder="Add specific skills, experience levels, or requirements for this job opening..."
-        )
-    else:
-        job_description = ""
-    
+                )
+            else:
+                        job_description = ""
+                    
     # Evaluation button
     if st.button("🚀 Launch Evaluation", type="primary", use_container_width=True):
         if resume_file and selected_job:
@@ -334,39 +334,39 @@ if page == "Single Candidate Evaluation":
             col1, col2, col3 = st.columns(3)
             
             with col1:
-                st.markdown("""
+            st.markdown("""
                 <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; text-align: center; transition: all 0.2s;">
                     <div style="font-size: 0.75rem; color: #475569; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Overall Fit</div>
                     <div style="font-size: 2rem; font-weight: 700; color: #1e40af; margin: 0.25rem 0;">87%</div>
                     <div style="background: #dcfce7; color: #059669; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 0.375rem; display: inline-block;">Strong Match</div>
-                </div>
-                """, unsafe_allow_html=True)
+            </div>
+            """, unsafe_allow_html=True)
             
             with col2:
-                st.markdown("""
+                            st.markdown("""
                 <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; text-align: center; transition: all 0.2s;">
                     <div style="font-size: 0.75rem; color: #475569; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Skills Match</div>
                     <div style="font-size: 2rem; font-weight: 700; color: #1e40af; margin: 0.25rem 0;">92%</div>
                     <div style="background: #dcfce7; color: #059669; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 0.375rem; display: inline-block;">Excellent</div>
-                </div>
-                """, unsafe_allow_html=True)
-            
+                            </div>
+                            """, unsafe_allow_html=True)
+                            
             with col3:
-                st.markdown("""
+        st.markdown("""
                 <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; text-align: center; transition: all 0.2s;">
                     <div style="font-size: 0.75rem; color: #475569; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Experience Fit</div>
                     <div style="font-size: 2rem; font-weight: 700; color: #1e40af; margin: 0.25rem 0;">78%</div>
                     <div style="background: #fef2f2; color: #dc2626; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 0.375rem; display: inline-block;">Good</div>
-                </div>
-                """, unsafe_allow_html=True)
-            
+        </div>
+        """, unsafe_allow_html=True)
+        
             # HR decision support
             st.markdown("### 🎯 HR Decision Support")
-            st.markdown("""
+        st.markdown("""
             <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; overflow: hidden;">
                 <div style="background: linear-gradient(135deg, #f8fafc, #f1f5f9); border-bottom: 1px solid #e2e8f0; padding: 1rem;">
                     <h4 style="margin: 0; color: #0f172a;">Candidate Assessment Report</h4>
-                </div>
+        </div>
                 <div style="padding: 1rem;">
                     <div style="margin-bottom: 1rem;">
                         <h5 style="color: #1e40af; margin-bottom: 0.25rem; font-size: 0.875rem;">🎯 Key Strengths</h5>
@@ -375,25 +375,25 @@ if page == "Single Candidate Evaluation":
                             <li>Relevant cloud experience and modern tech stack</li>
                             <li>Good educational background and certifications</li>
                         </ul>
-                    </div>
+                </div>
                     <div style="margin-bottom: 1rem;">
                         <h5 style="color: #d97706; margin-bottom: 0.25rem; font-size: 0.875rem;">⚠️ Areas of Concern</h5>
                         <ul style="color: #475569; line-height: 1.5; margin: 0; font-size: 0.875rem;">
                             <li>Could benefit from more DevOps experience</li>
                             <li>Missing specific database technologies mentioned</li>
                         </ul>
-                    </div>
+                </div>
                     <div>
                         <h5 style="color: #059669; margin-bottom: 0.25rem; font-size: 0.875rem;">💡 HR Recommendation</h5>
                         <p style="color: #475569; margin: 0; font-size: 0.875rem;"><strong>RECOMMENDED FOR INTERVIEW</strong> - This candidate shows strong potential and would be worth interviewing.</p>
-                    </div>
+                </div>
                 </div>
             </div>
             """, unsafe_allow_html=True)
-            
+        
             # 🎭 AI Personality Analysis Surprise!
             st.markdown("### 🎭 AI Personality & Cultural Fit Analysis")
-            st.markdown("""
+        st.markdown("""
             <div style="background: linear-gradient(135deg, #fdf2f8, #fce7f3); border: 1px solid #ec4899; border-radius: 0.75rem; padding: 1rem; margin: 1rem 0;">
                 <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
                     <span style="font-size: 1.5rem;">🧠</span>
@@ -401,10 +401,10 @@ if page == "Single Candidate Evaluation":
                 </div>
                 <p style="color: #be185d; margin: 0; font-size: 0.875rem;">
                     Our advanced AI analyzes personality traits, cultural fit, and predicts hiring success beyond just skills!
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
-            
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+        
             # Generate personality analysis
             sample_resume_text = "Sample resume content for analysis"
             personality_traits, cultural_indicators, success_metrics = analyze_candidate_personality(sample_resume_text)
@@ -418,32 +418,32 @@ if page == "Single Candidate Evaluation":
             col1, col2 = st.columns(2)
             
             with col1:
-                st.markdown(f"""
+            st.markdown(f"""
                 <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; border-left: 4px solid #ec4899;">
                     <h5 style="color: #ec4899; margin-bottom: 0.5rem; font-size: 0.875rem;">🌟 Key Strengths</h5>
                     <div style="margin-bottom: 0.5rem;">
                         <span style="font-size: 0.75rem; color: #475569;">Leadership:</span>
                         <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 0.25rem 0;">
                             <div style="background: #ec4899; height: 100%; width: {personality_traits['leadership']:.1%}; border-radius: 3px;"></div>
-                        </div>
+                    </div>
                     </div>
                     <div style="margin-bottom: 0.5rem;">
                         <span style="font-size: 0.75rem; color: #475569;">Teamwork:</span>
                         <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 0.25rem 0;">
                             <div style="background: #ec4899; height: 100%; width: {personality_traits['teamwork']:.1%}; border-radius: 3px;"></div>
-                        </div>
+                    </div>
                     </div>
                     <div>
                         <span style="font-size: 0.75rem; color: #475569;">Communication:</span>
                         <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 0.25rem 0;">
                             <div style="background: #ec4899; height: 100%; width: {personality_traits['communication']:.1%}; border-radius: 3px;"></div>
-                        </div>
-                    </div>
                 </div>
-                """, unsafe_allow_html=True)
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
             
             with col2:
-                st.markdown(f"""
+                    st.markdown(f"""
                 <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; border-left: 4px solid #8b5cf6;">
                     <h5 style="color: #8b5cf6; margin-bottom: 0.5rem; font-size: 0.875rem;">💡 Growth Areas</h5>
                     <div style="margin-bottom: 0.5rem;">
@@ -451,22 +451,22 @@ if page == "Single Candidate Evaluation":
                         <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 0.25rem 0;">
                             <div style="background: #8b5cf6; height: 100%; width: {personality_traits['innovation']:.1%}; border-radius: 3px;"></div>
                         </div>
-                    </div>
+                        </div>
                     <div style="margin-bottom: 0.5rem;">
                         <span style="font-size: 0.75rem; color: #475569;">Adaptability:</span>
                         <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 0.25rem 0;">
                             <div style="background: #8b5cf6; height: 100%; width: {personality_traits['adaptability']:.1%}; border-radius: 3px;"></div>
-                        </div>
                     </div>
+        </div>
                     <div>
                         <span style="font-size: 0.75rem; color: #475569;">Reliability:</span>
                         <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 0.25rem 0;">
                             <div style="background: #8b5cf6; height: 100%; width: {personality_traits['reliability']:.1%}; border-radius: 3px;"></div>
-                        </div>
-                    </div>
+            </div>
+            </div>
                 </div>
                 """, unsafe_allow_html=True)
-            
+        
             # Cultural fit analysis
             st.markdown("### 🏢 Cultural Fit & Team Compatibility")
             col1, col2 = st.columns(2)
@@ -479,8 +479,8 @@ if page == "Single Candidate Evaluation":
                         <span style="font-size: 0.75rem; color: #475569;">Values Alignment:</span>
                         <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 0.25rem 0;">
                             <div style="background: #10b981; height: 100%; width: {cultural_indicators['company_values_alignment']:.1%}; border-radius: 3px;"></div>
-                        </div>
-                    </div>
+                </div>
+            </div>
                     <div style="margin-bottom: 0.5rem;">
                         <span style="font-size: 0.75rem; color: #475569;">Work Style:</span>
                         <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 0.25rem 0;">
@@ -491,61 +491,61 @@ if page == "Single Candidate Evaluation":
                         <span style="font-size: 0.75rem; color: #475569;">Growth Mindset:</span>
                         <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 0.25rem 0;">
                             <div style="background: #10b981; height: 100%; width: {cultural_indicators['growth_mindset']:.1%}; border-radius: 3px;"></div>
-                        </div>
-                    </div>
                 </div>
-                """, unsafe_allow_html=True)
-            
+                </div>
+        </div>
+    """, unsafe_allow_html=True)
+    
             with col2:
-                st.markdown(f"""
+    st.markdown(f"""
                 <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; border-left: 4px solid #f59e0b;">
                     <h5 style="color: #f59e0b; margin-bottom: 0.5rem; font-size: 0.875rem;">🤝 Team Dynamics</h5>
                     <div style="margin-bottom: 0.5rem;">
                         <span style="font-size: 0.75rem; color: #475569;">Collaboration:</span>
                         <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 0.25rem 0;">
                             <div style="background: #f59e0b; height: 100%; width: {cultural_indicators['collaboration_preference']:.1%}; border-radius: 3px;"></div>
-                        </div>
-                    </div>
+        </div>
+    </div>
                     <div style="margin-bottom: 0.5rem;">
                         <span style="font-size: 0.75rem; color: #475569;">Integration Speed:</span>
                         <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 0.25rem 0;">
                             <div style="background: #f59e0b; height: 100%; width: {success_metrics['team_integration_speed']:.1%}; border-radius: 3px;"></div>
-                        </div>
-                    </div>
+        </div>
+                </div>
                     <div>
                         <span style="font-size: 0.75rem; color: #475569;">Team Chemistry:</span>
                         <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 0.25rem 0;">
                             <div style="background: #f59e0b; height: 100%; width: {personality_traits['teamwork']:.1%}; border-radius: 3px;"></div>
-                        </div>
-                    </div>
+            </div>
                 </div>
-                """, unsafe_allow_html=True)
-            
+            </div>
+            """, unsafe_allow_html=True)
+        
             # Predictive success metrics
             st.markdown("### 🔮 AI Predictive Success Analysis")
-            st.markdown("""
+    st.markdown("""
             <div style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border: 1px solid #0ea5e9; border-radius: 0.75rem; padding: 1rem; margin: 1rem 0;">
                 <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
                     <span style="font-size: 1.5rem;">🔮</span>
                     <h4 style="margin: 0; color: #0c4a6e; font-size: 1.125rem;">Future Success Predictions</h4>
-                </div>
+    </div>
                 <p style="color: #0369a1; margin: 0; font-size: 0.875rem;">
                     Our AI predicts long-term success, retention, and career growth potential!
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
-            
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
             # Success metrics display
             col1, col2, col3, col4 = st.columns(4)
             
             with col1:
-                st.markdown(f"""
+            st.markdown(f"""
                 <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; text-align: center; transition: all 0.2s;">
                     <div style="font-size: 0.75rem; color: #475569; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Retention</div>
                     <div style="font-size: 1.5rem; font-weight: 700; color: #10b981; margin: 0.25rem 0;">{success_metrics['retention_probability']:.1%}</div>
                     <div style="background: #dcfce7; color: #059669; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 0.375rem; display: inline-block;">High</div>
-                </div>
-                """, unsafe_allow_html=True)
+            </div>
+            """, unsafe_allow_html=True)
             
             with col2:
                 st.markdown(f"""
@@ -557,31 +557,31 @@ if page == "Single Candidate Evaluation":
                 """, unsafe_allow_html=True)
             
             with col3:
-                st.markdown(f"""
+                    st.markdown(f"""
                 <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; text-align: center; transition: all 0.2s;">
                     <div style="font-size: 0.75rem; color: #475569; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Integration</div>
                     <div style="font-size: 1.5rem; font-weight: 700; color: #f59e0b; margin: 0.25rem 0;">{success_metrics['team_integration_speed']:.1%}</div>
                     <div style="background: #fef3c7; color: #d97706; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 0.375rem; display: inline-block;">Good</div>
-                </div>
-                """, unsafe_allow_html=True)
+                    </div>
+                    """, unsafe_allow_html=True)
             
             with col4:
-                st.markdown(f"""
+                    st.markdown(f"""
                 <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; text-align: center; transition: all 0.2s;">
                     <div style="font-size: 0.75rem; color: #475569; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Growth</div>
                     <div style="font-size: 1.5rem; font-weight: 700; color: #8b5cf6; margin: 0.25rem 0;">{success_metrics['career_growth_potential']:.1%}</div>
                     <div style="background: #f3e8ff; color: #7c3aed; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 0.375rem; display: inline-block;">High</div>
-                </div>
-                """, unsafe_allow_html=True)
+                    </div>
+                    """, unsafe_allow_html=True)
             
             # AI personality insights
             st.markdown("### 🤖 AI Personality Insights")
-            st.markdown("""
+        st.markdown("""
             <div style="background: linear-gradient(135deg, #fdf2f8, #fce7f3); border: 1px solid #ec4899; border-radius: 0.75rem; padding: 1rem; margin: 1rem 0;">
                 <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
                     <span style="font-size: 1.5rem;">🧠</span>
                     <h4 style="margin: 0; color: #831843; font-size: 1.125rem;">Advanced AI Analysis Complete</h4>
-                </div>
+        </div>
                 <p style="color: #be185d; margin: 0; font-size: 0.875rem;">
                     Our AI has analyzed personality traits, cultural fit, and predicted long-term success potential!
                 </p>
@@ -603,20 +603,20 @@ if page == "Single Candidate Evaluation":
                     <div style="display: flex; align-items: center; gap: 0.5rem;">
                         <span style="font-size: 1.25rem;">{'🧠' if i == 0 else '🏢' if i == 1 else '🔮'}</span>
                         <p style="color: #475569; margin: 0; font-size: 0.875rem; line-height: 1.4;">{feedback}</p>
-                    </div>
                 </div>
-                """, unsafe_allow_html=True)
+            </div>
+            """, unsafe_allow_html=True)
             
-        else:
+                else:
             st.error("❌ Please select a job opening and upload a candidate resume to proceed.")
-            st.markdown("""
+        st.markdown("""
             <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem;">
                 <p style="color: #475569; margin: 0; font-size: 0.875rem;">
                     <strong>Missing information?</strong> Ensure you have selected a job opening and uploaded a candidate resume 
                     to proceed with the evaluation.
                 </p>
-            </div>
-            """, unsafe_allow_html=True)
-
+    </div>
+    """, unsafe_allow_html=True)
+    
 # Footer
 st.markdown(CompanyBranding.get_footer_html(), unsafe_allow_html=True)

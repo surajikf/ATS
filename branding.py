@@ -56,7 +56,7 @@ class CompanyBranding:
             <p style="margin: 0.5rem 0 0 0; font-size: 1.125rem; opacity: 0.9;">{CompanyBranding.COMPANY_DESCRIPTION}</p>
             <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; opacity: 0.8;">{CompanyBranding.COMPANY_FULL_NAME}</p>
         </div>
-        """
+    """
     
     @staticmethod
     def get_sidebar_header_html():
@@ -69,7 +69,7 @@ class CompanyBranding:
             <h3 style="margin: 0; font-size: 1.5rem; font-weight: 600;">{CompanyBranding.COMPANY_NAME}</h3>
             <p style="margin: 0.25rem 0 0 0; font-size: 0.875rem; opacity: 0.9;">{CompanyBranding.COMPANY_DESCRIPTION}</p>
         </div>
-        """
+    """
     
     @staticmethod
     def get_footer_html():
@@ -82,7 +82,7 @@ class CompanyBranding:
             <p style="margin: 0; color: {CompanyBranding.TEXT_SECONDARY}; font-size: 0.875rem;">&copy; 2024 {CompanyBranding.COMPANY_FULL_NAME}. All rights reserved.</p>
             <p style="margin: 0.25rem 0 0 0; color: {CompanyBranding.TEXT_SECONDARY}; font-size: 0.75rem;">Advanced Talent Screening & AI Solutions</p>
         </div>
-        """
+    """
     
     @staticmethod
     def get_css_styles():
