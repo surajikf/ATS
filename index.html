@@ -277,10 +277,11 @@
             padding: 2rem;
             text-align: center;
             background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
-            cursor: pointer;
+            cursor: pointer !important;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            user-select: none;
         }
         
         .file-upload-area:hover {
@@ -317,6 +318,25 @@
             font-size: 1.1rem;
             margin-bottom: 0.5rem;
             font-weight: 500;
+        }
+        
+        .file-upload-area::after {
+            content: '📁 Click to Browse Files';
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            color: #0f0f23;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+        
+        .file-upload-area:hover::after {
+            opacity: 1;
         }
         
         .file-upload-area .file-info {
@@ -683,7 +703,7 @@
                 
                 <div class="form-group">
                     <label for="resumeFile">Upload Candidate Resume:</label>
-                    <div class="file-upload-area" onclick="document.getElementById('resumeFile').click()">
+                    <div class="file-upload-area" onclick="triggerFileUpload('resumeFile')">
                         <i class="fas fa-cloud-upload-alt"></i>
                         <p>Click to upload resume (PDF, DOCX, TXT)</p>
                         <span class="file-info" id="resumeFileInfo">No file selected</span>
@@ -694,7 +714,7 @@
                 
                 <div class="form-group">
                     <label for="jobDescription">Job Description (Upload file or paste text):</label>
-                    <div class="file-upload-area" onclick="document.getElementById('jobDescriptionFile').click()" style="margin-bottom: 1rem;">
+                    <div class="file-upload-area" onclick="triggerFileUpload('jobDescriptionFile')" style="margin-bottom: 1rem;">
                         <i class="fas fa-file-alt"></i>
                         <p>Click to upload job description (PDF, DOCX, TXT)</p>
                         <span class="file-info" id="jobFileInfo">No file selected</span>
@@ -771,7 +791,7 @@
                 <h3>Upload Job Description</h3>
                 <div class="form-group">
                     <label for="bulkJobDescription">Job Description (Upload file or paste text):</label>
-                    <div class="file-upload-area" onclick="document.getElementById('bulkJobDescriptionFile').click()" style="margin-bottom: 1rem;">
+                    <div class="file-upload-area" onclick="triggerFileUpload('bulkJobDescriptionFile')" style="margin-bottom: 1rem;">
                         <i class="fas fa-file-alt"></i>
                         <p>Click to upload job description (PDF, DOCX, TXT)</p>
                         <span class="file-info" id="bulkJobFileInfo">No file selected</span>
@@ -786,7 +806,7 @@
                 <h3>Upload Multiple Resumes</h3>
                 <div class="form-group">
                     <label for="bulkResumeFiles">Select Multiple Resume Files:</label>
-                    <div class="file-upload-area" onclick="document.getElementById('bulkResumeFiles').click()">
+                    <div class="file-upload-area" onclick="triggerFileUpload('bulkResumeFiles')">
                         <i class="fas fa-folder-open"></i>
                         <p>Click to select multiple resume files (PDF, DOCX, TXT)</p>
                         <span class="file-info" id="bulkResumeFileInfo">No files selected</span>
@@ -925,6 +945,32 @@
         }
         
 
+        
+        // File upload trigger function
+        function triggerFileUpload(inputId) {
+            const fileInput = document.getElementById(inputId);
+            if (fileInput) {
+                console.log('Triggering file upload for:', inputId);
+                fileInput.click();
+            } else {
+                console.error('File input not found:', inputId);
+                alert('Error: File input not found. Please refresh the page.');
+            }
+        }
+        
+        // Test file upload functionality on page load
+        window.addEventListener('load', function() {
+            console.log('Page loaded, checking file inputs...');
+            const fileInputs = ['resumeFile', 'jobDescriptionFile', 'bulkJobDescriptionFile', 'bulkResumeFiles'];
+            fileInputs.forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    console.log('✓ File input found:', id);
+                } else {
+                    console.error('✗ File input missing:', id);
+                }
+            });
+        });
         
         // File info update handlers
         document.getElementById('resumeFile').addEventListener('change', function(e) {
