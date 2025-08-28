@@ -13,7 +13,7 @@
             box-sizing: border-box;
         }
 
-        body {
+        body { 
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
@@ -25,9 +25,9 @@
             margin: 0 auto;
             padding: 20px;
         }
-
-        .header {
-            text-align: center;
+        
+        .header { 
+            text-align: center; 
             margin-bottom: 40px;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -35,16 +35,16 @@
             padding: 30px;
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
-
-        .header h1 {
+        
+        .header h1 { 
             color: white;
-            font-size: 2.5rem;
+            font-size: 2.5rem; 
             font-weight: 700;
             margin-bottom: 10px;
             text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-
-        .header p {
+        
+        .header p { 
             color: rgba(255, 255, 255, 0.9);
             font-size: 1.1rem;
             font-weight: 400;
@@ -68,7 +68,7 @@
             font-size: 1.3rem;
             font-weight: 600;
             margin-bottom: 15px;
-            display: flex;
+            display: flex; 
             align-items: center;
             gap: 10px;
         }
@@ -82,13 +82,13 @@
             border-radius: 12px;
             padding: 30px;
             text-align: center;
-            cursor: pointer;
+            cursor: pointer; 
             transition: all 0.3s ease;
             background: #f7fafc;
             position: relative;
             overflow: hidden;
         }
-
+        
         .file-upload-area:hover {
             border-color: #667eea;
             background: #edf2f7;
@@ -193,7 +193,7 @@
             color: white;
             padding: 8px 16px;
             border-radius: 20px;
-            font-weight: 600;
+            font-weight: 600; 
             font-size: 1.1rem;
         }
 
@@ -219,7 +219,7 @@
         }
 
         .detail-value {
-            font-size: 1rem;
+            font-size: 1rem; 
             color: #2d3748;
             font-weight: 600;
         }
@@ -483,7 +483,15 @@
                         availability: extractAvailability(resumeData) || 'Not Mentioned',
                         currentCTC: extractCurrentCTC(resumeData) || 'Not Mentioned',
                         expectedCTC: extractExpectedCTC(resumeData) || 'Not Mentioned',
-                        concerns: identifyConcerns(resumeData) || []
+                        concerns: identifyConcerns(resumeData) || [],
+                        // Additional HR Criteria
+                        educationLevel: extractEducationLevel(resumeData) || 'Not Mentioned',
+                        experienceYears: extractExperienceYears(resumeData) || 'Not Mentioned',
+                        noticePeriod: extractNoticePeriod(resumeData) || 'Not Mentioned',
+                        certifications: extractCertifications(resumeData) || [],
+                        languages: extractLanguages(resumeData) || [],
+                        workAuthorization: extractWorkAuthorization(resumeData) || 'Not Mentioned',
+                        relocationWillingness: extractRelocationWillingness(resumeData) || 'Not Mentioned'
                     };
                     
                     // Calculate match score with job description comparison
@@ -550,12 +558,12 @@
                         <h3 style="color: #38a169; margin-bottom: 10px;">🚀 Strong Matches</h3>
                         <div style="font-size: 2rem; font-weight: bold; color: #38a169;">${strongCandidates.length}</div>
                         <small style="color: #718096;">80%+ Match</small>
-                    </div>
+                        </div>
                     <div style="background: #fef5e7; border: 2px solid #ed8936; border-radius: 12px; padding: 20px; text-align: center;">
                         <h3 style="color: #dd6b20; margin-bottom: 10px;">✅ Good Matches</h3>
                         <div style="font-size: 2rem; font-weight: bold; color: #dd6b20;">${goodCandidates.length}</div>
                         <small style="color: #718096;">70-79% Match</small>
-                    </div>
+                        </div>
                     <div style="background: #fef8e7; border: 2px solid #ecc94b; border-radius: 12px; padding: 20px; text-align: center;">
                         <h3 style="color: #d69e2e; margin-bottom: 10px;">🟡 Moderate</h3>
                         <div style="font-size: 2rem; font-weight: bold; color: #d69e2e;">${moderateCandidates.length}</div>
@@ -565,9 +573,9 @@
                         <h3 style="color: #e53e3e; margin-bottom: 10px;">⚠️ Needs Review</h3>
                         <div style="font-size: 2rem; font-weight: bold; color: #e53e3e;">${weakCandidates.length}</div>
                         <small style="color: #718096;">< 60% Match</small>
+                        </div>
                     </div>
-                </div>
-                
+                    
                 <div style="background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 30px;">
                     <h3 style="color: #4a5568; margin-bottom: 15px; text-align: center;">📋 Resume Analysis Summary</h3>
                     <p style="color: #718096; line-height: 1.6; text-align: center; margin-bottom: 20px;">
@@ -583,7 +591,7 @@
                             <input type="text" id="candidateSearch" placeholder="Search by name, skills, location..." 
                                    style="width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.9rem;"
                                    onkeyup="filterCandidates()">
-                        </div>
+                            </div>
                         <div>
                             <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #4a5568;">Filter by Match Score:</label>
                             <select id="scoreFilter" style="width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.9rem;" onchange="filterCandidates()">
@@ -592,14 +600,14 @@
                                 <option value="70">70%+ (Good)</option>
                                 <option value="60">60%+ (Moderate)</option>
                             </select>
-                        </div>
-                        <div>
+                            </div>
+                            <div>
                             <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #4a5568;">Filter by Location:</label>
                             <select id="locationFilter" style="width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.9rem;" onchange="filterCandidates()">
                                 <option value="">All Locations</option>
                                 ${[...new Set(results.map(r => r.location).filter(l => l !== 'Not Mentioned'))].map(loc => `<option value="${loc}">${loc}</option>`).join('')}
                             </select>
-                        </div>
+                            </div>
                         <div>
                             <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #4a5568;">Sort By:</label>
                             <select id="sortFilter" style="width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.9rem;" onchange="filterCandidates()">
@@ -695,8 +703,8 @@
             html += `
                             </tbody>
                         </table>
-                    </div>
-                </div>
+                        </div>
+                        </div>
             `;
             
             return html;
@@ -709,15 +717,15 @@
                          <div>
                              <div class="candidate-name">${candidate.name}</div>
                              <div style="font-size: 0.9rem; color: #718096; margin-top: 5px; font-style: italic;">📄 ${candidate.fileName}</div>
-                         </div>
+                        </div>
                          <div class="match-score">${candidate.matchScore > 0 ? candidate.matchScore + '% Match' : 'Pending Analysis'}</div>
-                     </div>
+                    </div>
                     
                     <div class="candidate-details">
                         <div class="detail-item">
                             <div class="detail-label">Gender</div>
                             <div class="detail-value">${candidate.gender}</div>
-                        </div>
+                            </div>
                         <div class="detail-item">
                             <div class="detail-label">Location</div>
                             <div class="detail-value">${candidate.location}</div>
@@ -725,35 +733,35 @@
                         <div class="detail-item">
                             <div class="detail-label">Profile Stability</div>
                             <div class="detail-value">${candidate.profileStability}</div>
-                        </div>
+                    </div>
                         <div class="detail-item">
                             <div class="detail-label">Availability</div>
                             <div class="detail-value">${candidate.availability}</div>
-                        </div>
+                </div>
                         <div class="detail-item">
                             <div class="detail-label">Current CTC</div>
                             <div class="detail-value">${candidate.currentCTC}</div>
-                        </div>
+            </div>
                         <div class="detail-item">
                             <div class="detail-label">Expected CTC</div>
                             <div class="detail-value">${candidate.expectedCTC}</div>
-                        </div>
-                    </div>
-                    
+        </div>
+            </div>
+            
                                          <div class="skills-section">
                          <h4><i class="fas fa-star"></i> Key Skills (Relevant to JD)</h4>
                          <div class="skills-grid">
                              ${candidate.keySkills.length > 0 ? candidate.keySkills.map(skill => `<span class="skill-tag">${skill}</span>`).join('') : '<span style="color: #718096; font-style: italic; padding: 10px;">No skills information available</span>'}
-                         </div>
-                     </div>
-                     
+                </div>
+            </div>
+            
                      <div class="concerns-section">
                          <h4><i class="fas fa-exclamation-triangle"></i> Areas of Concern</h4>
                          <div class="skills-grid">
                              ${candidate.concerns.length > 0 ? candidate.concerns.map(concern => `<span class="concern-tag">${concern}</span>`).join('') : '<span style="color: #718096; font-style: italic; padding: 10px;">No concerns identified</span>'}
-                         </div>
-                     </div>
-                    
+                </div>
+            </div>
+            
                                          <div class="recommendation">
                          <h4><i class="fas fa-lightbulb"></i> Recruiter's Recommendation</h4>
                          <p><strong>${candidate.recommendation}</strong></p>
@@ -774,8 +782,8 @@
                              <button onclick="addToShortlist('${candidate.name}')" style="background: #ed8936; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
                                  <i class="fas fa-star"></i> Add to Shortlist
                              </button>
-                         </div>
-                     </div>
+            </div>
+                </div>
                 </div>
             `;
         }
@@ -1169,7 +1177,7 @@
                         )
                     );
                     skillScore = (matchedSkills.length / Math.max(resumeData.keySkills.length, jobSkills.length)) * 40;
-                } else {
+            } else {
                     skillScore = Math.min(resumeData.keySkills.length * 2, 40);
                 }
                 score += skillScore;
@@ -1295,6 +1303,149 @@
             return 'Needs Improvement - Consider for Future';
         }
 
+        // Additional HR Screening Criteria Functions
+        function extractEducationLevel(text) {
+            const educationPatterns = {
+                'PhD/Doctorate': /\b(?:phd|doctorate|doctor|ph\.d|dphil)\b/i,
+                'Masters': /\b(?:masters?|ms|m\.s|mba|m\.b\.a|mca|m\.c\.a|mtech|m\.tech|m\.e|me)\b/i,
+                'Bachelors': /\b(?:bachelors?|bs|b\.s|btech|b\.tech|b\.e|be|bca|b\.c\.a|bsc|b\.sc|bcom|b\.com)\b/i,
+                'Diploma': /\b(?:diploma|polytechnic|iti)\b/i,
+                'High School': /\b(?:high school|hsc|12th|intermediate|senior secondary)\b/i
+            };
+            
+            for (const [level, pattern] of Object.entries(educationPatterns)) {
+                if (pattern.test(text)) {
+                    return level;
+                }
+            }
+            return 'Not Mentioned';
+        }
+
+        function extractExperienceYears(text) {
+            const experiencePatterns = [
+                /\b(\d+(?:\.\d+)?)\s*(?:years?|yrs?)\s*(?:of\s+)?(?:experience|exp|work)\b/i,
+                /\b(?:experience|exp|work)\s*(?:of\s+)?(\d+(?:\.\d+)?)\s*(?:years?|yrs?)\b/i,
+                /\b(\d+(?:\.\d+)?)\s*(?:years?|yrs?)\s*(?:in\s+)?(?:industry|field|domain)\b/i
+            ];
+            
+            for (const pattern of experiencePatterns) {
+                const match = text.match(pattern);
+                if (match && match[1]) {
+                    const years = parseFloat(match[1]);
+                    if (years > 0 && years < 50) {
+                        return `${years} years`;
+                    }
+                }
+            }
+            return 'Not Mentioned';
+        }
+
+        function extractNoticePeriod(text) {
+            const noticePatterns = [
+                /\b(?:notice period|notice|serving notice)\s*(?:of\s+)?(\d+(?:\.\d+)?)\s*(?:days?|weeks?|months?)\b/i,
+                /\b(\d+(?:\.\d+)?)\s*(?:days?|weeks?|months?)\s*(?:notice|notice period)\b/i,
+                /\b(?:immediate|ready|available)\s+(?:to\s+)?(?:join|start|relieve)\b/i,
+                /\b(?:can\s+)?(?:join|start|relieve)\s+(?:in\s+)?(\d+(?:\.\d+)?)\s*(?:days?|weeks?|months?)\b/i
+            ];
+            
+            for (const pattern of noticePatterns) {
+                const match = text.match(pattern);
+                if (match && match[1]) {
+                    const period = parseFloat(match[1]);
+                    if (period > 0 && period < 365) {
+                        return `${period} days notice`;
+                    }
+                }
+            }
+            
+            // Check for immediate availability
+            if (/\b(?:immediate|ready|available|no notice|serving notice)\b/i.test(text)) {
+                return 'Immediate';
+            }
+            
+            return 'Not Mentioned';
+        }
+
+        function extractCertifications(text) {
+            const certPatterns = [
+                /\b(?:certified|certification|certificate)\s+(?:in\s+)?([A-Za-z\s&]+(?:certification|certificate|certified))\b/gi,
+                /\b([A-Za-z\s&]+(?:certification|certificate|certified))\b/gi,
+                /\b(?:aws|azure|google cloud|microsoft|oracle|cisco|comptia|pmi|scrum|agile)\s+(?:certified|certification)\b/gi
+            ];
+            
+            const certifications = [];
+            for (const pattern of certPatterns) {
+                let match;
+                while ((match = pattern.exec(text)) !== null) {
+                    const cert = match[1] || match[0];
+                    if (cert && cert.length > 3 && !certifications.includes(cert)) {
+                        certifications.push(cert.trim());
+                    }
+                }
+            }
+            
+            return certifications.length > 0 ? certifications : ['No certifications mentioned'];
+        }
+
+        function extractLanguages(text) {
+            const languagePatterns = [
+                /\b(?:english|hindi|spanish|french|german|chinese|japanese|arabic|russian|portuguese|italian|korean)\b/gi,
+                /\b(?:fluent|native|proficient|intermediate|basic)\s+(?:in\s+)?([A-Za-z]+)\b/gi,
+                /\b([A-Za-z]+)\s+(?:fluent|native|proficient|intermediate|basic)\b/gi
+            ];
+            
+            const languages = [];
+            for (const pattern of languagePatterns) {
+                let match;
+                while ((match = pattern.exec(text)) !== null) {
+                    const lang = match[1] || match[0];
+                    if (lang && lang.length > 2 && !languages.includes(lang.toLowerCase())) {
+                        languages.push(lang.toLowerCase());
+                    }
+                }
+            }
+            
+            return languages.length > 0 ? languages : ['Not mentioned'];
+        }
+
+        function extractWorkAuthorization(text) {
+            const authPatterns = [
+                /\b(?:work permit|work visa|green card|citizenship|permanent resident|pr)\b/gi,
+                /\b(?:authorized|eligible|legally)\s+(?:to\s+)?(?:work|employment)\b/gi,
+                /\b(?:no\s+)?(?:sponsorship|sponsor)\s+(?:required|needed)\b/gi
+            ];
+            
+            for (const pattern of authPatterns) {
+                if (pattern.test(text)) {
+                    if (/\b(?:no\s+)?(?:sponsorship|sponsor)\s+(?:required|needed)\b/gi.test(text)) {
+                        return 'No sponsorship required';
+                    }
+                    return 'Work authorization available';
+                }
+            }
+            
+            return 'Not mentioned';
+        }
+
+        function extractRelocationWillingness(text) {
+            const relocationPatterns = [
+                /\b(?:willing|ready|open|available)\s+(?:to\s+)?(?:relocate|move|travel)\b/gi,
+                /\b(?:relocation|relocate|move)\s+(?:willing|ready|open|available)\b/gi,
+                /\b(?:remote|work from home|wfh|hybrid|flexible)\s+(?:work|job|position)\b/gi
+            ];
+            
+            for (const pattern of relocationPatterns) {
+                if (pattern.test(text)) {
+                    if (/\b(?:remote|work from home|wfh)\b/gi.test(text)) {
+                        return 'Remote work preferred';
+                    }
+                    return 'Willing to relocate';
+                }
+            }
+            
+            return 'Not mentioned';
+        }
+
         // Smart action functions
         function exportCandidateData(candidateName) {
             const candidate = window.currentResults?.find(c => c.name === candidateName);
@@ -1342,6 +1493,12 @@ Gender: ${candidate.gender}
 Location: ${candidate.location}
 Availability: ${candidate.availability}
 
+EDUCATION & EXPERIENCE
+${'-'.repeat(30)}
+Education Level: ${candidate.educationLevel || 'Not Mentioned'}
+Total Experience: ${candidate.experienceYears || 'Not Mentioned'}
+Notice Period: ${candidate.noticePeriod || 'Not Mentioned'}
+
 PROFESSIONAL ASSESSMENT
 ${'-'.repeat(30)}
 Profile Stability: ${candidate.profileStability}
@@ -1351,6 +1508,23 @@ ${'-'.repeat(30)}
 ${candidate.keySkills && candidate.keySkills.length > 0 
     ? candidate.keySkills.map(skill => `• ${skill}`).join('\n')
     : 'No skills information available'}
+
+CERTIFICATIONS
+${'-'.repeat(30)}
+${candidate.certifications && candidate.certifications.length > 0 
+    ? candidate.certifications.map(cert => `• ${cert}`).join('\n')
+    : 'No certifications mentioned'}
+
+LANGUAGES
+${'-'.repeat(30)}
+${candidate.languages && candidate.languages.length > 0 
+    ? candidate.languages.map(lang => `• ${lang}`).join('\n')
+    : 'Not mentioned'}
+
+WORK AUTHORIZATION & RELOCATION
+${'-'.repeat(30)}
+Work Authorization: ${candidate.workAuthorization || 'Not mentioned'}
+Relocation: ${candidate.relocationWillingness || 'Not mentioned'}
 
 COMPENSATION DETAILS
 ${'-'.repeat(30)}
@@ -1460,8 +1634,8 @@ This analysis is based on AI-powered resume screening technology.`;
                             </button>
                         </div>
                     `).join('')}
-                </div>
-            `;
+                        </div>
+                    `;
         }
         
         function removeFromShortlist(candidateName) {
