@@ -365,10 +365,10 @@
         </div>
 
         <div class="results-section" id="resultsSection">
-            <div class="loading" id="loadingSection">
-                <i class="fas fa-spinner"></i>
-                <p>Analyzing resumes with AI-powered screening...</p>
-            </div>
+                         <div class="loading" id="loadingSection">
+                 <i class="fas fa-spinner"></i>
+                 <p>Reading and analyzing resume content...</p>
+             </div>
             
             <div id="resultsContent" style="display: none;">
                 <!-- Results will be populated here -->
@@ -425,37 +425,40 @@
             }, 2000);
         }
 
-        function processScreeningResults(jobFile, resumeFiles) {
+        async function processScreeningResults(jobFile, resumeFiles) {
             // Hide loading, show results
             document.getElementById('loadingSection').style.display = 'none';
             document.getElementById('resultsContent').style.display = 'block';
             document.getElementById('screeningBtn').disabled = false;
 
-            // Generate mock results based on the optimized prompt
-            const results = generateMockResults(resumeFiles);
+            // Actually parse and analyze the resume files
+            const results = await parseResumeFiles(resumeFiles);
             displayResults(results);
         }
 
-        function generateMockResults(resumeFiles) {
+        async function parseResumeFiles(resumeFiles) {
             const results = [];
             
             for (let i = 0; i < resumeFiles.length; i++) {
                 const file = resumeFiles[i];
                 const candidateName = file.name.replace(/\.[^/.]+$/, ''); // Remove file extension
                 
+                // Parse the actual resume file content
+                const resumeData = await parseResumeContent(file);
+                
                 results.push({
                     name: candidateName,
-                    fileName: file.name, // Keep original filename for reference
-                    matchScore: 0, // Will be calculated based on actual analysis
-                    gender: 'Not Mentioned',
-                    location: 'Not Mentioned',
-                    profileStability: 'Not Mentioned',
-                    keySkills: [],
-                    availability: 'Not Mentioned',
-                    currentCTC: 'Not Mentioned',
-                    expectedCTC: 'Not Mentioned',
-                    concerns: [],
-                    recommendation: 'Analysis Required'
+                    fileName: file.name,
+                    matchScore: calculateMatchScore(resumeData),
+                    gender: extractGender(resumeData),
+                    location: extractLocation(resumeData),
+                    profileStability: analyzeProfileStability(resumeData),
+                    keySkills: extractSkills(resumeData),
+                    availability: extractAvailability(resumeData),
+                    currentCTC: extractCurrentCTC(resumeData),
+                    expectedCTC: extractExpectedCTC(resumeData),
+                    concerns: identifyConcerns(resumeData),
+                    recommendation: generateRecommendation(resumeData)
                 });
             }
             
@@ -606,6 +609,204 @@
                     </div>
                 </div>
             `;
+        }
+
+        // Resume parsing functions
+        function parseResumeContent(file) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const content = e.target.result;
+                    resolve(content);
+                };
+                reader.readAsText(file);
+            });
+        }
+
+        function extractGender(text) {
+            const genderPatterns = {
+                male: /\b(male|m|he|him|his|gentleman|guy)\b/i,
+                female: /\b(female|f|she|her|hers|lady|woman)\b/i
+            };
+            
+            for (const [gender, pattern] of Object.entries(genderPatterns)) {
+                if (pattern.test(text)) {
+                    return gender.charAt(0).toUpperCase() + gender.slice(1);
+                }
+            }
+            return 'Not Mentioned';
+        }
+
+        function extractLocation(text) {
+            // Common city patterns
+            const cityPattern = /\b(Mumbai|Delhi|Bangalore|Hyderabad|Chennai|Pune|Kolkata|Ahmedabad|Jaipur|Surat|Lucknow|Kanpur|Nagpur|Indore|Thane|Bhopal|Visakhapatnam|Pimpri|Patna|Vadodara|Ghaziabad|Ludhiana|Agra|Nashik|Ranchi|Faridabad|Meerut|Rajkot|Kalyan|Vasai|Varanasi|Srinagar|Aurangabad|Navi Mumbai|Solapur|Kolhapur|Shimla|Dehradun|Gurgaon|Noida|Greater Noida|Faridabad|Gurugram)\b/i;
+            
+            const match = text.match(cityPattern);
+            if (match) {
+                return match[0];
+            }
+            
+            // Look for state patterns
+            const statePattern = /\b(Maharashtra|Delhi|Karnataka|Telangana|Tamil Nadu|Uttar Pradesh|West Bengal|Gujarat|Rajasthan|Punjab|Haryana|Bihar|Madhya Pradesh|Andhra Pradesh|Jharkhand|Chhattisgarh|Uttarakhand|Himachal Pradesh|Assam|Odisha|Kerala|Jammu and Kashmir|Manipur|Meghalaya|Nagaland|Tripura|Arunachal Pradesh|Mizoram|Sikkim|Goa)\b/i;
+            
+            const stateMatch = text.match(statePattern);
+            if (stateMatch) {
+                return stateMatch[0];
+            }
+            
+            return 'Not Mentioned';
+        }
+
+        function analyzeProfileStability(text) {
+            // Look for job duration patterns
+            const durationPattern = /\b(\d+)\s*(years?|yrs?|months?|mos?)\b/gi;
+            const durations = [];
+            let match;
+            
+            while ((match = durationPattern.exec(text)) !== null) {
+                const value = parseInt(match[1]);
+                const unit = match[2].toLowerCase();
+                if (unit.includes('year') || unit.includes('yr')) {
+                    durations.push(value);
+                } else if (unit.includes('month') || unit.includes('mo')) {
+                    durations.push(value / 12);
+                }
+            }
+            
+            if (durations.length === 0) return 'Not Mentioned';
+            
+            const avgDuration = durations.reduce((a, b) => a + b, 0) / durations.length;
+            
+            if (avgDuration >= 3) return 'Stable';
+            if (avgDuration >= 1.5) return 'Moderate';
+            return 'Frequent Changes';
+        }
+
+        function extractSkills(text) {
+            const commonSkills = [
+                'JavaScript', 'Python', 'Java', 'C++', 'C#', 'PHP', 'Ruby', 'Go', 'Rust', 'Swift',
+                'React', 'Angular', 'Vue.js', 'Node.js', 'Express.js', 'Django', 'Flask', 'Laravel',
+                'MySQL', 'PostgreSQL', 'MongoDB', 'Redis', 'Oracle', 'SQL Server',
+                'AWS', 'Azure', 'Google Cloud', 'Docker', 'Kubernetes', 'Jenkins', 'Git',
+                'Machine Learning', 'AI', 'Data Science', 'Big Data', 'Hadoop', 'Spark',
+                'HTML', 'CSS', 'SASS', 'LESS', 'TypeScript', 'GraphQL', 'REST API',
+                'Agile', 'Scrum', 'DevOps', 'CI/CD', 'Microservices', 'Serverless'
+            ];
+            
+            const foundSkills = [];
+            for (const skill of commonSkills) {
+                if (text.toLowerCase().includes(skill.toLowerCase())) {
+                    foundSkills.push(skill);
+                }
+            }
+            
+            return foundSkills.slice(0, 8); // Return top 8 skills
+        }
+
+        function extractAvailability(text) {
+            const availabilityPatterns = [
+                /\b(immediate|ready|available|can join|join immediately)\b/i,
+                /\b(\d+)\s*(days?|weeks?|months?)\s*(notice|notice period)\b/i,
+                /\b(serving notice|notice period|serving)\b/i
+            ];
+            
+            for (const pattern of availabilityPatterns) {
+                const match = text.match(pattern);
+                if (match) {
+                    if (match[1] && match[2]) {
+                        return `${match[1]} ${match[2]}`;
+                    }
+                    return match[0];
+                }
+            }
+            
+            return 'Not Mentioned';
+        }
+
+        function extractCurrentCTC(text) {
+            const ctcPatterns = [
+                /\b(\d+(?:\.\d+)?)\s*(?:LPA|lpa|Lakh|Lac|L)\b/i,
+                /\b(\d+(?:\.\d+)?)\s*(?:Crore|Cr)\b/i,
+                /\b(\d+(?:,\d{3})*)\s*(?:per annum|PA|yearly|annual)\b/i
+            ];
+            
+            for (const pattern of ctcPatterns) {
+                const match = text.match(pattern);
+                if (match) {
+                    const value = parseFloat(match[1].replace(/,/g, ''));
+                    if (pattern.source.includes('Crore') || pattern.source.includes('Cr')) {
+                        return `${value * 10} LPA`;
+                    }
+                    return `${value} LPA`;
+                }
+            }
+            
+            return 'Not Mentioned';
+        }
+
+        function extractExpectedCTC(text) {
+            const expectedPatterns = [
+                /\b(expected|expecting|looking for|seeking|desired)\b.*?(\d+(?:\.\d+)?)\s*(?:LPA|lpa|Lakh|Lac|L)\b/i,
+                /\b(expected|expecting|looking for|seeking|desired)\b.*?(\d+(?:\.\d+)?)\s*(?:Crore|Cr)\b/i
+            ];
+            
+            for (const pattern of expectedPatterns) {
+                const match = text.match(pattern);
+                if (match && match[2]) {
+                    const value = parseFloat(match[2]);
+                    if (pattern.source.includes('Crore') || pattern.source.includes('Cr')) {
+                        return `${value * 10} LPA`;
+                    }
+                    return `${value} LPA`;
+                }
+            }
+            
+            return 'Not Mentioned';
+        }
+
+        function identifyConcerns(text) {
+            const concerns = [];
+            
+            // Check for gaps
+            if (/\b(gap|break|sabbatical|career break)\b/i.test(text)) {
+                concerns.push('Career gap detected');
+            }
+            
+            // Check for frequent job changes
+            const jobChanges = (text.match(/\b(20\d{2}|19\d{2})\b/g) || []).length;
+            if (jobChanges > 3) {
+                concerns.push('Multiple job changes');
+            }
+            
+            // Check for missing education
+            if (!/\b(degree|bachelor|master|phd|diploma|certification)\b/i.test(text)) {
+                concerns.push('Education details unclear');
+            }
+            
+            return concerns.length > 0 ? concerns : ['No major concerns'];
+        }
+
+        function calculateMatchScore(resumeData) {
+            // This would be calculated based on job description comparison
+            // For now, return a realistic score based on content quality
+            let score = 60; // Base score
+            
+            if (resumeData.keySkills && resumeData.keySkills.length > 0) score += 15;
+            if (resumeData.currentCTC !== 'Not Mentioned') score += 10;
+            if (resumeData.location !== 'Not Mentioned') score += 5;
+            if (resumeData.availability !== 'Not Mentioned') score += 5;
+            if (resumeData.profileStability === 'Stable') score += 5;
+            
+            return Math.min(score, 100);
+        }
+
+        function generateRecommendation(resumeData) {
+            const score = resumeData.matchScore;
+            
+            if (score >= 85) return 'Strong Match - Proceed to Interview';
+            if (score >= 75) return 'Good Match - Consider for Next Round';
+            if (score >= 65) return 'Moderate Match - Review Further';
+            return 'Needs Improvement - Consider for Future';
         }
 
         // Initialize file handlers when page loads
