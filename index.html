@@ -785,11 +785,81 @@
             return new Promise((resolve) => {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    const content = e.target.result;
-                    resolve(content);
+                    try {
+                        const content = e.target.result;
+                        
+                        // If it's a PDF, try to extract text content
+                        if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+                            // For PDFs, we'll try to extract readable text
+                            const cleanContent = extractPDFText(content);
+                            resolve(cleanContent);
+                        } else {
+                            // For text files, use as is
+                            resolve(content);
+                        }
+                    } catch (error) {
+                        console.warn('Error parsing file content:', error);
+                        resolve('File content could not be parsed');
+                    }
                 };
-                reader.readAsText(file);
+                reader.onerror = () => resolve('File could not be read');
+                
+                // For PDFs, read as ArrayBuffer to handle binary content
+                if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+                    reader.readAsArrayBuffer(file);
+                } else {
+                    reader.readAsText(file);
+                }
             });
+        }
+
+        function extractPDFText(pdfContent) {
+            try {
+                // Convert ArrayBuffer to string and extract readable text
+                const decoder = new TextDecoder('utf-8');
+                const content = decoder.decode(pdfContent);
+                
+                // Remove PDF metadata and extract actual text content
+                // Look for text between parentheses and brackets
+                const textMatches = content.match(/\(([^)]+)\)/g) || [];
+                const bracketMatches = content.match(/\[([^\]]+)\]/g) || [];
+                
+                // Extract meaningful text content
+                let extractedText = '';
+                
+                // Add text from parentheses
+                textMatches.forEach(match => {
+                    const text = match.replace(/[()]/g, '').trim();
+                    if (text.length > 3 && !text.includes('obj') && !text.includes('R')) {
+                        extractedText += text + ' ';
+                    }
+                });
+                
+                // Add text from brackets
+                bracketMatches.forEach(match => {
+                    const text = match.replace(/[\[\]]/g, '').trim();
+                    if (text.length > 3 && !text.includes('obj') && !text.includes('R')) {
+                        extractedText += text + ' ';
+                    }
+                });
+                
+                // If we have extracted text, return it
+                if (extractedText.trim().length > 0) {
+                    return extractedText.trim();
+                }
+                
+                // Fallback: try to extract any readable text
+                const readableText = content
+                    .replace(/[^\x20-\x7E\n]/g, ' ') // Remove non-printable characters
+                    .replace(/\s+/g, ' ') // Normalize whitespace
+                    .trim();
+                
+                return readableText || 'PDF content could not be extracted';
+                
+            } catch (error) {
+                console.warn('Error extracting PDF text:', error);
+                return 'PDF content could not be extracted';
+            }
         }
 
         function extractGender(text) {
@@ -1233,10 +1303,25 @@
                 return;
             }
             
+            // Clean up job description for export
+            let cleanJobDescription = 'Not available';
+            if (window.currentJobDescription) {
+                // If it's a long PDF content, truncate and clean it
+                if (window.currentJobDescription.length > 500) {
+                    cleanJobDescription = window.currentJobDescription
+                        .substring(0, 500)
+                        .replace(/[^\x20-\x7E\n]/g, ' ') // Remove non-printable characters
+                        .replace(/\s+/g, ' ') // Normalize whitespace
+                        .trim() + '... (truncated)';
+                } else {
+                    cleanJobDescription = window.currentJobDescription;
+                }
+            }
+            
             const data = {
                 candidate: candidate,
                 exportDate: new Date().toISOString(),
-                jobDescription: window.currentJobDescription || 'Not available'
+                jobDescription: cleanJobDescription
             };
             
             const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
