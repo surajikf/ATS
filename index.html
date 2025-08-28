@@ -413,33 +413,52 @@
                 return;
             }
 
+            console.log('Starting screening with:', { jobFile: jobFile.name, resumeCount: resumeFiles.length });
+
             // Show results section and loading
             document.getElementById('resultsSection').style.display = 'block';
             document.getElementById('loadingSection').style.display = 'block';
             document.getElementById('resultsContent').style.display = 'none';
             document.getElementById('screeningBtn').disabled = true;
 
+            console.log('Results section displayed:', document.getElementById('resultsSection').style.display);
+
             // Simulate AI processing (replace with actual backend call)
             setTimeout(() => {
+                console.log('Timeout completed, calling processScreeningResults');
                 processScreeningResults(jobFile, resumeFiles);
             }, 2000);
         }
 
         async function processScreeningResults(jobFile, resumeFiles) {
-            // Hide loading, show results
-            document.getElementById('loadingSection').style.display = 'none';
-            document.getElementById('resultsContent').style.display = 'block';
-            document.getElementById('screeningBtn').disabled = false;
+            console.log('processScreeningResults called with:', { jobFile: jobFile.name, resumeCount: resumeFiles.length });
+            
+            try {
+                // Hide loading, show results
+                document.getElementById('loadingSection').style.display = 'none';
+                document.getElementById('resultsContent').style.display = 'block';
+                document.getElementById('screeningBtn').disabled = false;
 
-            // Parse job description first
-            const jobDescription = await parseResumeContent(jobFile);
-            
-            // Store job description globally
-            window.currentJobDescription = jobDescription;
-            
-            // Actually parse and analyze the resume files with job description
-            const results = await parseResumeFiles(resumeFiles, jobDescription);
-            displayResults(results);
+                console.log('Loading hidden, results content shown');
+
+                // Parse job description first
+                const jobDescription = await parseResumeContent(jobFile);
+                console.log('Job description parsed, length:', jobDescription.length);
+                
+                // Store job description globally
+                window.currentJobDescription = jobDescription;
+                
+                // Actually parse and analyze the resume files with job description
+                const results = await parseResumeFiles(resumeFiles, jobDescription);
+                console.log('Resume parsing completed, results:', results);
+                
+                displayResults(results);
+                console.log('Results displayed');
+                
+            } catch (error) {
+                console.error('Error in processScreeningResults:', error);
+                alert('Error processing screening results: ' + error.message);
+            }
         }
 
         async function parseResumeFiles(resumeFiles, jobDescription = '') {
@@ -500,7 +519,15 @@
         }
 
         function displayResults(results) {
+            console.log('displayResults called with:', results);
+            
             const content = document.getElementById('resultsContent');
+            console.log('Results content element:', content);
+            
+            if (!content) {
+                console.error('resultsContent element not found!');
+                return;
+            }
             
             // Store results globally for other functions to use
             window.currentResults = results;
