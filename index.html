@@ -328,10 +328,11 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1><i class="fas fa-user-tie"></i> IKF HR</h1>
-            <p>Smart Resume Screening Assistant - Professional Candidate Assessment</p>
-        </div>
+                 <div class="header">
+             <h1><i class="fas fa-user-tie"></i> IKF HR</h1>
+             <p>Smart Resume Screening Assistant - Professional Candidate Assessment</p>
+             <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.8;">Note: This is a template interface. Real resume analysis requires backend integration.</p>
+         </div>
 
         <div class="screening-form">
             <div class="form-section">
@@ -441,21 +442,19 @@
             for (let i = 0; i < resumeFiles.length; i++) {
                 const file = resumeFiles[i];
                 const candidateName = `Candidate ${i + 1}`;
-                const matchScore = Math.floor(Math.random() * 40) + 60; // 60-100%
                 
                 results.push({
                     name: candidateName,
-                    matchScore: matchScore,
-                    gender: Math.random() > 0.5 ? 'Male' : 'Female',
-                    location: ['Mumbai', 'Delhi', 'Bangalore', 'Hyderabad', 'Chennai'][Math.floor(Math.random() * 5)],
-                    profileStability: Math.random() > 0.7 ? 'Stable' : 'Moderate',
-                    keySkills: ['JavaScript', 'React', 'Node.js', 'Python', 'SQL'].slice(0, Math.floor(Math.random() * 3) + 3),
-                    availability: Math.random() > 0.5 ? '15 days' : '30 days',
-                    currentCTC: Math.floor(Math.random() * 10 + 5) + ' LPA',
-                    expectedCTC: Math.floor(Math.random() * 5 + 8) + ' LPA',
-                    concerns: Math.random() > 0.6 ? ['Frequent job changes', 'Gap in experience'] : ['Minor formatting issues'],
-                    recommendation: matchScore > 80 ? 'Strong Match - Proceed to Interview' : 
-                                 matchScore > 70 ? 'Good Match - Consider for Next Round' : 'Moderate Match - Review Further'
+                    matchScore: 0, // Will be calculated based on actual analysis
+                    gender: 'Not Mentioned',
+                    location: 'Not Mentioned',
+                    profileStability: 'Not Mentioned',
+                    keySkills: [],
+                    availability: 'Not Mentioned',
+                    currentCTC: 'Not Mentioned',
+                    expectedCTC: 'Not Mentioned',
+                    concerns: [],
+                    recommendation: 'Analysis Required'
                 });
             }
             
@@ -507,15 +506,15 @@
                         <td style="padding: 12px; border-bottom: 1px solid #f7fafc; text-align: center;">
                             <span class="match-score" style="font-size: 0.8rem;">${candidate.matchScore}%</span>
                         </td>
-                        <td style="padding: 12px; border-bottom: 1px solid #f7fafc;">
-                            ${candidate.keySkills.slice(0, 3).map(skill => `<span class="skill-tag">${skill}</span>`).join(' ')}
-                        </td>
-                        <td style="padding: 12px; border-bottom: 1px solid #f7fafc;">
-                            ${candidate.concerns.map(concern => `<span class="concern-tag">${concern}</span>`).join(' ')}
-                        </td>
-                        <td style="padding: 12px; border-bottom: 1px solid #f7fafc; text-align: center; font-size: 0.8rem;">
-                            ${candidate.matchScore > 80 ? '✅ Strong' : candidate.matchScore > 70 ? '🟡 Good' : '🟠 Review'}
-                        </td>
+                                                 <td style="padding: 12px; border-bottom: 1px solid #f7fafc;">
+                             ${candidate.keySkills.length > 0 ? candidate.keySkills.slice(0, 3).map(skill => `<span class="skill-tag">${skill}</span>`).join(' ') : '<span style="color: #718096; font-style: italic;">Not Mentioned</span>'}
+                         </td>
+                         <td style="padding: 12px; border-bottom: 1px solid #f7fafc;">
+                             ${candidate.concerns.length > 0 ? candidate.concerns.map(concern => `<span class="concern-tag">${concern}</span>`).join(' ') : '<span style="color: #718096; font-style: italic;">No Concerns</span>'}
+                         </td>
+                                                 <td style="padding: 12px; border-bottom: 1px solid #f7fafc; text-align: center; font-size: 0.8rem;">
+                             ${candidate.matchScore > 0 ? (candidate.matchScore > 80 ? '✅ Strong' : candidate.matchScore > 70 ? '🟡 Good' : '🟠 Review') : '⏳ Pending'}
+                         </td>
                     </tr>
                 `;
             });
@@ -535,7 +534,7 @@
                 <div class="candidate-card">
                     <div class="candidate-header">
                         <div class="candidate-name">${candidate.name}</div>
-                        <div class="match-score">${candidate.matchScore}% Match</div>
+                                                 <div class="match-score">${candidate.matchScore > 0 ? candidate.matchScore + '% Match' : 'Pending Analysis'}</div>
                     </div>
                     
                     <div class="candidate-details">
@@ -565,29 +564,28 @@
                         </div>
                     </div>
                     
-                    <div class="skills-section">
-                        <h4><i class="fas fa-star"></i> Key Skills (Relevant to JD)</h4>
-                        <div class="skills-grid">
-                            ${candidate.keySkills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
-                        </div>
-                    </div>
-                    
-                    <div class="concerns-section">
-                        <h4><i class="fas fa-exclamation-triangle"></i> Areas of Concern</h4>
-                        <div class="skills-grid">
-                            ${candidate.concerns.map(concern => `<span class="concern-tag">${concern}</span>`).join('')}
-                        </div>
-                    </div>
+                                         <div class="skills-section">
+                         <h4><i class="fas fa-star"></i> Key Skills (Relevant to JD)</h4>
+                         <div class="skills-grid">
+                             ${candidate.keySkills.length > 0 ? candidate.keySkills.map(skill => `<span class="skill-tag">${skill}</span>`).join('') : '<span style="color: #718096; font-style: italic; padding: 10px;">No skills information available</span>'}
+                         </div>
+                     </div>
+                     
+                     <div class="concerns-section">
+                         <h4><i class="fas fa-exclamation-triangle"></i> Areas of Concern</h4>
+                         <div class="skills-grid">
+                             ${candidate.concerns.length > 0 ? candidate.concerns.map(concern => `<span class="concern-tag">${concern}</span>`).join('') : '<span style="color: #718096; font-style: italic; padding: 10px;">No concerns identified</span>'}
+                         </div>
+                     </div>
                     
                     <div class="recommendation">
                         <h4><i class="fas fa-lightbulb"></i> Recruiter's Recommendation</h4>
-                        <p><strong>${candidate.recommendation}</strong></p>
-                        <p style="margin-top: 10px; font-size: 0.9rem;">
-                            Based on ${candidate.matchScore}% match with job requirements. 
-                            ${candidate.matchScore > 80 ? 'Strong candidate profile with relevant skills and experience.' : 
-                              candidate.matchScore > 70 ? 'Good potential match, recommend further evaluation.' : 
-                              'Moderate match, consider for specific requirements or backup candidate.'}
-                        </p>
+                                                 <p><strong>${candidate.recommendation}</strong></p>
+                         <p style="margin-top: 10px; font-size: 0.9rem;">
+                             ${candidate.matchScore > 0 ? 
+                               `Based on ${candidate.matchScore}% match with job requirements. ${candidate.matchScore > 80 ? 'Strong candidate profile with relevant skills and experience.' : candidate.matchScore > 70 ? 'Good potential match, recommend further evaluation.' : 'Moderate match, consider for specific requirements or backup candidate.'}` : 
+                               'Resume analysis required. Please upload resume and job description for evaluation.'}
+                         </p>
                     </div>
                 </div>
             `;
