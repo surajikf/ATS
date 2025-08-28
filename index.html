@@ -491,7 +491,9 @@
                         certifications: extractCertifications(resumeData) || [],
                         languages: extractLanguages(resumeData) || [],
                         workAuthorization: extractWorkAuthorization(resumeData) || 'Not Mentioned',
-                        relocationWillingness: extractRelocationWillingness(resumeData) || 'Not Mentioned'
+                        relocationWillingness: extractRelocationWillingness(resumeData) || 'Not Mentioned',
+                        // Contact Information
+                        mobileNumber: extractMobileNumber(resumeData) || null
                     };
                     
                     // Calculate match score with job description comparison
@@ -526,7 +528,8 @@
                         certifications: ['Error in parsing'],
                         languages: ['Error in parsing'],
                         workAuthorization: 'Error in parsing',
-                        relocationWillingness: 'Error in parsing'
+                        relocationWillingness: 'Error in parsing',
+                        mobileNumber: null
                     });
                 }
             }
@@ -790,6 +793,14 @@
                              <button onclick="addToShortlist('${candidate.name}')" style="background: #ed8936; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
                                  <i class="fas fa-star"></i> Add to Shortlist
                              </button>
+                             ${candidate.mobileNumber ? 
+                                 `<button onclick="sendWhatsAppInvite('${candidate.name}')" style="background: #25d366; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
+                                     <i class="fab fa-whatsapp"></i> Send WhatsApp Invite
+                                 </button>` : 
+                                 `<button disabled style="background: #cbd5e0; color: #718096; border: none; padding: 8px 16px; border-radius: 6px; cursor: not-allowed; font-size: 0.9rem;">
+                                     <i class="fas fa-phone"></i> No Mobile Number
+                                 </button>`
+                             }
             </div>
                 </div>
                 </div>
@@ -1454,6 +1465,107 @@
             return 'Not mentioned';
         }
 
+        function extractMobileNumber(text) {
+            // Comprehensive mobile number patterns for Indian and international numbers
+            const mobilePatterns = [
+                // Indian mobile numbers (10 digits starting with 6,7,8,9)
+                /\b(?:mobile|phone|contact|whatsapp|call|dial|mob|tel|cell)?\s*:?\s*(\+?91\s*[-]?\s*[6-9]\d{9})\b/gi,
+                /\b(?:mobile|phone|contact|whatsapp|call|dial|mob|tel|cell)?\s*:?\s*([6-9]\d{9})\b/gi,
+                // International format
+                /\b(?:mobile|phone|contact|whatsapp|call|dial|mob|tel|cell)?\s*:?\s*(\+?\d{1,3}\s*[-]?\s*\d{6,14})\b/gi,
+                // Numbers in parentheses or brackets
+                /[\(\[\{]\s*(\+?91\s*[-]?\s*[6-9]\d{9})\s*[\)\]\}]/gi,
+                /[\(\[\{]\s*([6-9]\d{9})\s*[\)\]\}]/gi,
+                // Numbers with spaces or dashes
+                /\b(\+?91\s*[-]?\s*[6-9]\d{2}\s*[-]?\s*\d{3}\s*[-]?\s*\d{4})\b/gi,
+                /\b([6-9]\d{2}\s*[-]?\s*\d{3}\s*[-]?\s*\d{4})\b/gi
+            ];
+            
+            for (const pattern of mobilePatterns) {
+                let match;
+                while ((match = pattern.exec(text)) !== null) {
+                    const number = match[1].replace(/[\s\-\(\)\[\]\{\}]/g, '');
+                    // Validate the number
+                    if (number.length >= 10 && number.length <= 15) {
+                        return number;
+                    }
+                }
+            }
+            
+            return null;
+        }
+
+        function generateWhatsAppMessage(candidate) {
+            const currentDate = new Date().toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            let message = `Hello ${candidate.name}! 👋\n\n`;
+            message += `Thank you for your interest in our company. We have reviewed your resume and would like to invite you for an interview.\n\n`;
+            message += `📋 *Interview Details:*\n`;
+            message += `• Position: Based on your ${candidate.experienceYears || 'experience'} and skills\n`;
+            message += `• Match Score: ${Math.round(candidate.matchScore)}%\n`;
+            message += `• Key Skills: ${candidate.keySkills && candidate.keySkills.length > 0 ? candidate.keySkills.slice(0, 3).join(', ') : 'Not specified'}\n\n`;
+            
+            if (candidate.location && candidate.location !== 'Not Mentioned') {
+                message += `📍 Location: ${candidate.location}\n`;
+            }
+            
+            message += `\n📅 *Next Steps:*\n`;
+            message += `Please reply with your preferred interview date and time. We can schedule:\n`;
+            message += `• Video Call (Zoom/Teams)\n`;
+            message += `• Phone Interview\n`;
+            message += `• In-person (if location permits)\n\n`;
+            
+            message += `⏰ *Availability:*\n`;
+            if (candidate.noticePeriod && candidate.noticePeriod !== 'Not Mentioned') {
+                message += `• Notice Period: ${candidate.noticePeriod}\n`;
+            }
+            message += `• Expected Joining: Based on your availability\n\n`;
+            
+            message += `💰 *Compensation Discussion:*\n`;
+            if (candidate.currentCTC !== 'Not Mentioned') {
+                message += `• Current CTC: ${candidate.currentCTC}\n`;
+            }
+            if (candidate.expectedCTC !== 'Not Mentioned') {
+                message += `• Expected CTC: ${candidate.expectedCTC}\n`;
+            }
+            message += `• Package: Negotiable based on experience\n\n`;
+            
+            message += `Please confirm your interest and preferred interview slot.\n\n`;
+            message += `Best regards,\nHR Team\n${currentDate}`;
+            
+            return encodeURIComponent(message);
+        }
+
+        function sendWhatsAppInvite(candidateName) {
+            const candidate = window.currentResults?.find(c => c.name === candidateName);
+            if (!candidate) {
+                alert('Candidate data not found');
+                return;
+            }
+            
+            const mobileNumber = candidate.mobileNumber;
+            if (!mobileNumber) {
+                alert('No mobile number found for this candidate. Please check the resume for contact information.');
+                return;
+            }
+            
+            // Generate personalized message
+            const message = generateWhatsAppMessage(candidate);
+            
+            // Create WhatsApp URL
+            const whatsappUrl = `https://wa.me/${mobileNumber}?text=${message}`;
+            
+            // Open WhatsApp in new tab
+            window.open(whatsappUrl, '_blank');
+            
+            // Show confirmation
+            alert(`WhatsApp invite sent to ${candidate.name} (${mobileNumber})`);
+        }
+
         // Smart action functions
         function exportCandidateData(candidateName) {
             const candidate = window.currentResults?.find(c => c.name === candidateName);
@@ -1494,6 +1606,7 @@ ${'-'.repeat(30)}
 Name: ${candidate.name}
 File: ${candidate.fileName}
 Match Score: ${Math.round(candidate.matchScore)}%
+${candidate.mobileNumber ? `Contact: ${candidate.mobileNumber}` : 'Contact: Not available'}
 
 PERSONAL DETAILS
 ${'-'.repeat(30)}
