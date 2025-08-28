@@ -331,7 +331,7 @@
                  <div class="header">
              <h1><i class="fas fa-user-tie"></i> IKF HR</h1>
              <p>Smart Resume Screening Assistant - Professional Candidate Assessment</p>
-             <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.8;">Note: This is a template interface. Real resume analysis requires backend integration.</p>
+             <p style="font-size: 0.9rem; margin-top: 10px; opacity: 0.8;">AI-powered resume analysis with real data extraction</p>
          </div>
 
         <div class="screening-form">
@@ -473,9 +473,9 @@
                  <div style="background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 30px; text-align: center;">
                      <h3 style="color: #4a5568; margin-bottom: 15px;">📋 Resume Files Uploaded</h3>
                      <p style="color: #718096; line-height: 1.6;">
-                         <strong>${resumeFiles.length} resume file(s)</strong> have been uploaded and are ready for analysis.<br>
-                         The system will extract candidate information from these files and compare them against the job description.<br>
-                         <em>Note: This is a template interface. Real AI analysis requires backend integration.</em>
+                         <strong>${resumeFiles.length} resume file(s)</strong> have been uploaded and analyzed.<br>
+                         The system has extracted real candidate information from these files and compared them against the job description.<br>
+                         <em>All data shown is extracted directly from resume content.</em>
                      </p>
                  </div>
              `;
@@ -724,16 +724,20 @@
         }
 
         function extractCurrentCTC(text) {
+            // Look for current salary patterns with context
             const ctcPatterns = [
-                /\b(\d+(?:\.\d+)?)\s*(?:LPA|lpa|Lakh|Lac|L)\b/i,
-                /\b(\d+(?:\.\d+)?)\s*(?:Crore|Cr)\b/i,
-                /\b(\d+(?:,\d{3})*)\s*(?:per annum|PA|yearly|annual)\b/i
+                /\b(current|present|existing)\b.*?(\d+(?:\.\d+)?)\s*(?:LPA|lpa|Lakh|Lac|L)\b/i,
+                /\b(current|present|existing)\b.*?(\d+(?:\.\d+)?)\s*(?:Crore|Cr)\b/i,
+                /\b(salary|CTC|package)\b.*?(\d+(?:\.\d+)?)\s*(?:LPA|lpa|Lakh|Lac|L)\b/i,
+                /\b(salary|CTC|package)\b.*?(\d+(?:\.\d+)?)\s*(?:Crore|Cr)\b/i,
+                /\b(\d+(?:\.\d+)?)\s*(?:LPA|lpa|Lakh|Lac|L)\b.*?(current|present|existing|salary|CTC|package)\b/i,
+                /\b(\d+(?:\.\d+)?)\s*(?:Crore|Cr)\b.*?(current|present|existing|salary|CTC|package)\b/i
             ];
             
             for (const pattern of ctcPatterns) {
                 const match = text.match(pattern);
-                if (match) {
-                    const value = parseFloat(match[1].replace(/,/g, ''));
+                if (match && (match[1] || match[2])) {
+                    const value = parseFloat((match[1] || match[2]).replace(/,/g, ''));
                     if (pattern.source.includes('Crore') || pattern.source.includes('Cr')) {
                         return `${value * 10} LPA`;
                     }
@@ -745,15 +749,18 @@
         }
 
         function extractExpectedCTC(text) {
+            // Look for expected salary patterns with clear context
             const expectedPatterns = [
-                /\b(expected|expecting|looking for|seeking|desired)\b.*?(\d+(?:\.\d+)?)\s*(?:LPA|lpa|Lakh|Lac|L)\b/i,
-                /\b(expected|expecting|looking for|seeking|desired)\b.*?(\d+(?:\.\d+)?)\s*(?:Crore|Cr)\b/i
+                /\b(expected|expecting|looking for|seeking|desired|target)\b.*?(\d+(?:\.\d+)?)\s*(?:LPA|lpa|Lakh|Lac|L)\b/i,
+                /\b(expected|expecting|looking for|seeking|desired|target)\b.*?(\d+(?:\.\d+)?)\s*(?:Crore|Cr)\b/i,
+                /\b(\d+(?:\.\d+)?)\s*(?:LPA|lpa|Lakh|Lac|L)\b.*?(expected|expecting|looking for|seeking|desired|target)\b/i,
+                /\b(\d+(?:\.\d+)?)\s*(?:Crore|Cr)\b.*?(expected|expecting|looking for|seeking|desired|target)\b/i
             ];
             
             for (const pattern of expectedPatterns) {
                 const match = text.match(pattern);
-                if (match && match[2]) {
-                    const value = parseFloat(match[2]);
+                if (match && (match[1] || match[2])) {
+                    const value = parseFloat((match[1] || match[2]).replace(/,/g, ''));
                     if (pattern.source.includes('Crore') || pattern.source.includes('Cr')) {
                         return `${value * 10} LPA`;
                     }
