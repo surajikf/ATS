@@ -431,12 +431,18 @@
             document.getElementById('resultsContent').style.display = 'block';
             document.getElementById('screeningBtn').disabled = false;
 
-            // Actually parse and analyze the resume files
-            const results = await parseResumeFiles(resumeFiles);
+            // Parse job description first
+            const jobDescription = await parseResumeContent(jobFile);
+            
+            // Store job description globally
+            window.currentJobDescription = jobDescription;
+            
+            // Actually parse and analyze the resume files with job description
+            const results = await parseResumeFiles(resumeFiles, jobDescription);
             displayResults(results);
         }
 
-        async function parseResumeFiles(resumeFiles) {
+        async function parseResumeFiles(resumeFiles, jobDescription = '') {
             const results = [];
             
             for (let i = 0; i < resumeFiles.length; i++) {
@@ -446,10 +452,13 @@
                 // Parse the actual resume file content
                 const resumeData = await parseResumeContent(file);
                 
+                // Calculate match score with job description comparison
+                const matchScore = calculateMatchScore(resumeData, jobDescription);
+                
                 results.push({
                     name: candidateName,
                     fileName: file.name,
-                    matchScore: calculateMatchScore(resumeData),
+                    matchScore: matchScore,
                     gender: extractGender(resumeData),
                     location: extractLocation(resumeData),
                     profileStability: analyzeProfileStability(resumeData),
@@ -458,7 +467,7 @@
                     currentCTC: extractCurrentCTC(resumeData),
                     expectedCTC: extractExpectedCTC(resumeData),
                     concerns: identifyConcerns(resumeData),
-                    recommendation: generateRecommendation(resumeData)
+                    recommendation: generateRecommendation({...resumeData, matchScore})
                 });
             }
             
@@ -468,27 +477,122 @@
         function displayResults(results) {
             const content = document.getElementById('resultsContent');
             
-                         let html = `
-                 <h2 style="color: #2d3748; margin-bottom: 30px; text-align: center;">Screening Results</h2>
-                 <div style="background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 30px; text-align: center;">
-                     <h3 style="color: #4a5568; margin-bottom: 15px;">📋 Resume Files Uploaded</h3>
-                     <p style="color: #718096; line-height: 1.6;">
-                         <strong>${resumeFiles.length} resume file(s)</strong> have been uploaded and analyzed.<br>
-                         The system has extracted real candidate information from these files and compared them against the job description.<br>
-                         <em>All data shown is extracted directly from resume content.</em>
-                     </p>
-                 </div>
-             `;
+            // Store results globally for other functions to use
+            window.currentResults = results;
+            
+            // Sort candidates by match score (highest first)
+            const sortedResults = [...results].sort((a, b) => b.matchScore - a.matchScore);
+            
+            // Categorize candidates
+            const strongCandidates = sortedResults.filter(c => c.matchScore >= 80);
+            const goodCandidates = sortedResults.filter(c => c.matchScore >= 70 && c.matchScore < 80);
+            const moderateCandidates = sortedResults.filter(c => c.matchScore >= 60 && c.matchScore < 70);
+            const weakCandidates = sortedResults.filter(c => c.matchScore < 60);
+            
+            let html = `
+                <h2 style="color: #2d3748; margin-bottom: 30px; text-align: center;">Smart Screening Results</h2>
+                
+                <!-- Summary Dashboard -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                    <div style="background: #f0fff4; border: 2px solid #48bb78; border-radius: 12px; padding: 20px; text-align: center;">
+                        <h3 style="color: #38a169; margin-bottom: 10px;">🚀 Strong Matches</h3>
+                        <div style="font-size: 2rem; font-weight: bold; color: #38a169;">${strongCandidates.length}</div>
+                        <small style="color: #718096;">80%+ Match</small>
+                    </div>
+                    <div style="background: #fef5e7; border: 2px solid #ed8936; border-radius: 12px; padding: 20px; text-align: center;">
+                        <h3 style="color: #dd6b20; margin-bottom: 10px;">✅ Good Matches</h3>
+                        <div style="font-size: 2rem; font-weight: bold; color: #dd6b20;">${goodCandidates.length}</div>
+                        <small style="color: #718096;">70-79% Match</small>
+                    </div>
+                    <div style="background: #fef8e7; border: 2px solid #ecc94b; border-radius: 12px; padding: 20px; text-align: center;">
+                        <h3 style="color: #d69e2e; margin-bottom: 10px;">🟡 Moderate</h3>
+                        <div style="font-size: 2rem; font-weight: bold; color: #d69e2e;">${moderateCandidates.length}</div>
+                        <small style="color: #718096;">60-69% Match</small>
+                    </div>
+                    <div style="background: #fed7d7; border: 2px solid #f56565; border-radius: 12px; padding: 20px; text-align: center;">
+                        <h3 style="color: #e53e3e; margin-bottom: 10px;">⚠️ Needs Review</h3>
+                        <div style="font-size: 2rem; font-weight: bold; color: #e53e3e;">${weakCandidates.length}</div>
+                        <small style="color: #718096;">< 60% Match</small>
+                    </div>
+                </div>
+                
+                <div style="background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 30px;">
+                    <h3 style="color: #4a5568; margin-bottom: 15px; text-align: center;">📋 Resume Analysis Summary</h3>
+                    <p style="color: #718096; line-height: 1.6; text-align: center; margin-bottom: 20px;">
+                        <strong>${results.length} resume file(s)</strong> have been analyzed using AI-powered screening.<br>
+                        The system has extracted real candidate information and compared it against the job description.<br>
+                        <em>All data shown is extracted directly from resume content with intelligent scoring.</em>
+                    </p>
+                    
+                    <!-- Smart Search and Filters -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #4a5568;">Search Candidates:</label>
+                            <input type="text" id="candidateSearch" placeholder="Search by name, skills, location..." 
+                                   style="width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.9rem;"
+                                   onkeyup="filterCandidates()">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #4a5568;">Filter by Match Score:</label>
+                            <select id="scoreFilter" style="width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.9rem;" onchange="filterCandidates()">
+                                <option value="">All Scores</option>
+                                <option value="80">80%+ (Strong)</option>
+                                <option value="70">70%+ (Good)</option>
+                                <option value="60">60%+ (Moderate)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #4a5568;">Filter by Location:</label>
+                            <select id="locationFilter" style="width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.9rem;" onchange="filterCandidates()">
+                                <option value="">All Locations</option>
+                                ${[...new Set(results.map(r => r.location).filter(l => l !== 'Not Mentioned'))].map(loc => `<option value="${loc}">${loc}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-weight: 600; color: #4a5568;">Sort By:</label>
+                            <select id="sortFilter" style="width: 100%; padding: 8px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.9rem;" onchange="filterCandidates()">
+                                <option value="score">Match Score (High to Low)</option>
+                                <option value="name">Name (A-Z)</option>
+                                <option value="experience">Experience (High to Low)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            `;
             
             if (results.length > 1) {
                 // Comparison table for multiple candidates
-                html += createComparisonTable(results);
+                html += createComparisonTable(sortedResults);
             }
             
-            // Detailed analysis for each candidate
-            results.forEach(candidate => {
-                html += createCandidateCard(candidate);
-            });
+            // Show candidates by category
+            if (strongCandidates.length > 0) {
+                html += `<h3 style="color: #38a169; margin: 30px 0 20px 0; text-align: center;">🚀 Strong Matches (${strongCandidates.length})</h3>`;
+                strongCandidates.forEach(candidate => {
+                    html += createCandidateCard(candidate);
+                });
+            }
+            
+            if (goodCandidates.length > 0) {
+                html += `<h3 style="color: #dd6b20; margin: 30px 0 20px 0; text-align: center;">✅ Good Matches (${goodCandidates.length})</h3>`;
+                goodCandidates.forEach(candidate => {
+                    html += createCandidateCard(candidate);
+                });
+            }
+            
+            if (moderateCandidates.length > 0) {
+                html += `<h3 style="color: #d69e2e; margin: 30px 0 20px 0; text-align: center;">🟡 Moderate Matches (${moderateCandidates.length})</h3>`;
+                moderateCandidates.forEach(candidate => {
+                    html += createCandidateCard(candidate);
+                });
+            }
+            
+            if (weakCandidates.length > 0) {
+                html += `<h3 style="color: #e53e3e; margin: 30px 0 20px 0; text-align: center;">⚠️ Candidates Needing Review (${weakCandidates.length})</h3>`;
+                weakCandidates.forEach(candidate => {
+                    html += createCandidateCard(candidate);
+                });
+            }
             
             content.innerHTML = html;
         }
@@ -598,15 +702,28 @@
                          </div>
                      </div>
                     
-                    <div class="recommendation">
-                        <h4><i class="fas fa-lightbulb"></i> Recruiter's Recommendation</h4>
-                                                 <p><strong>${candidate.recommendation}</strong></p>
+                                         <div class="recommendation">
+                         <h4><i class="fas fa-lightbulb"></i> Recruiter's Recommendation</h4>
+                         <p><strong>${candidate.recommendation}</strong></p>
                          <p style="margin-top: 10px; font-size: 0.9rem;">
                              ${candidate.matchScore > 0 ? 
                                `Based on ${candidate.matchScore}% match with job requirements. ${candidate.matchScore > 80 ? 'Strong candidate profile with relevant skills and experience.' : candidate.matchScore > 70 ? 'Good potential match, recommend further evaluation.' : 'Moderate match, consider for specific requirements or backup candidate.'}` : 
                                'Resume analysis required. Please upload resume and job description for evaluation.'}
                          </p>
-                    </div>
+                         
+                         <!-- Action Buttons -->
+                         <div style="margin-top: 15px; display: flex; gap: 10px; flex-wrap: wrap;">
+                             <button onclick="exportCandidateData('${candidate.name}')" style="background: #4299e1; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
+                                 <i class="fas fa-download"></i> Export Data
+                             </button>
+                             <button onclick="scheduleInterview('${candidate.name}')" style="background: #48bb78; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
+                                 <i class="fas fa-calendar"></i> Schedule Interview
+                             </button>
+                             <button onclick="addToShortlist('${candidate.name}')" style="background: #ed8936; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
+                                 <i class="fas fa-star"></i> Add to Shortlist
+                             </button>
+                         </div>
+                     </div>
                 </div>
             `;
         }
@@ -658,49 +775,162 @@
         }
 
         function analyzeProfileStability(text) {
-            // Look for job duration patterns
-            const durationPattern = /\b(\d+)\s*(years?|yrs?|months?|mos?)\b/gi;
-            const durations = [];
-            let match;
+            // Enhanced profile stability analysis with multiple factors
+            const jobPatterns = [
+                // Look for job entries with dates
+                /\b(20\d{2}|19\d{2})\s*[-–—]\s*(20\d{2}|19\d{2}|present|current|till date|ongoing)\b/gi,
+                // Look for duration patterns
+                /\b(\d+)\s*(years?|yrs?|months?|mos?)\b/gi,
+                // Look for company names with durations
+                /\b(?:at|with|worked at|employed at)\s+[A-Z][a-zA-Z\s&]+(?:for|over|duration|period)\s+(\d+)\s*(years?|yrs?|months?|mos?)\b/gi
+            ];
             
-            while ((match = durationPattern.exec(text)) !== null) {
-                const value = parseInt(match[1]);
-                const unit = match[2].toLowerCase();
-                if (unit.includes('year') || unit.includes('yr')) {
-                    durations.push(value);
-                } else if (unit.includes('month') || unit.includes('mo')) {
-                    durations.push(value / 12);
+            const durations = [];
+            const jobChanges = [];
+            let totalExperience = 0;
+            
+            // Extract job durations and changes
+            for (const pattern of jobPatterns) {
+                let match;
+                while ((match = pattern.exec(text)) !== null) {
+                    if (match[1]) {
+                        const value = parseInt(match[1]);
+                        const unit = match[2] ? match[2].toLowerCase() : 'years';
+                        
+                        if (unit.includes('year') || unit.includes('yr')) {
+                            durations.push(value);
+                            totalExperience += value;
+                        } else if (unit.includes('month') || unit.includes('mo')) {
+                            const yearValue = value / 12;
+                            durations.push(yearValue);
+                            totalExperience += yearValue;
+                        }
+                    }
                 }
             }
             
-            if (durations.length === 0) return 'Not Mentioned';
+            // Count job changes from company names and dates
+            const companyPattern = /\b(?:at|with|worked at|employed at|joined|started)\s+([A-Z][a-zA-Z\s&]+(?:Inc|Ltd|Corp|Company|Tech|Solutions|Systems|Services|Consulting|Group|LLC|Pvt|Private|Limited))\b/gi;
+            const companies = new Set();
+            let companyMatch;
+            while ((companyMatch = companyPattern.exec(text)) !== null) {
+                companies.add(companyMatch[1].trim());
+            }
             
-            const avgDuration = durations.reduce((a, b) => a + b, 0) / durations.length;
+            // Calculate stability score
+            let stabilityScore = 0;
+            let stabilityLabel = 'Not Mentioned';
             
-            if (avgDuration >= 3) return 'Stable';
-            if (avgDuration >= 1.5) return 'Moderate';
-            return 'Frequent Changes';
+            if (durations.length > 0) {
+                const avgDuration = durations.reduce((a, b) => a + b, 0) / durations.length;
+                const companyCount = companies.size;
+                
+                // Stability scoring algorithm
+                if (avgDuration >= 4) stabilityScore += 40;
+                else if (avgDuration >= 3) stabilityScore += 30;
+                else if (avgDuration >= 2) stabilityScore += 20;
+                else if (avgDuration >= 1) stabilityScore += 10;
+                
+                if (companyCount <= 2) stabilityScore += 30;
+                else if (companyCount <= 4) stabilityScore += 20;
+                else if (companyCount <= 6) stabilityScore += 10;
+                
+                if (totalExperience >= 8) stabilityScore += 20;
+                else if (totalExperience >= 5) stabilityScore += 15;
+                else if (totalExperience >= 3) stabilityScore += 10;
+                
+                // Determine stability label
+                if (stabilityScore >= 70) stabilityLabel = 'Very Stable';
+                else if (stabilityScore >= 50) stabilityLabel = 'Stable';
+                else if (stabilityScore >= 30) stabilityLabel = 'Moderate';
+                else if (stabilityScore >= 15) stabilityLabel = 'Somewhat Unstable';
+                else stabilityLabel = 'Frequent Changes';
+                
+                // Add detailed analysis
+                stabilityLabel += ` (${companyCount} companies, ${totalExperience.toFixed(1)} years avg)`;
+            }
+            
+            return stabilityLabel;
         }
 
         function extractSkills(text) {
-            const commonSkills = [
-                'JavaScript', 'Python', 'Java', 'C++', 'C#', 'PHP', 'Ruby', 'Go', 'Rust', 'Swift',
-                'React', 'Angular', 'Vue.js', 'Node.js', 'Express.js', 'Django', 'Flask', 'Laravel',
-                'MySQL', 'PostgreSQL', 'MongoDB', 'Redis', 'Oracle', 'SQL Server',
-                'AWS', 'Azure', 'Google Cloud', 'Docker', 'Kubernetes', 'Jenkins', 'Git',
-                'Machine Learning', 'AI', 'Data Science', 'Big Data', 'Hadoop', 'Spark',
-                'HTML', 'CSS', 'SASS', 'LESS', 'TypeScript', 'GraphQL', 'REST API',
-                'Agile', 'Scrum', 'DevOps', 'CI/CD', 'Microservices', 'Serverless'
-            ];
+            // Comprehensive skill categories with smart detection
+            const skillCategories = {
+                'Programming Languages': [
+                    'JavaScript', 'Python', 'Java', 'C++', 'C#', 'PHP', 'Ruby', 'Go', 'Rust', 'Swift',
+                    'Kotlin', 'Scala', 'TypeScript', 'R', 'MATLAB', 'Perl', 'Shell', 'Bash'
+                ],
+                'Frontend Technologies': [
+                    'React', 'Angular', 'Vue.js', 'Svelte', 'jQuery', 'Bootstrap', 'Tailwind CSS',
+                    'HTML', 'CSS', 'SASS', 'LESS', 'Webpack', 'Vite', 'Redux', 'Vuex'
+                ],
+                'Backend Technologies': [
+                    'Node.js', 'Express.js', 'Django', 'Flask', 'Laravel', 'Spring Boot', 'ASP.NET',
+                    'FastAPI', 'Ruby on Rails', 'Phoenix', 'Gin', 'Echo'
+                ],
+                'Databases': [
+                    'MySQL', 'PostgreSQL', 'MongoDB', 'Redis', 'Oracle', 'SQL Server', 'SQLite',
+                    'Cassandra', 'DynamoDB', 'Elasticsearch', 'Neo4j', 'InfluxDB'
+                ],
+                'Cloud & DevOps': [
+                    'AWS', 'Azure', 'Google Cloud', 'Docker', 'Kubernetes', 'Jenkins', 'Git',
+                    'Terraform', 'Ansible', 'Prometheus', 'Grafana', 'ELK Stack'
+                ],
+                'Data Science & AI': [
+                    'Machine Learning', 'AI', 'Data Science', 'Big Data', 'Hadoop', 'Spark',
+                    'TensorFlow', 'PyTorch', 'Scikit-learn', 'Pandas', 'NumPy', 'Jupyter'
+                ],
+                'Mobile Development': [
+                    'React Native', 'Flutter', 'Xamarin', 'Ionic', 'Cordova', 'PhoneGap'
+                ],
+                'Testing & QA': [
+                    'Jest', 'Mocha', 'Cypress', 'Selenium', 'JUnit', 'PyTest', 'Postman'
+                ]
+            };
             
             const foundSkills = [];
-            for (const skill of commonSkills) {
-                if (text.toLowerCase().includes(skill.toLowerCase())) {
-                    foundSkills.push(skill);
+            const skillScores = {};
+            
+            // Smart skill detection with context and scoring
+            for (const [category, skills] of Object.entries(skillCategories)) {
+                for (const skill of skills) {
+                    const skillRegex = new RegExp(`\\b${skill.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'gi');
+                    const matches = text.match(skillRegex);
+                    if (matches) {
+                        const count = matches.length;
+                        const skillName = skill;
+                        
+                        // Calculate skill relevance score
+                        let score = count * 10; // Base score from frequency
+                        
+                        // Bonus for skills mentioned in experience section
+                        if (text.toLowerCase().includes('experience') && text.toLowerCase().includes(skill.toLowerCase())) {
+                            score += 20;
+                        }
+                        
+                        // Bonus for skills in projects section
+                        if (text.toLowerCase().includes('project') && text.toLowerCase().includes(skill.toLowerCase())) {
+                            score += 15;
+                        }
+                        
+                        // Bonus for skills with years of experience
+                        const yearPattern = new RegExp(`(\\d+)\\s*(?:years?|yrs?)\\s*.*?${skill.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'gi');
+                        if (yearPattern.test(text)) {
+                            score += 25;
+                        }
+                        
+                        skillScores[skillName] = score;
+                    }
                 }
             }
             
-            return foundSkills.slice(0, 8); // Return top 8 skills
+            // Sort skills by relevance score and return top skills
+            const sortedSkills = Object.entries(skillScores)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 10)
+                .map(([skill]) => skill);
+            
+            return sortedSkills;
         }
 
         function extractAvailability(text) {
@@ -793,18 +1023,133 @@
             return concerns.length > 0 ? concerns : ['No major concerns'];
         }
 
-        function calculateMatchScore(resumeData) {
-            // This would be calculated based on job description comparison
-            // For now, return a realistic score based on content quality
-            let score = 60; // Base score
+        function calculateMatchScore(resumeData, jobDescription = '') {
+            // Enhanced match score calculation with job description analysis
+            let score = 50; // Base score
             
-            if (resumeData.keySkills && resumeData.keySkills.length > 0) score += 15;
-            if (resumeData.currentCTC !== 'Not Mentioned') score += 10;
-            if (resumeData.location !== 'Not Mentioned') score += 5;
-            if (resumeData.availability !== 'Not Mentioned') score += 5;
-            if (resumeData.profileStability === 'Stable') score += 5;
+            // Skills relevance (40% weight)
+            if (resumeData.keySkills && resumeData.keySkills.length > 0) {
+                let skillScore = 0;
+                const jobSkills = extractJobSkills(jobDescription);
+                
+                if (jobSkills.length > 0) {
+                    // Calculate skill match percentage
+                    const matchedSkills = resumeData.keySkills.filter(skill => 
+                        jobSkills.some(jobSkill => 
+                            skill.toLowerCase().includes(jobSkill.toLowerCase()) ||
+                            jobSkill.toLowerCase().includes(skill.toLowerCase())
+                        )
+                    );
+                    skillScore = (matchedSkills.length / Math.max(resumeData.keySkills.length, jobSkills.length)) * 40;
+                } else {
+                    skillScore = Math.min(resumeData.keySkills.length * 2, 40);
+                }
+                score += skillScore;
+            }
             
-            return Math.min(score, 100);
+            // Experience and stability (25% weight)
+            if (resumeData.profileStability !== 'Not Mentioned') {
+                if (resumeData.profileStability.includes('Very Stable')) score += 25;
+                else if (resumeData.profileStability.includes('Stable')) score += 20;
+                else if (resumeData.profileStability.includes('Moderate')) score += 15;
+                else if (resumeData.profileStability.includes('Somewhat Unstable')) score += 10;
+                else score += 5;
+            }
+            
+            // Location match (10% weight)
+            if (resumeData.location !== 'Not Mentioned') {
+                const jobLocation = extractJobLocation(jobDescription);
+                if (jobLocation && resumeData.location.toLowerCase().includes(jobLocation.toLowerCase())) {
+                    score += 10;
+                } else {
+                    score += 5; // Location mentioned but may not match
+                }
+            }
+            
+            // Availability (10% weight)
+            if (resumeData.availability !== 'Not Mentioned') {
+                if (resumeData.availability.toLowerCase().includes('immediate')) score += 10;
+                else if (resumeData.availability.toLowerCase().includes('30 days') || resumeData.availability.toLowerCase().includes('1 month')) score += 8;
+                else if (resumeData.availability.toLowerCase().includes('60 days') || resumeData.availability.toLowerCase().includes('2 month')) score += 6;
+                else score += 4;
+            }
+            
+            // CTC information (5% weight)
+            if (resumeData.currentCTC !== 'Not Mentioned' || resumeData.expectedCTC !== 'Not Mentioned') {
+                score += 5;
+            }
+            
+            // Content quality bonus
+            const contentQuality = calculateContentQuality(resumeData);
+            score += contentQuality;
+            
+            return Math.min(Math.max(score, 0), 100);
+        }
+        
+        function extractJobSkills(jobDescription) {
+            if (!jobDescription) return [];
+            
+            const skillKeywords = [
+                'required', 'must have', 'should have', 'experience with', 'proficient in',
+                'knowledge of', 'familiarity with', 'expertise in', 'skills in', 'proficiency in'
+            ];
+            
+            const skills = [];
+            const lines = jobDescription.split('\n');
+            
+            for (const line of lines) {
+                for (const keyword of skillKeywords) {
+                    if (line.toLowerCase().includes(keyword)) {
+                        // Extract skills from this line
+                        const skillMatches = line.match(/\b[A-Z][a-zA-Z\s+#&]+(?:\.js|\.net|\.js|\.py|\.java|\.cpp|\.cs|\.php|\.rb|\.go|\.rs|\.swift)\b/g);
+                        if (skillMatches) {
+                            skills.push(...skillMatches.map(s => s.trim()));
+                        }
+                    }
+                }
+            }
+            
+            return skills;
+        }
+        
+        function extractJobLocation(jobDescription) {
+            if (!jobDescription) return null;
+            
+            const locationPatterns = [
+                /\b(location|based in|work from|office in|headquarters in)\s*:?\s*([A-Z][a-zA-Z\s,]+)\b/gi,
+                /\b([A-Z][a-zA-Z\s,]+)\s*(?:location|office|headquarters)\b/gi
+            ];
+            
+            for (const pattern of locationPatterns) {
+                const match = jobDescription.match(pattern);
+                if (match) {
+                    return match[1] || match[2];
+                }
+            }
+            
+            return null;
+        }
+        
+        function calculateContentQuality(resumeData) {
+            let qualityScore = 0;
+            
+            // Check for comprehensive information
+            const fields = ['gender', 'location', 'profileStability', 'availability', 'currentCTC', 'expectedCTC'];
+            const filledFields = fields.filter(field => resumeData[field] !== 'Not Mentioned').length;
+            
+            qualityScore += (filledFields / fields.length) * 10;
+            
+            // Bonus for detailed skills
+            if (resumeData.keySkills && resumeData.keySkills.length >= 5) {
+                qualityScore += 5;
+            }
+            
+            // Bonus for detailed stability analysis
+            if (resumeData.profileStability && resumeData.profileStability.includes('(')) {
+                qualityScore += 3;
+            }
+            
+            return Math.min(qualityScore, 10);
         }
 
         function generateRecommendation(resumeData) {
@@ -816,9 +1161,225 @@
             return 'Needs Improvement - Consider for Future';
         }
 
+        // Smart action functions
+        function exportCandidateData(candidateName) {
+            const candidate = window.currentResults?.find(c => c.name === candidateName);
+            if (!candidate) {
+                alert('Candidate data not found');
+                return;
+            }
+            
+            const data = {
+                candidate: candidate,
+                exportDate: new Date().toISOString(),
+                jobDescription: window.currentJobDescription || 'Not available'
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${candidateName}_resume_analysis.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            alert(`Exported ${candidateName}'s data successfully!`);
+        }
+        
+        function scheduleInterview(candidateName) {
+            const candidate = window.currentResults?.find(c => c.name === candidateName);
+            if (!candidate) {
+                alert('Candidate data not found');
+                return;
+            }
+            
+            const interviewDate = prompt(`Schedule interview for ${candidateName} (Enter date in DD/MM/YYYY format):`);
+            if (interviewDate) {
+                // Here you would integrate with your calendar system
+                alert(`Interview scheduled for ${candidateName} on ${interviewDate}`);
+                
+                // Add to interview schedule
+                if (!window.interviewSchedule) window.interviewSchedule = [];
+                window.interviewSchedule.push({
+                    candidate: candidateName,
+                    date: interviewDate,
+                    status: 'Scheduled',
+                    matchScore: candidate.matchScore
+                });
+            }
+        }
+        
+        function addToShortlist(candidateName) {
+            const candidate = window.currentResults?.find(c => c.name === candidateName);
+            if (!candidate) {
+                alert('Candidate data not found');
+                return;
+            }
+            
+            if (!window.shortlistedCandidates) window.shortlistedCandidates = [];
+            
+            const existingIndex = window.shortlistedCandidates.findIndex(c => c.name === candidateName);
+            if (existingIndex >= 0) {
+                window.shortlistedCandidates.splice(existingIndex, 1);
+                alert(`${candidateName} removed from shortlist`);
+            } else {
+                window.shortlistedCandidates.push({
+                    ...candidate,
+                    shortlistedDate: new Date().toISOString()
+                });
+                alert(`${candidateName} added to shortlist!`);
+            }
+            
+            updateShortlistDisplay();
+        }
+        
+        function updateShortlistDisplay() {
+            if (!window.shortlistedCandidates || window.shortlistedCandidates.length === 0) return;
+            
+            // Create or update shortlist display
+            let shortlistDiv = document.getElementById('shortlistSection');
+            if (!shortlistDiv) {
+                shortlistDiv = document.createElement('div');
+                shortlistDiv.id = 'shortlistSection';
+                shortlistDiv.style.cssText = 'background: #f0fff4; border: 2px solid #48bb78; border-radius: 12px; padding: 20px; margin: 20px 0;';
+                document.getElementById('resultsContent').insertBefore(shortlistDiv, document.getElementById('resultsContent').firstChild);
+            }
+            
+            shortlistDiv.innerHTML = `
+                <h3 style="color: #38a169; margin-bottom: 15px;">
+                    <i class="fas fa-star"></i> Shortlisted Candidates (${window.shortlistedCandidates.length})
+                </h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                    ${window.shortlistedCandidates.map(candidate => `
+                        <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #c6f6d5;">
+                            <div style="font-weight: bold; color: #2d3748;">${candidate.name}</div>
+                            <div style="font-size: 0.9rem; color: #718096;">Match: ${candidate.matchScore}%</div>
+                            <div style="font-size: 0.9rem; color: #718096;">Shortlisted: ${new Date(candidate.shortlistedDate).toLocaleDateString()}</div>
+                            <button onclick="removeFromShortlist('${candidate.name}')" style="background: #f56565; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; margin-top: 8px;">
+                                Remove
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        function removeFromShortlist(candidateName) {
+            if (window.shortlistedCandidates) {
+                window.shortlistedCandidates = window.shortlistedCandidates.filter(c => c.name !== candidateName);
+                updateShortlistDisplay();
+            }
+        }
+        
+        function filterCandidates() {
+            if (!window.currentResults) return;
+            
+            const searchTerm = document.getElementById('candidateSearch').value.toLowerCase();
+            const scoreFilter = document.getElementById('scoreFilter').value;
+            const locationFilter = document.getElementById('locationFilter').value;
+            const sortBy = document.getElementById('sortFilter').value;
+            
+            let filteredResults = window.currentResults.filter(candidate => {
+                // Search filter
+                const matchesSearch = !searchTerm || 
+                    candidate.name.toLowerCase().includes(searchTerm) ||
+                    candidate.keySkills.some(skill => skill.toLowerCase().includes(searchTerm)) ||
+                    candidate.location.toLowerCase().includes(searchTerm);
+                
+                // Score filter
+                const matchesScore = !scoreFilter || candidate.matchScore >= parseInt(scoreFilter);
+                
+                // Location filter
+                const matchesLocation = !locationFilter || candidate.location === locationFilter;
+                
+                return matchesSearch && matchesScore && matchesLocation;
+            });
+            
+            // Sort results
+            switch (sortBy) {
+                case 'name':
+                    filteredResults.sort((a, b) => a.name.localeCompare(b.name));
+                    break;
+                case 'experience':
+                    filteredResults.sort((a, b) => {
+                        const aExp = parseFloat(a.profileStability.match(/(\d+\.?\d*)/)?.[1] || 0);
+                        const bExp = parseFloat(b.profileStability.match(/(\d+\.?\d*)/)?.[1] || 0);
+                        return bExp - aExp;
+                    });
+                    break;
+                default: // score
+                    filteredResults.sort((a, b) => b.matchScore - a.matchScore);
+            }
+            
+            // Update display with filtered results
+            displayFilteredResults(filteredResults);
+        }
+        
+        function displayFilteredResults(filteredResults) {
+            const content = document.getElementById('resultsContent');
+            
+            // Keep the header and filters, update only the candidate sections
+            const headerSection = content.querySelector('h2').parentNode;
+            const filtersSection = content.querySelector('#candidateSearch').closest('div').parentNode;
+            
+            // Clear existing candidate sections
+            const existingSections = content.querySelectorAll('h3[style*="margin: 30px 0 20px 0"]');
+            existingSections.forEach(section => section.remove());
+            
+            // Categorize filtered candidates
+            const strongCandidates = filteredResults.filter(c => c.matchScore >= 80);
+            const goodCandidates = filteredResults.filter(c => c.matchScore >= 70 && c.matchScore < 80);
+            const moderateCandidates = filteredResults.filter(c => c.matchScore >= 60 && c.matchScore < 70);
+            const weakCandidates = filteredResults.filter(c => c.matchScore < 60);
+            
+            let candidatesHtml = '';
+            
+            if (strongCandidates.length > 0) {
+                candidatesHtml += `<h3 style="color: #38a169; margin: 30px 0 20px 0; text-align: center;">🚀 Strong Matches (${strongCandidates.length})</h3>`;
+                strongCandidates.forEach(candidate => {
+                    candidatesHtml += createCandidateCard(candidate);
+                });
+            }
+            
+            if (goodCandidates.length > 0) {
+                candidatesHtml += `<h3 style="color: #dd6b20; margin: 30px 0 20px 0; text-align: center;">✅ Good Matches (${goodCandidates.length})</h3>`;
+                goodCandidates.forEach(candidate => {
+                    candidatesHtml += createCandidateCard(candidate);
+                });
+            }
+            
+            if (moderateCandidates.length > 0) {
+                candidatesHtml += `<h3 style="color: #d69e2e; margin: 30px 0 20px 0; text-align: center;">🟡 Moderate Matches (${moderateCandidates.length})</h3>`;
+                moderateCandidates.forEach(candidate => {
+                    candidatesHtml += createCandidateCard(candidate);
+                });
+            }
+            
+            if (weakCandidates.length > 0) {
+                candidatesHtml += `<h3 style="color: #e53e3e; margin: 30px 0 20px 0; text-align: center;">⚠️ Candidates Needing Review (${weakCandidates.length})</h3>`;
+                weakCandidates.forEach(candidate => {
+                    candidatesHtml += createCandidateCard(candidate);
+                });
+            }
+            
+            // Insert candidates after filters
+            filtersSection.insertAdjacentHTML('afterend', candidatesHtml);
+            
+            // Update shortlist if it exists
+            if (window.shortlistedCandidates && window.shortlistedCandidates.length > 0) {
+                updateShortlistDisplay();
+            }
+        }
+        
         // Initialize file handlers when page loads
         document.addEventListener('DOMContentLoaded', function() {
             console.log('Page loaded, file handlers initialized');
+            
+            // Initialize global variables
+            window.currentResults = null;
+            window.currentJobDescription = null;
+            window.shortlistedCandidates = [];
+            window.interviewSchedule = [];
         });
     </script>
 </body>
