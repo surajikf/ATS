@@ -1468,23 +1468,28 @@
         function extractMobileNumber(text) {
             console.log('Extracting mobile number from text:', text.substring(0, 200) + '...');
             
-            // Simple and effective mobile number patterns
+            // More precise mobile number patterns - only extract actual mobile numbers
             const mobilePatterns = [
-                // Indian mobile numbers (10 digits starting with 6,7,8,9)
-                /(\+?91\s*[-]?\s*[6-9]\d{9})/gi,
-                /([6-9]\d{9})/gi,
-                // International format
-                /(\+?\d{1,3}\s*[-]?\s*\d{6,14})/gi,
-                // Numbers with common prefixes
-                /(?:mobile|phone|contact|whatsapp|call|dial|mob|tel|cell)\s*:?\s*(\+?\d{1,3}\s*[-]?\s*\d{6,14})/gi,
-                /(?:mobile|phone|contact|whatsapp|call|dial|mob|tel|cell)\s*:?\s*([6-9]\d{9})/gi
+                // Indian mobile numbers with clear context (10 digits starting with 6,7,8,9)
+                /(?:mobile|phone|contact|whatsapp|call|dial|mob|tel|cell|ph|mobile\s*no|phone\s*no)\s*:?\s*(\+?91\s*[-]?\s*[6-9]\d{9})/gi,
+                /(?:mobile|phone|contact|whatsapp|call|dial|mob|tel|cell|ph|mobile\s*no|phone\s*no)\s*:?\s*([6-9]\d{9})/gi,
+                // Numbers in contact section with clear labels
+                /(?:contact|reach|get\s*in\s*touch)\s*:?\s*(\+?91\s*[-]?\s*[6-9]\d{9})/gi,
+                /(?:contact|reach|get\s*in\s*touch)\s*:?\s*([6-9]\d{9})/gi,
+                // Numbers after email or name with context
+                /(?:email|mail|e-mail)\s*:?\s*[^\n]*\n\s*(?:mobile|phone|contact|whatsapp|call|dial|mob|tel|cell|ph)\s*:?\s*(\+?91\s*[-]?\s*[6-9]\d{9})/gi,
+                /(?:email|mail|e-mail)\s*:?\s*[^\n]*\n\s*(?:mobile|phone|contact|whatsapp|call|dial|mob|tel|cell|ph)\s*:?\s*([6-9]\d{9})/gi,
+                // Numbers in personal information section
+                /(?:personal|personal\s*info|personal\s*details)\s*:?\s*[^\n]*\n\s*(?:mobile|phone|contact|whatsapp|call|dial|mob|tel|cell|ph)\s*:?\s*(\+?91\s*[-]?\s*[6-9]\d{9})/gi,
+                /(?:personal|personal\s*info|personal\s*details)\s*:?\s*[^\n]*\n\s*(?:mobile|phone|contact|whatsapp|call|dial|mob|tel|cell|ph)\s*:?\s*([6-9]\d{9})/gi
             ];
             
+            // First, try to find numbers with clear context
             for (const pattern of mobilePatterns) {
                 let match;
                 while ((match = pattern.exec(text)) !== null) {
                     const number = match[1].replace(/[\s\-\(\)\[\]\{\}]/g, '');
-                    console.log('Found potential number:', number);
+                    console.log('Found potential mobile number with context:', number);
                     
                     // Validate the number
                     if (number.length >= 10 && number.length <= 15) {
@@ -1496,14 +1501,101 @@
                             cleanNumber = '+91' + cleanNumber;
                         }
                         
-                        console.log('Extracted mobile number:', cleanNumber);
-                        return cleanNumber;
+                        // Double validate the cleaned number
+                        if (validateMobileNumber(cleanNumber)) {
+                            console.log('Extracted and validated mobile number:', cleanNumber);
+                            return cleanNumber;
+                        } else {
+                            console.log('Number failed validation:', cleanNumber);
+                        }
                     }
                 }
             }
             
-            console.log('No mobile number found');
+            // If no clear context found, try to find numbers near contact-related keywords
+            const contactKeywords = ['mobile', 'phone', 'contact', 'whatsapp', 'call', 'dial', 'mob', 'tel', 'cell', 'ph'];
+            const lines = text.split('\n');
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].toLowerCase();
+                const nextLine = lines[i + 1] || '';
+                const prevLine = lines[i - 1] || '';
+                
+                // Check if current line has contact keywords
+                const hasContactKeyword = contactKeywords.some(keyword => line.includes(keyword));
+                
+                if (hasContactKeyword) {
+                    // Look for mobile number in current line, next line, or previous line
+                    const numberPattern = /(\+?91\s*[-]?\s*[6-9]\d{9})|([6-9]\d{9})/gi;
+                    
+                    // Check current line
+                    let match = numberPattern.exec(lines[i]);
+                    if (match) {
+                        const number = (match[1] || match[2]).replace(/[\s\-\(\)\[\]\{\}]/g, '');
+                        if (number.length >= 10 && number.length <= 15) {
+                            let cleanNumber = number;
+                            if (cleanNumber.startsWith('91') && cleanNumber.length === 12) {
+                                cleanNumber = '+' + cleanNumber;
+                            } else if (cleanNumber.length === 10 && /^[6-9]/.test(cleanNumber)) {
+                                cleanNumber = '+91' + cleanNumber;
+                            }
+                            
+                            if (validateMobileNumber(cleanNumber)) {
+                                console.log('Found and validated mobile number near contact keyword:', cleanNumber);
+                                return cleanNumber;
+                            } else {
+                                console.log('Number near contact keyword failed validation:', cleanNumber);
+                            }
+                        }
+                    }
+                    
+                    // Check next line
+                    match = numberPattern.exec(nextLine);
+                    if (match) {
+                        const number = (match[1] || match[2]).replace(/[\s\-\(\)\[\]\{\}]/g, '');
+                        if (number.length >= 10 && number.length <= 15) {
+                            let cleanNumber = number;
+                            if (cleanNumber.startsWith('91') && cleanNumber.length === 12) {
+                                cleanNumber = '+' + cleanNumber;
+                            } else if (cleanNumber.length === 10 && /^[6-9]/.test(cleanNumber)) {
+                                cleanNumber = '+91' + cleanNumber;
+                            }
+                            
+                            if (validateMobileNumber(cleanNumber)) {
+                                console.log('Found and validated mobile number in next line after contact keyword:', cleanNumber);
+                                return cleanNumber;
+                            } else {
+                                console.log('Number in next line failed validation:', cleanNumber);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            console.log('No valid mobile number found with proper context');
             return null;
+        }
+
+        function validateMobileNumber(number) {
+            // Remove all non-digit characters except +
+            const cleanNumber = number.replace(/[^\d+]/g, '');
+            
+            // Check if it's a valid Indian mobile number
+            if (cleanNumber.startsWith('+91')) {
+                const mobilePart = cleanNumber.substring(3);
+                if (mobilePart.length === 10 && /^[6-9]/.test(mobilePart)) {
+                    return true;
+                }
+            } else if (cleanNumber.startsWith('91') && cleanNumber.length === 12) {
+                const mobilePart = cleanNumber.substring(2);
+                if (/^[6-9]/.test(mobilePart)) {
+                    return true;
+                }
+            } else if (cleanNumber.length === 10 && /^[6-9]/.test(cleanNumber)) {
+                return true;
+            }
+            
+            return false;
         }
 
         function generateWhatsAppMessage(candidate) {
@@ -1606,15 +1698,30 @@
         // Debug function to test mobile number extraction
         function testMobileExtraction() {
             const testText = `
-                Contact: +91 98765 43210
-                Mobile: 87654 32109
-                Phone: 76543 21098
-                WhatsApp: 65432 10987
+                Name: John Doe
+                Email: john@example.com
+                Mobile: +91 98765 43210
+                Phone: 87654 32109
+                Contact: 76543 21098
+                
+                Personal Details:
+                Mobile No: 65432 10987
+                WhatsApp: 54321 09876
+                
+                Experience: 5 years
+                Skills: React, Node.js
             `;
             
+            console.log('Testing mobile extraction with sample text...');
             const extracted = extractMobileNumber(testText);
             console.log('Test extraction result:', extracted);
-            alert(`Test extraction result: ${extracted || 'No number found'}`);
+            
+            if (extracted) {
+                const isValid = validateMobileNumber(extracted);
+                alert(`Test extraction result: ${extracted}\nValidation: ${isValid ? 'Valid' : 'Invalid'}`);
+            } else {
+                alert('No mobile number found in test text');
+            }
         }
 
         // Smart action functions
