@@ -449,26 +449,51 @@
                 const file = resumeFiles[i];
                 const candidateName = file.name.replace(/\.[^/.]+$/, ''); // Remove file extension
                 
-                // Parse the actual resume file content
-                const resumeData = await parseResumeContent(file);
-                
-                // Calculate match score with job description comparison
-                const matchScore = calculateMatchScore(resumeData, jobDescription);
-                
-                results.push({
-                    name: candidateName,
-                    fileName: file.name,
-                    matchScore: matchScore,
-                    gender: extractGender(resumeData),
-                    location: extractLocation(resumeData),
-                    profileStability: analyzeProfileStability(resumeData),
-                    keySkills: extractSkills(resumeData),
-                    availability: extractAvailability(resumeData),
-                    currentCTC: extractCurrentCTC(resumeData),
-                    expectedCTC: extractExpectedCTC(resumeData),
-                    concerns: identifyConcerns(resumeData),
-                    recommendation: generateRecommendation({...resumeData, matchScore})
-                });
+                try {
+                    // Parse the actual resume file content
+                    const resumeData = await parseResumeContent(file);
+                    
+                    // Ensure all extracted data is properly initialized
+                    const extractedData = {
+                        name: candidateName,
+                        fileName: file.name,
+                        gender: extractGender(resumeData) || 'Not Mentioned',
+                        location: extractLocation(resumeData) || 'Not Mentioned',
+                        profileStability: analyzeProfileStability(resumeData) || 'Not Mentioned',
+                        keySkills: extractSkills(resumeData) || [],
+                        availability: extractAvailability(resumeData) || 'Not Mentioned',
+                        currentCTC: extractCurrentCTC(resumeData) || 'Not Mentioned',
+                        expectedCTC: extractExpectedCTC(resumeData) || 'Not Mentioned',
+                        concerns: identifyConcerns(resumeData) || []
+                    };
+                    
+                    // Calculate match score with job description comparison
+                    extractedData.matchScore = calculateMatchScore(extractedData, jobDescription);
+                    
+                    // Generate recommendation
+                    extractedData.recommendation = generateRecommendation(extractedData);
+                    
+                    results.push(extractedData);
+                    
+                } catch (error) {
+                    console.error(`Error processing file ${file.name}:`, error);
+                    
+                    // Add fallback data for failed parsing
+                    results.push({
+                        name: candidateName,
+                        fileName: file.name,
+                        matchScore: 0,
+                        gender: 'Error in parsing',
+                        location: 'Error in parsing',
+                        profileStability: 'Error in parsing',
+                        keySkills: [],
+                        availability: 'Error in parsing',
+                        currentCTC: 'Error in parsing',
+                        expectedCTC: 'Error in parsing',
+                        concerns: ['File parsing failed'],
+                        recommendation: 'Analysis failed - please check file format'
+                    });
+                }
             }
             
             return results;
@@ -1027,8 +1052,14 @@
             // Enhanced match score calculation with job description analysis
             let score = 50; // Base score
             
+            // Ensure resumeData has all required properties
+            if (!resumeData) {
+                console.warn('resumeData is undefined in calculateMatchScore');
+                return 0;
+            }
+            
             // Skills relevance (40% weight)
-            if (resumeData.keySkills && resumeData.keySkills.length > 0) {
+            if (resumeData.keySkills && Array.isArray(resumeData.keySkills) && resumeData.keySkills.length > 0) {
                 let skillScore = 0;
                 const jobSkills = extractJobSkills(jobDescription);
                 
@@ -1048,7 +1079,7 @@
             }
             
             // Experience and stability (25% weight)
-            if (resumeData.profileStability !== 'Not Mentioned') {
+            if (resumeData.profileStability && resumeData.profileStability !== 'Not Mentioned') {
                 if (resumeData.profileStability.includes('Very Stable')) score += 25;
                 else if (resumeData.profileStability.includes('Stable')) score += 20;
                 else if (resumeData.profileStability.includes('Moderate')) score += 15;
@@ -1057,7 +1088,7 @@
             }
             
             // Location match (10% weight)
-            if (resumeData.location !== 'Not Mentioned') {
+            if (resumeData.location && resumeData.location !== 'Not Mentioned') {
                 const jobLocation = extractJobLocation(jobDescription);
                 if (jobLocation && resumeData.location.toLowerCase().includes(jobLocation.toLowerCase())) {
                     score += 10;
@@ -1067,7 +1098,7 @@
             }
             
             // Availability (10% weight)
-            if (resumeData.availability !== 'Not Mentioned') {
+            if (resumeData.availability && resumeData.availability !== 'Not Mentioned') {
                 if (resumeData.availability.toLowerCase().includes('immediate')) score += 10;
                 else if (resumeData.availability.toLowerCase().includes('30 days') || resumeData.availability.toLowerCase().includes('1 month')) score += 8;
                 else if (resumeData.availability.toLowerCase().includes('60 days') || resumeData.availability.toLowerCase().includes('2 month')) score += 6;
@@ -1075,7 +1106,8 @@
             }
             
             // CTC information (5% weight)
-            if (resumeData.currentCTC !== 'Not Mentioned' || resumeData.expectedCTC !== 'Not Mentioned') {
+            if ((resumeData.currentCTC && resumeData.currentCTC !== 'Not Mentioned') || 
+                (resumeData.expectedCTC && resumeData.expectedCTC !== 'Not Mentioned')) {
                 score += 5;
             }
             
@@ -1133,19 +1165,24 @@
         function calculateContentQuality(resumeData) {
             let qualityScore = 0;
             
+            // Ensure resumeData exists
+            if (!resumeData) {
+                return 0;
+            }
+            
             // Check for comprehensive information
             const fields = ['gender', 'location', 'profileStability', 'availability', 'currentCTC', 'expectedCTC'];
-            const filledFields = fields.filter(field => resumeData[field] !== 'Not Mentioned').length;
+            const filledFields = fields.filter(field => resumeData[field] && resumeData[field] !== 'Not Mentioned').length;
             
             qualityScore += (filledFields / fields.length) * 10;
             
             // Bonus for detailed skills
-            if (resumeData.keySkills && resumeData.keySkills.length >= 5) {
+            if (resumeData.keySkills && Array.isArray(resumeData.keySkills) && resumeData.keySkills.length >= 5) {
                 qualityScore += 5;
             }
             
             // Bonus for detailed stability analysis
-            if (resumeData.profileStability && resumeData.profileStability.includes('(')) {
+            if (resumeData.profileStability && resumeData.profileStability.includes && resumeData.profileStability.includes('(')) {
                 qualityScore += 3;
             }
             
