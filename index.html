@@ -441,10 +441,11 @@
             
             for (let i = 0; i < resumeFiles.length; i++) {
                 const file = resumeFiles[i];
-                const candidateName = `Candidate ${i + 1}`;
+                const candidateName = file.name.replace(/\.[^/.]+$/, ''); // Remove file extension
                 
                 results.push({
                     name: candidateName,
+                    fileName: file.name, // Keep original filename for reference
                     matchScore: 0, // Will be calculated based on actual analysis
                     gender: 'Not Mentioned',
                     location: 'Not Mentioned',
@@ -464,7 +465,17 @@
         function displayResults(results) {
             const content = document.getElementById('resultsContent');
             
-            let html = '<h2 style="color: #2d3748; margin-bottom: 30px; text-align: center;">Screening Results</h2>';
+                         let html = `
+                 <h2 style="color: #2d3748; margin-bottom: 30px; text-align: center;">Screening Results</h2>
+                 <div style="background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 30px; text-align: center;">
+                     <h3 style="color: #4a5568; margin-bottom: 15px;">📋 Resume Files Uploaded</h3>
+                     <p style="color: #718096; line-height: 1.6;">
+                         <strong>${resumeFiles.length} resume file(s)</strong> have been uploaded and are ready for analysis.<br>
+                         The system will extract candidate information from these files and compare them against the job description.<br>
+                         <em>Note: This is a template interface. Real AI analysis requires backend integration.</em>
+                     </p>
+                 </div>
+             `;
             
             if (results.length > 1) {
                 // Comparison table for multiple candidates
@@ -502,7 +513,10 @@
             results.forEach(candidate => {
                 html += `
                     <tr>
-                        <td style="padding: 12px; border-bottom: 1px solid #f7fafc; font-weight: 600;">${candidate.name}</td>
+                                                 <td style="padding: 12px; border-bottom: 1px solid #f7fafc; font-weight: 600;">
+                             <div>${candidate.name}</div>
+                             <div style="font-size: 0.8rem; color: #718096; font-style: italic;">📄 ${candidate.fileName}</div>
+                         </td>
                         <td style="padding: 12px; border-bottom: 1px solid #f7fafc; text-align: center;">
                             <span class="match-score" style="font-size: 0.8rem;">${candidate.matchScore}%</span>
                         </td>
@@ -532,10 +546,13 @@
         function createCandidateCard(candidate) {
             return `
                 <div class="candidate-card">
-                    <div class="candidate-header">
-                        <div class="candidate-name">${candidate.name}</div>
-                                                 <div class="match-score">${candidate.matchScore > 0 ? candidate.matchScore + '% Match' : 'Pending Analysis'}</div>
-                    </div>
+                                         <div class="candidate-header">
+                         <div>
+                             <div class="candidate-name">${candidate.name}</div>
+                             <div style="font-size: 0.9rem; color: #718096; margin-top: 5px; font-style: italic;">📄 ${candidate.fileName}</div>
+                         </div>
+                         <div class="match-score">${candidate.matchScore > 0 ? candidate.matchScore + '% Match' : 'Pending Analysis'}</div>
+                     </div>
                     
                     <div class="candidate-details">
                         <div class="detail-item">
