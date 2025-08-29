@@ -364,6 +364,27 @@
             </div>
         </div>
 
+        <!-- Job Description Storage Section -->
+        <div class="form-section" style="margin-top: 20px;">
+            <h3><i class="fas fa-save"></i> Job Description Storage</h3>
+            
+            <!-- Current Job Description Display -->
+            <div id="currentJobDescription"></div>
+            
+            <!-- Saved Job Descriptions -->
+            <div id="savedJobDescriptions"></div>
+            
+            <!-- Quick Actions -->
+            <div style="text-align: center; margin-top: 20px;">
+                <button onclick="displaySavedJobDescriptions()" style="background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin: 0 10px;">
+                    <i class="fas fa-list"></i> View Saved JDs
+                </button>
+                <button onclick="clearCurrentJobDescription()" style="background: #e53e3e; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin: 0 10px;">
+                    <i class="fas fa-trash"></i> Clear Current JD
+                </button>
+            </div>
+        </div>
+
         <div class="results-section" id="resultsSection">
                          <div class="loading" id="loadingSection">
                  <i class="fas fa-spinner"></i>
@@ -377,6 +398,15 @@
     </div>
 
     <script>
+        // Global variables
+        let currentJobFile = null;
+        let currentResumeFiles = [];
+        let currentResults = [];
+        let shortlistedCandidates = [];
+        let interviewSchedule = [];
+        let savedJobDescriptions = JSON.parse(localStorage.getItem('savedJobDescriptions') || '[]');
+        let currentJobDescription = localStorage.getItem('currentJobDescription') || '';
+
         function triggerFileUpload(inputId) {
             document.getElementById(inputId).click();
         }
@@ -403,8 +433,9 @@
             const jobFile = document.getElementById('jobDescriptionFile').files[0];
             const resumeFiles = document.getElementById('resumeFiles').files;
 
-            if (!jobFile) {
-                alert('Please upload a job description first.');
+            // Check if we have a job description (either uploaded or saved)
+            if (!jobFile && !window.currentJobDescription) {
+                alert('Please upload a job description first or use a saved one.');
                 return;
             }
 
@@ -431,7 +462,7 @@
         }
 
         async function processScreeningResults(jobFile, resumeFiles) {
-            console.log('processScreeningResults called with:', { jobFile: jobFile.name, resumeCount: resumeFiles.length });
+            console.log('processScreeningResults called with:', { jobFile: jobFile?.name, resumeCount: resumeFiles.length });
             
             try {
                 // Hide loading, show results
@@ -441,12 +472,21 @@
 
                 console.log('Loading hidden, results content shown');
 
-                // Parse job description first
-                const jobDescription = await parseResumeContent(jobFile);
-                console.log('Job description parsed, length:', jobDescription.length);
-                
-                // Store job description globally
-                window.currentJobDescription = jobDescription;
+                // Get job description (either from uploaded file or saved)
+                let jobDescription;
+                if (jobFile) {
+                    // Parse uploaded job description
+                    jobDescription = await parseResumeContent(jobFile);
+                    console.log('Job description parsed from file, length:', jobDescription.length);
+                    
+                    // Store job description globally and save it
+                    window.currentJobDescription = jobDescription;
+                    saveJobDescription(jobDescription, jobFile.name);
+                } else {
+                    // Use saved job description
+                    jobDescription = window.currentJobDescription;
+                    console.log('Using saved job description, length:', jobDescription.length);
+                }
                 
                 // Actually parse and analyze the resume files with job description
                 const results = await parseResumeFiles(resumeFiles, jobDescription);
@@ -2265,10 +2305,219 @@ This analysis is based on AI-powered resume screening technology.`;
             
             // Initialize global variables
             window.currentResults = null;
-            window.currentJobDescription = null;
+            window.currentJobDescription = localStorage.getItem('currentJobDescription') || null;
             window.shortlistedCandidates = [];
             window.interviewSchedule = [];
+            
+            // Load saved job descriptions
+            loadSavedJobDescriptions();
+            
+            // If there's a saved job description, show it
+            if (window.currentJobDescription) {
+                displaySavedJobDescription();
+            }
         });
+
+        // Job Description Storage Functions
+        function saveJobDescription(jobDescription, fileName = 'Job Description') {
+            const jobData = {
+                id: Date.now(),
+                content: jobDescription,
+                fileName: fileName,
+                date: new Date().toISOString(),
+                usageCount: 1
+            };
+            
+            // Check if this job description already exists
+            const existingIndex = savedJobDescriptions.findIndex(job => 
+                job.content === jobDescription
+            );
+            
+            if (existingIndex !== -1) {
+                // Update existing entry
+                savedJobDescriptions[existingIndex].usageCount++;
+                savedJobDescriptions[existingIndex].lastUsed = new Date().toISOString();
+            } else {
+                // Add new entry
+                savedJobDescriptions.push(jobData);
+            }
+            
+            // Store in localStorage
+            localStorage.setItem('savedJobDescriptions', JSON.stringify(savedJobDescriptions));
+            localStorage.setItem('currentJobDescription', jobDescription);
+            
+            // Update global variable
+            window.currentJobDescription = jobDescription;
+            
+            console.log('Job description saved:', jobData);
+        }
+
+        function loadSavedJobDescriptions() {
+            const saved = localStorage.getItem('savedJobDescriptions');
+            if (saved) {
+                savedJobDescriptions = JSON.parse(saved);
+                console.log('Loaded saved job descriptions:', savedJobDescriptions);
+            }
+        }
+
+        function displaySavedJobDescriptions() {
+            const container = document.getElementById('savedJobDescriptions');
+            if (!container) return;
+            
+            if (savedJobDescriptions.length === 0) {
+                container.innerHTML = '<p style="color: #718096; text-align: center; font-style: italic;">No saved job descriptions yet</p>';
+                return;
+            }
+            
+            let html = '<h4 style="color: #4a5568; margin-bottom: 15px;">📋 Saved Job Descriptions</h4>';
+            
+            savedJobDescriptions.forEach(job => {
+                const isCurrent = job.content === window.currentJobDescription;
+                const shortContent = job.content.substring(0, 100) + (job.content.length > 100 ? '...' : '');
+                
+                html += `
+                    <div style="background: ${isCurrent ? '#f0fff4' : '#f7fafc'}; border: 1px solid ${isCurrent ? '#48bb78' : '#e2e8f0'}; border-radius: 8px; padding: 15px; margin-bottom: 10px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                            <div>
+                                <strong style="color: #2d3748;">${job.fileName}</strong>
+                                <div style="color: #718096; font-size: 0.9rem; margin-top: 2px;">
+                                    Used ${job.usageCount} time${job.usageCount > 1 ? 's' : ''} • ${new Date(job.date).toLocaleDateString()}
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 8px;">
+                                ${isCurrent ? '<span style="background: #48bb78; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.8rem;">Current</span>' : ''}
+                                <button onclick="useJobDescription('${job.id}')" style="background: #667eea; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">
+                                    ${isCurrent ? '✓ Active' : 'Use'}
+                                </button>
+                                <button onclick="deleteJobDescription('${job.id}')" style="background: #e53e3e; color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                        <div style="color: #4a5568; font-size: 0.9rem; line-height: 1.4;">
+                            ${shortContent}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function useJobDescription(jobId) {
+            const job = savedJobDescriptions.find(j => j.id === parseInt(jobId));
+            if (job) {
+                window.currentJobDescription = job.content;
+                localStorage.setItem('currentJobDescription', job.content);
+                
+                // Update usage count
+                job.usageCount++;
+                job.lastUsed = new Date().toISOString();
+                localStorage.setItem('savedJobDescriptions', JSON.stringify(savedJobDescriptions));
+                
+                // Update display
+                displaySavedJobDescriptions();
+                displaySavedJobDescription();
+                
+                alert(`Using job description: ${job.fileName}`);
+            }
+        }
+
+        function deleteJobDescription(jobId) {
+            if (confirm('Are you sure you want to delete this job description?')) {
+                const index = savedJobDescriptions.findIndex(j => j.id === parseInt(jobId));
+                if (index !== -1) {
+                    const deletedJob = savedJobDescriptions[index];
+                    savedJobDescriptions.splice(index, 1);
+                    localStorage.setItem('savedJobDescriptions', JSON.stringify(savedJobDescriptions));
+                    
+                    // If this was the current job description, clear it
+                    if (deletedJob.content === window.currentJobDescription) {
+                        window.currentJobDescription = null;
+                        localStorage.removeItem('currentJobDescription');
+                        hideSavedJobDescription();
+                    }
+                    
+                    displaySavedJobDescriptions();
+                    alert('Job description deleted successfully');
+                }
+            }
+        }
+
+        function displaySavedJobDescription() {
+            if (!window.currentJobDescription) return;
+            
+            const container = document.getElementById('currentJobDescription');
+            if (!container) return;
+            
+            const shortContent = window.currentJobDescription.substring(0, 200) + (window.currentJobDescription.length > 200 ? '...' : '');
+            
+            container.innerHTML = `
+                <div style="background: #f0fff4; border: 2px solid #48bb78; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                    <h4 style="color: #38a169; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-file-alt"></i> Current Job Description
+                        <button onclick="clearCurrentJobDescription()" style="background: #e53e3e; color: white; border: none; padding: 4px 8px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; margin-left: auto;">
+                            Clear
+                        </button>
+                    </h4>
+                    <div style="color: #2d3748; line-height: 1.6; margin-bottom: 15px;">
+                        ${shortContent}
+                    </div>
+                    <button onclick="showFullJobDescription()" style="background: #48bb78; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem;">
+                        View Full Description
+                    </button>
+                </div>
+            `;
+        }
+
+        function hideSavedJobDescription() {
+            const container = document.getElementById('currentJobDescription');
+            if (container) {
+                container.innerHTML = '';
+            }
+        }
+
+        function clearCurrentJobDescription() {
+            if (confirm('Are you sure you want to clear the current job description?')) {
+                window.currentJobDescription = null;
+                localStorage.removeItem('currentJobDescription');
+                hideSavedJobDescription();
+                alert('Current job description cleared');
+            }
+        }
+
+        function showFullJobDescription() {
+            if (window.currentJobDescription) {
+                const modal = document.createElement('div');
+                modal.style.cssText = `
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+                    background: rgba(0,0,0,0.8); z-index: 10000; display: flex; 
+                    align-items: center; justify-content: center; padding: 20px;
+                `;
+                
+                modal.innerHTML = `
+                    <div style="background: white; border-radius: 12px; padding: 30px; max-width: 800px; max-height: 80vh; overflow-y: auto;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3 style="color: #2d3748;">Full Job Description</h3>
+                            <button onclick="this.closest('.modal').remove()" style="background: #e53e3e; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
+                                Close
+                            </button>
+                        </div>
+                        <div style="color: #2d3748; line-height: 1.6; white-space: pre-wrap;">
+                            ${window.currentJobDescription}
+                        </div>
+                    </div>
+                `;
+                
+                modal.className = 'modal';
+                document.body.appendChild(modal);
+                
+                // Close on outside click
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) modal.remove();
+                });
+            }
+        }
     </script>
 </body>
 </html>
