@@ -658,6 +658,137 @@ with st.sidebar:
         </div>
         """, unsafe_allow_html=True)
     
+# Global UI/UX controls and theming (Design System)
+with st.sidebar:
+    st.markdown("### 🎨 Appearance")
+    theme_choice = st.radio(
+        "Theme",
+        ["System", "Light", "Dark", "High Contrast"],
+        horizontal=True,
+        index=0,
+        help="Choose the visual theme"
+    )
+    density_choice = st.selectbox(
+        "Density",
+        ["Comfortable", "Compact"],
+        index=0,
+        help="Control spacing and component density"
+    )
+    reduce_motion = st.checkbox("Reduce motion (accessibility)", value=False)
+
+    st.session_state["ui_theme"] = theme_choice
+    st.session_state["ui_density"] = density_choice
+    st.session_state["ui_reduce_motion"] = reduce_motion
+
+# Inject CSS variables and theme overrides
+_radius = 12 if st.session_state.get("ui_density", "Comfortable") == "Comfortable" else 8
+_spacing = 14 if st.session_state.get("ui_density", "Comfortable") == "Comfortable" else 10
+
+base_css = f"""
+<style>
+  :root {{
+    /* Color tokens */
+    --color-bg: #f8fafc;
+    --color-surface: #ffffff;
+    --color-border: #e2e8f0;
+    --color-text: #0f172a;
+    --color-muted: #475569;
+    --color-primary: #6366f1;
+    --color-primary-2: #8b5cf6;
+    --color-success: #22c55e;
+    --color-warning: #f59e0b;
+    --color-danger: #ef4444;
+
+    /* Elevation */
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 10px 30px rgba(0,0,0,0.12);
+
+    /* Shape & spacing */
+    --radius: {_radius}px;
+    --spacing: {_spacing}px;
+  }}
+
+  body, .main {{
+    background: var(--color-bg) !important;
+    color: var(--color-text);
+  }}
+
+  /* Normalize common components to tokens */
+  .modern-card, .metric-card, .stTextArea > div, .stSelectbox > div > div, .stFileUploader > div {{
+    background: var(--color-surface);
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border);
+    box-shadow: var(--shadow-sm);
+  }}
+
+  .stButton > button {{
+    border-radius: var(--radius);
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-2) 100%);
+  }}
+
+  .section-header, .metric-label {{ color: var(--color-muted); }}
+
+  /* Density adjustments */
+  .modern-card {{ padding: calc(var(--spacing) * 1.5); }}
+  .metric-card {{ padding: var(--spacing); }}
+
+  /* Focus visibility */
+  :focus-visible {{ outline: 3px solid var(--color-primary); outline-offset: 2px; }}
+</style>
+"""
+
+dark_css = """
+<style>
+  :root {
+    --color-bg: #0b1220;
+    --color-surface: #111827;
+    --color-border: #1f2937;
+    --color-text: #e5e7eb;
+    --color-muted: #cbd5e1;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.35);
+    --shadow-lg: 0 10px 30px rgba(0,0,0,0.4);
+  }
+</style>
+"""
+
+hc_css = """
+<style>
+  :root {
+    --color-bg: #ffffff;
+    --color-surface: #ffffff;
+    --color-border: #000000;
+    --color-text: #000000;
+    --color-muted: #000000;
+    --color-primary: #000000;
+    --color-primary-2: #222222;
+  }
+
+  * { border-width: 2px !important; }
+</style>
+"""
+
+rm_css = """
+<style>
+  * { transition: none !important; animation: none !important; }
+</style>
+"""
+
+# Apply base CSS
+st.markdown(base_css, unsafe_allow_html=True)
+
+# Apply theme overrides
+_theme = st.session_state.get("ui_theme", "System")
+if _theme == "Dark":
+    st.markdown(dark_css, unsafe_allow_html=True)
+elif _theme == "High Contrast":
+    st.markdown(hc_css, unsafe_allow_html=True)
+
+# Apply reduced motion if selected
+if st.session_state.get("ui_reduce_motion", False):
+    st.markdown(rm_css, unsafe_allow_html=True)
+
 # AI Personality Analysis Functions
 def analyze_candidate_personality(resume_text):
     """Analyze candidate personality and cultural fit using AI"""
