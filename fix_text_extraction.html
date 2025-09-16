@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Extraction Test</title>
+</head>
+<body>
+    <h1>Text Extraction Test</h1>
+    
+    <div>
+        <h3>Upload Job Description</h3>
+        <input type="file" id="jobFile" accept=".pdf,.doc,.docx,.txt" onchange="handleFileUpload()">
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function handleFileUpload() {
+            const file = document.getElementById('jobFile').files[0];
+            if (!file) return;
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<p>Processing file...</p>';
+            
+            try {
+                const extractedText = await extractTextFromFile(file);
+                resultDiv.innerHTML = `
+                    <h4>Extracted Text:</h4>
+                    <div style="background: #f0f0f0; padding: 10px; border-radius: 5px; white-space: pre-wrap; max-height: 300px; overflow-y: auto;">
+                        ${extractedText}
+                    </div>
+                    <p><strong>File:</strong> ${file.name}</p>
+                    <p><strong>Type:</strong> ${file.type}</p>
+                    <p><strong>Size:</strong> ${(file.size / 1024).toFixed(2)} KB</p>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `<p style="color: red;">Error: ${error}</p>`;
+            }
+        }
+
+        function extractTextFromFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    try {
+                        let extractedText = '';
+                        
+                        if (file.type === 'text/plain' || file.name.toLowerCase().endsWith('.txt')) {
+                            // For text files, we can read directly
+                            extractedText = e.target.result;
+                        } else if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+                            // For PDFs, show message about server-side processing
+                            extractedText = `[PDF File: ${file.name}]\n\nText extraction requires server-side processing.\n\nFor proper PDF text extraction, please use the Python Streamlit app (streamlit run app.py) which has working PDF text extraction.\n\nThis HTML interface can only handle text files directly.`;
+                        } else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
+                                   file.name.toLowerCase().endsWith('.docx')) {
+                            // For DOCX files, show message about server-side processing
+                            extractedText = `[DOCX File: ${file.name}]\n\nText extraction requires server-side processing.\n\nFor proper DOCX text extraction, please use the Python Streamlit app (streamlit run app.py) which has working DOCX text extraction.\n\nThis HTML interface can only handle text files directly.`;
+                        } else {
+                            extractedText = `[Unsupported file type: ${file.name}]\n\nPlease use PDF, DOCX, or TXT files.\n\nFor PDF and DOCX files, use the Python app for proper text extraction.`;
+                        }
+                        
+                        resolve(extractedText);
+                    } catch (error) {
+                        reject(`Error extracting text: ${error.message}`);
+                    }
+                };
+                
+                reader.onerror = function() {
+                    reject('Failed to read file');
+                };
+                
+                // Read as text for all files to avoid binary data issues
+                reader.readAsText(file);
+            });
+        }
+    </script>
+</body>
+</html>

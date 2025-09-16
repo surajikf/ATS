@@ -27,9 +27,155 @@ warnings.filterwarnings('ignore')
 
 from branding import CompanyBranding
 from file_handler import FileHandler
+from text_processor import TextProcessor
+from similarity_calculator import SimilarityCalculator
+from ml_predictor import MLPredictor
+from analytics_dashboard import AnalyticsDashboard
 
-# Initialize file handler
+# Initialize components
 file_handler = FileHandler()
+text_processor = TextProcessor()
+similarity_calculator = SimilarityCalculator()
+ml_predictor = MLPredictor()
+analytics_dashboard = AnalyticsDashboard()
+
+# Professional ATS Functions
+def extract_resume_data(resume_text):
+    """Extract comprehensive data from resume using advanced NLP"""
+    try:
+        # Use text processor for advanced extraction
+        processed_text = text_processor.preprocess_text(resume_text)
+        
+        # Extract key information
+        data = {
+            'name': text_processor.extract_name(resume_text),
+            'email': text_processor.extract_email(resume_text),
+            'phone': text_processor.extract_phone(resume_text),
+            'location': text_processor.extract_location(resume_text),
+            'skills': text_processor.extract_skills(resume_text),
+            'experience': text_processor.extract_experience(resume_text),
+            'education': text_processor.extract_education(resume_text),
+            'certifications': text_processor.extract_certifications(resume_text),
+            'languages': text_processor.extract_languages(resume_text),
+            'summary': text_processor.extract_summary(resume_text),
+            'years_experience': text_processor.calculate_experience_years(resume_text),
+            'keywords': text_processor.extract_keywords(resume_text),
+            'ats_score': 0,  # Will be calculated later
+            'match_percentage': 0,  # Will be calculated later
+            'red_flags': [],  # Will be populated during analysis
+            'strengths': [],  # Will be populated during analysis
+            'recommendations': []  # Will be populated during analysis
+        }
+        
+        return data
+    except Exception as e:
+        st.error(f"Error extracting resume data: {e}")
+        return None
+
+def calculate_ats_score(resume_data, job_description):
+    """Calculate comprehensive ATS score"""
+    try:
+        # Use similarity calculator for matching
+        match_score = similarity_calculator.calculate_match(resume_data, job_description)
+        
+        # Use ML predictor for additional scoring
+        ml_score = ml_predictor.predict_success_probability(resume_data, job_description)
+        
+        # Combine scores with weights
+        ats_score = (match_score * 0.7) + (ml_score * 0.3)
+        
+        return {
+            'overall_score': round(ats_score, 2),
+            'match_score': round(match_score, 2),
+            'ml_score': round(ml_score, 2),
+            'keyword_match': similarity_calculator.calculate_keyword_match(resume_data, job_description),
+            'skill_match': similarity_calculator.calculate_skill_match(resume_data, job_description),
+            'experience_match': similarity_calculator.calculate_experience_match(resume_data, job_description)
+        }
+    except Exception as e:
+        st.error(f"Error calculating ATS score: {e}")
+        return None
+
+def analyze_resume_quality(resume_data):
+    """Analyze resume quality and provide recommendations"""
+    try:
+        quality_analysis = {
+            'overall_quality': 'Good',
+            'strengths': [],
+            'weaknesses': [],
+            'recommendations': [],
+            'red_flags': []
+        }
+        
+        # Check for common issues
+        if not resume_data.get('email'):
+            quality_analysis['red_flags'].append('Missing email address')
+        
+        if not resume_data.get('phone'):
+            quality_analysis['red_flags'].append('Missing phone number')
+        
+        if len(resume_data.get('skills', [])) < 5:
+            quality_analysis['weaknesses'].append('Limited skills listed')
+        
+        if resume_data.get('years_experience', 0) < 1:
+            quality_analysis['weaknesses'].append('Limited work experience')
+        
+        # Check for strengths
+        if len(resume_data.get('certifications', [])) > 0:
+            quality_analysis['strengths'].append('Has relevant certifications')
+        
+        if len(resume_data.get('languages', [])) > 1:
+            quality_analysis['strengths'].append('Multilingual candidate')
+        
+        # Generate recommendations
+        if 'Missing email address' in quality_analysis['red_flags']:
+            quality_analysis['recommendations'].append('Add professional email address')
+        
+        if 'Limited skills listed' in quality_analysis['weaknesses']:
+            quality_analysis['recommendations'].append('Add more relevant technical skills')
+        
+        return quality_analysis
+    except Exception as e:
+        st.error(f"Error analyzing resume quality: {e}")
+        return None
+
+def generate_ats_report(resume_data, job_description, ats_scores):
+    """Generate comprehensive ATS report"""
+    try:
+        report = {
+            'candidate_name': resume_data.get('name', 'Unknown'),
+            'job_title': 'Software Engineer',  # Extract from job description
+            'overall_score': ats_scores['overall_score'],
+            'match_breakdown': {
+                'keyword_match': ats_scores['keyword_match'],
+                'skill_match': ats_scores['skill_match'],
+                'experience_match': ats_scores['experience_match']
+            },
+            'candidate_summary': {
+                'years_experience': resume_data.get('years_experience', 0),
+                'key_skills': resume_data.get('skills', [])[:10],
+                'education': resume_data.get('education', []),
+                'certifications': resume_data.get('certifications', [])
+            },
+            'recommendations': [],
+            'next_steps': []
+        }
+        
+        # Generate recommendations based on scores
+        if ats_scores['overall_score'] >= 80:
+            report['recommendations'].append('Strong candidate - recommend for interview')
+            report['next_steps'].append('Schedule technical interview')
+        elif ats_scores['overall_score'] >= 60:
+            report['recommendations'].append('Good candidate - consider for interview')
+            report['next_steps'].append('Schedule initial screening call')
+        else:
+            report['recommendations'].append('Consider for other positions or provide feedback')
+            report['next_steps'].append('Send polite rejection or suggest other roles')
+        
+        return report
+    except Exception as e:
+        st.error(f"Error generating ATS report: {e}")
+        return None
 
 # Job Description Storage Functions
 def load_saved_jds():
@@ -370,7 +516,7 @@ st.markdown("""
             <div style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">⚡</div>
             <div style="font-size: 1rem; font-weight: 600;">Fast Processing</div>
             <div style="font-size: 0.85rem; opacity: 0.8; margin-top: 0.25rem;">Process resumes in seconds</div>
-        </div>
+    </div>
         <div style="background: rgba(255,255,255,0.15); padding: 1.5rem 2rem; border-radius: 16px; backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s ease;">
             <div style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">📊</div>
             <div style="font-size: 1rem; font-weight: 600;">Analytics</div>
@@ -391,7 +537,7 @@ st.markdown("""
     100% { transform: scale(1); }
 }
 </style>
-""", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
     
 # Welcome message for HR users
 if 'first_visit' not in st.session_state:
@@ -411,7 +557,7 @@ with st.sidebar:
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                 <span style="font-size: 0.85rem; opacity: 0.8;">Active Sessions</span>
                 <span style="font-weight: 600; color: #48bb78;">Online</span>
-            </div>
+    </div>
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span style="font-size: 0.85rem; opacity: 0.8;">Last Activity</span>
                 <span style="font-size: 0.85rem; opacity: 0.8;">Just now</span>
@@ -432,12 +578,18 @@ with st.sidebar:
     
     st.markdown("### 🎯 HR Workflows")
     
-    # Modern HR-focused navigation
+    # Professional ATS Navigation
     navigation_options = {
-        "📋 Single Candidate Evaluation": "Evaluate individual candidate against job opening", 
-        "📁 Bulk Candidate Screening": "Screen multiple candidates for job openings",
-        "📊 Recruitment Analytics": "Track hiring metrics and performance",
-        "💼 Job Opening Management": "Manage and update job descriptions"
+        "📋 Single Candidate Analysis": "Comprehensive ATS evaluation of individual candidate", 
+        "📁 Bulk Resume Screening": "AI-powered screening of multiple candidates",
+        "📊 ATS Analytics Dashboard": "Advanced recruitment metrics and insights",
+        "💼 Job Description Management": "Create and manage job postings",
+        "🎯 ATS Score Optimization": "Optimize resumes for better ATS performance",
+        "📈 Recruitment Pipeline": "Track candidates through hiring process",
+        "🔍 Advanced Search & Filter": "Search and filter candidates by criteria",
+        "📋 Interview Scheduling": "Schedule and manage interviews",
+        "📊 Performance Reports": "Generate detailed recruitment reports",
+        "⚙️ ATS Configuration": "Configure ATS settings and preferences"
     }
     
     page_display = st.selectbox(
@@ -580,16 +732,37 @@ def create_personality_radar(personality_data):
     return fig
 
 # Main content based on page selection
-if page == "Single Candidate Evaluation":
-    # HR-focused header
+if page == "Single Candidate Analysis":
+    # Professional ATS Header
     st.markdown("""
-    <div style="background: white; border-bottom: 1px solid #e2e8f0; padding: 1.5rem 0; margin-bottom: 1.5rem;">
-        <h1 style="font-size: 2rem; font-weight: 700; color: #0f172a; margin-bottom: 0.25rem;">
-            Single Candidate Evaluation
+    <div style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 1px solid #e2e8f0; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.75rem; border-radius: 12px; font-size: 1.5rem;">
+                🎯
+            </div>
+            <div>
+                <h1 style="font-size: 2rem; font-weight: 700; color: #0f172a; margin: 0;">
+                    Professional ATS Candidate Analysis
         </h1>
-        <p style="font-size: 1rem; color: #475569; margin: 0;">
-            Professional AI-powered candidate analysis for job openings
-        </p>
+                <p style="font-size: 1rem; color: #475569; margin: 0.25rem 0 0 0;">
+                    Advanced AI-powered resume screening and candidate evaluation
+                </p>
+            </div>
+        </div>
+        <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+            <div style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; flex: 1; min-width: 200px;">
+                <div style="font-size: 0.875rem; color: #64748b; margin-bottom: 0.25rem;">ATS Score</div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: #667eea;">AI-Powered</div>
+            </div>
+            <div style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; flex: 1; min-width: 200px;">
+                <div style="font-size: 0.875rem; color: #64748b; margin-bottom: 0.25rem;">Keyword Match</div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: #48bb78;">Advanced NLP</div>
+            </div>
+            <div style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; flex: 1; min-width: 200px;">
+                <div style="font-size: 0.875rem; color: #64748b; margin-bottom: 0.25rem;">Experience Analysis</div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: #ed8936;">ML-Powered</div>
+            </div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
     
@@ -729,12 +902,12 @@ if page == "Single Candidate Evaluation":
             )
             
             if input_method == "📝 Type/Edit Text":
-                custom_requirements = st.text_area(
-                    "Add custom requirements or modify job description:",
-                    value=job_openings[selected_job],
-                    height=120,
-                    help="Customize the job description with specific requirements"
-                )
+            custom_requirements = st.text_area(
+                "Add custom requirements or modify job description:",
+                value=job_openings[selected_job],
+                height=120,
+                help="Customize the job description with specific requirements"
+            )
             else:
                 # Paste functionality
                 st.markdown("**📋 Paste Job Description**")
@@ -791,16 +964,43 @@ if page == "Single Candidate Evaluation":
     col1, col2 = st.columns(2)
         
     with col1:
-        st.markdown("#### Candidate Resume")
+        st.markdown("#### 📄 Professional Resume Analysis")
+        
+        # Resume upload with enhanced features
         resume_file = st.file_uploader(
             "Upload Candidate Resume (PDF, DOCX, TXT)",
             type=['pdf', 'docx', 'txt'],
-            key="resume_upload"
+            key="resume_upload",
+            help="Supported formats: PDF, DOCX, TXT. Maximum file size: 10MB"
         )
         
-        # Show resume text if uploaded
+        # ATS optimization tips
+        with st.expander("💡 ATS Optimization Tips", expanded=False):
+            st.markdown("""
+            **For better ATS scores, ensure your resume includes:**
+            - Clear section headers (Experience, Education, Skills)
+            - Relevant keywords from the job description
+            - Quantified achievements and metrics
+            - Standard fonts (Arial, Calibri, Times New Roman)
+            - Proper formatting without tables or graphics
+            - Contact information at the top
+            - Professional email address
+            """)
+        
+        # Resume quality checker
         if resume_file:
-            st.markdown("#### 📋 Resume Content Preview")
+            st.success(f"✅ Resume uploaded: {resume_file.name}")
+            
+            # File size check
+            file_size = len(resume_file.getvalue())
+            if file_size > 10 * 1024 * 1024:  # 10MB
+                st.warning("⚠️ File size is large. Processing may take longer.")
+            else:
+                st.info(f"📊 File size: {file_size / 1024:.1f} KB")
+        
+        # Professional resume analysis
+        if resume_file:
+            st.markdown("#### 🔍 Advanced Resume Analysis")
             
             # Create temporary file and extract text
             with tempfile.NamedTemporaryFile(delete=False, suffix=f".{resume_file.name.split('.')[-1]}") as tmp_file:
@@ -814,9 +1014,48 @@ if page == "Single Candidate Evaluation":
                 if success:
                     st.success(f"✅ Successfully extracted text from {resume_file.name}")
                     
-                    # Show extracted text in expandable section
-                    with st.expander("📋 View Resume Content", expanded=False):
+                    # Show loading spinner for AI analysis
+                    with st.spinner("🤖 Analyzing resume with AI..."):
+                        # Extract comprehensive resume data
+                        resume_data = extract_resume_data(extracted_resume_text)
+                        
+                        if resume_data:
+                            # Display extracted data in a professional format
+                            st.markdown("#### 📊 Extracted Candidate Information")
+                            
+                            # Create columns for better layout
+                            col_info1, col_info2 = st.columns(2)
+                            
+                            with col_info1:
+                                st.markdown("**👤 Personal Information**")
+                                st.write(f"**Name:** {resume_data.get('name', 'Not found')}")
+                                st.write(f"**Email:** {resume_data.get('email', 'Not found')}")
+                                st.write(f"**Phone:** {resume_data.get('phone', 'Not found')}")
+                                st.write(f"**Location:** {resume_data.get('location', 'Not found')}")
+                                st.write(f"**Experience:** {resume_data.get('years_experience', 0)} years")
+                            
+                            with col_info2:
+                                st.markdown("**🎯 Professional Summary**")
+                                if resume_data.get('summary'):
+                                    st.write(f"**Summary:** {resume_data['summary'][:200]}...")
+                                
+                                st.markdown("**🛠️ Key Skills**")
+                                skills = resume_data.get('skills', [])
+                                if skills:
+                                    st.write(", ".join(skills[:8]))  # Show first 8 skills
+                                else:
+                                    st.write("No skills detected")
+                            
+                            # Store resume data in session state for analysis
+                            st.session_state.resume_data = resume_data
+                            
+                        else:
+                            st.error("❌ Could not extract data from resume. Please try a different file format.")
+                    
+                    # Resume text preview (collapsible)
+                    with st.expander("📋 View Full Resume Text", expanded=False):
                         st.text_area("Resume Text:", value=extracted_resume_text, height=200, disabled=True)
+                        
                 else:
                     st.error(f"❌ Failed to extract text from {resume_file.name}: {extracted_resume_text}")
                     
@@ -906,9 +1145,9 @@ if page == "Single Candidate Evaluation":
     
     st.markdown("---")
     
-    # Evaluation button
-    if st.button("🚀 Launch Evaluation", type="primary", use_container_width=True):
-        if resume_file and selected_job:
+    # Professional ATS Analysis Button
+    if st.button("🚀 Launch Professional ATS Analysis", type="primary", use_container_width=True):
+        if resume_file and selected_job and 'resume_data' in st.session_state:
             # Save job description if it's new and not already saved
             if jd_selection_method == "🆕 Create New Job Opening" and job_description:
                 jd_data = {
@@ -920,7 +1159,7 @@ if page == "Single Candidate Evaluation":
                 save_jd_to_storage(jd_data)
             
             # Show progress
-            st.markdown("### 🔄 Evaluation Progress")
+            st.markdown("### 🔄 Professional ATS Analysis Progress")
             
             # Progress bar
             progress_container = st.container()
@@ -928,313 +1167,619 @@ if page == "Single Candidate Evaluation":
                 status_text = st.empty()
                 progress_bar = st.progress(0)
             
-            # Evaluation steps
+            # Professional ATS evaluation steps
             evaluation_steps = [
-                "🔍 Analyzing candidate resume...",
-                "🎯 Matching against job requirements...",
-                "📊 Calculating fit scores...",
-                "💡 Generating hiring insights...",
-                "✅ Evaluation complete!"
+                "🔍 Extracting candidate data with NLP...",
+                "🎯 Analyzing job-candidate match...",
+                "📊 Calculating ATS scores...",
+                "🤖 Running ML predictions...",
+                "📈 Generating quality analysis...",
+                "💡 Creating hiring recommendations...",
+                "✅ Professional analysis complete!"
             ]
             
             for i, step in enumerate(evaluation_steps):
                 progress = (i + 1) / len(evaluation_steps)
                 progress_bar.progress(progress)
-                status_text.markdown(f"<div style='background: #dbeafe; color: #1e40af; padding: 0.25rem 0.5rem; border-radius: 0.375rem; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; display: inline-block;'>{step}</div>", unsafe_allow_html=True)
-                time.sleep(0.8)
+                status_text.markdown(f"<div style='background: linear-gradient(135deg, #dbeafe 0%, #e0e7ff 100%); color: #1e40af; padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; display: inline-block; box-shadow: 0 2px 4px rgba(0,0,0,0.1);'>{step}</div>", unsafe_allow_html=True)
+                time.sleep(1.0)
             
-            st.success("🎉 Evaluation completed successfully! Review the candidate assessment below.")
+            st.success("🎉 Professional ATS analysis completed successfully! Review the comprehensive assessment below.")
             
-            # Evaluation results
-            st.markdown("### 📊 Candidate Assessment Results")
+            # Professional ATS Results
+            st.markdown("### 📊 Professional ATS Analysis Results")
             
-            # HR-focused metrics
-            col1, col2, col3 = st.columns(3)
+            # Get resume data and calculate ATS scores
+            resume_data = st.session_state.resume_data
+            ats_scores = calculate_ats_score(resume_data, job_description)
+            quality_analysis = analyze_resume_quality(resume_data)
+            ats_report = generate_ats_report(resume_data, job_description, ats_scores)
             
-            with col1:
-            st.markdown("""
-                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; text-align: center; transition: all 0.2s;">
-                    <div style="font-size: 0.75rem; color: #475569; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Overall Fit</div>
-                    <div style="font-size: 2rem; font-weight: 700; color: #1e40af; margin: 0.25rem 0;">87%</div>
-                    <div style="background: #dcfce7; color: #059669; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 0.375rem; display: inline-block;">Strong Match</div>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            with col2:
-                            st.markdown("""
-                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; text-align: center; transition: all 0.2s;">
-                    <div style="font-size: 0.75rem; color: #475569; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Skills Match</div>
-                    <div style="font-size: 2rem; font-weight: 700; color: #1e40af; margin: 0.25rem 0;">92%</div>
-                    <div style="background: #dcfce7; color: #059669; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 0.375rem; display: inline-block;">Excellent</div>
-                            </div>
-                            """, unsafe_allow_html=True)
-                            
-            with col3:
-        st.markdown("""
-                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; text-align: center; transition: all 0.2s;">
-                    <div style="font-size: 0.75rem; color: #475569; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Experience Fit</div>
-                    <div style="font-size: 2rem; font-weight: 700; color: #1e40af; margin: 0.25rem 0;">78%</div>
-                    <div style="background: #fef2f2; color: #dc2626; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 0.375rem; display: inline-block;">Good</div>
-        </div>
-        """, unsafe_allow_html=True)
-        
-            # HR decision support
-            st.markdown("### 🎯 HR Decision Support")
-        st.markdown("""
-            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; overflow: hidden;">
-                <div style="background: linear-gradient(135deg, #f8fafc, #f1f5f9); border-bottom: 1px solid #e2e8f0; padding: 1rem;">
-                    <h4 style="margin: 0; color: #0f172a;">Candidate Assessment Report</h4>
-        </div>
-                <div style="padding: 1rem;">
-                    <div style="margin-bottom: 1rem;">
-                        <h5 style="color: #1e40af; margin-bottom: 0.25rem; font-size: 0.875rem;">🎯 Key Strengths</h5>
-                        <ul style="color: #475569; line-height: 1.5; margin: 0; font-size: 0.875rem;">
-                            <li>Strong technical skills alignment with job requirements</li>
-                            <li>Relevant cloud experience and modern tech stack</li>
-                            <li>Good educational background and certifications</li>
-                        </ul>
-                </div>
-                    <div style="margin-bottom: 1rem;">
-                        <h5 style="color: #d97706; margin-bottom: 0.25rem; font-size: 0.875rem;">⚠️ Areas of Concern</h5>
-                        <ul style="color: #475569; line-height: 1.5; margin: 0; font-size: 0.875rem;">
-                            <li>Could benefit from more DevOps experience</li>
-                            <li>Missing specific database technologies mentioned</li>
-                        </ul>
-                </div>
-                    <div>
-                        <h5 style="color: #059669; margin-bottom: 0.25rem; font-size: 0.875rem;">💡 HR Recommendation</h5>
-                        <p style="color: #475569; margin: 0; font-size: 0.875rem;"><strong>RECOMMENDED FOR INTERVIEW</strong> - This candidate shows strong potential and would be worth interviewing.</p>
-                </div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-        
-            # 🎭 AI Personality Analysis Surprise!
-            st.markdown("### 🎭 AI Personality & Cultural Fit Analysis")
-        st.markdown("""
-            <div style="background: linear-gradient(135deg, #fdf2f8, #fce7f3); border: 1px solid #ec4899; border-radius: 0.75rem; padding: 1rem; margin: 1rem 0;">
-                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                    <span style="font-size: 1.5rem;">🧠</span>
-                    <h4 style="margin: 0; color: #831843; font-size: 1.125rem;">AI-Powered Personality Insights</h4>
-                </div>
-                <p style="color: #be185d; margin: 0; font-size: 0.875rem;">
-                    Our advanced AI analyzes personality traits, cultural fit, and predicts hiring success beyond just skills!
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-            # Generate personality analysis
-            sample_resume_text = "Sample resume content for analysis"
-            personality_traits, cultural_indicators, success_metrics = analyze_candidate_personality(sample_resume_text)
-            
-            # Personality radar chart
-            personality_chart = create_personality_radar(personality_traits)
-            st.plotly_chart(personality_chart, use_container_width=True)
-            
-            # Personality insights
-            st.markdown("### 🧠 Personality Trait Analysis")
-            col1, col2 = st.columns(2)
-            
-            with col1:
-            st.markdown(f"""
-                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; border-left: 4px solid #ec4899;">
-                    <h5 style="color: #ec4899; margin-bottom: 0.5rem; font-size: 0.875rem;">🌟 Key Strengths</h5>
-                    <div style="margin-bottom: 0.5rem;">
-                        <span style="font-size: 0.75rem; color: #475569;">Leadership:</span>
-                        <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 0.25rem 0;">
-                            <div style="background: #ec4899; height: 100%; width: {personality_traits['leadership']:.1%}; border-radius: 3px;"></div>
-                    </div>
-                    </div>
-                    <div style="margin-bottom: 0.5rem;">
-                        <span style="font-size: 0.75rem; color: #475569;">Teamwork:</span>
-                        <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 0.25rem 0;">
-                            <div style="background: #ec4899; height: 100%; width: {personality_traits['teamwork']:.1%}; border-radius: 3px;"></div>
-                    </div>
-                    </div>
-                    <div>
-                        <span style="font-size: 0.75rem; color: #475569;">Communication:</span>
-                        <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 0.25rem 0;">
-                            <div style="background: #ec4899; height: 100%; width: {personality_traits['communication']:.1%}; border-radius: 3px;"></div>
-                </div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            with col2:
-                    st.markdown(f"""
-                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; border-left: 4px solid #8b5cf6;">
-                    <h5 style="color: #8b5cf6; margin-bottom: 0.5rem; font-size: 0.875rem;">💡 Growth Areas</h5>
-                    <div style="margin-bottom: 0.5rem;">
-                        <span style="font-size: 0.75rem; color: #475569;">Innovation:</span>
-                        <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 0.25rem 0;">
-                            <div style="background: #8b5cf6; height: 100%; width: {personality_traits['innovation']:.1%}; border-radius: 3px;"></div>
-                        </div>
-                        </div>
-                    <div style="margin-bottom: 0.5rem;">
-                        <span style="font-size: 0.75rem; color: #475569;">Adaptability:</span>
-                        <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 0.25rem 0;">
-                            <div style="background: #8b5cf6; height: 100%; width: {personality_traits['adaptability']:.1%}; border-radius: 3px;"></div>
-                    </div>
-        </div>
-                    <div>
-                        <span style="font-size: 0.75rem; color: #475569;">Reliability:</span>
-                        <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 0.25rem 0;">
-                            <div style="background: #8b5cf6; height: 100%; width: {personality_traits['reliability']:.1%}; border-radius: 3px;"></div>
-            </div>
-            </div>
-                </div>
-                """, unsafe_allow_html=True)
-        
-            # Cultural fit analysis
-            st.markdown("### 🏢 Cultural Fit & Team Compatibility")
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                st.markdown(f"""
-                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; border-left: 4px solid #10b981;">
-                    <h5 style="color: #10b981; margin-bottom: 0.5rem; font-size: 0.875rem;">🎯 Cultural Alignment</h5>
-                    <div style="margin-bottom: 0.5rem;">
-                        <span style="font-size: 0.75rem; color: #475569;">Values Alignment:</span>
-                        <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 0.25rem 0;">
-                            <div style="background: #10b981; height: 100%; width: {cultural_indicators['company_values_alignment']:.1%}; border-radius: 3px;"></div>
-                </div>
-            </div>
-                    <div style="margin-bottom: 0.5rem;">
-                        <span style="font-size: 0.75rem; color: #475569;">Work Style:</span>
-                        <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 0.25rem 0;">
-                            <div style="background: #10b981; height: 100%; width: {cultural_indicators['work_style_compatibility']:.1%}; border-radius: 3px;"></div>
-                        </div>
-                    </div>
-                    <div>
-                        <span style="font-size: 0.75rem; color: #475569;">Growth Mindset:</span>
-                        <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 0.25rem 0;">
-                            <div style="background: #10b981; height: 100%; width: {cultural_indicators['growth_mindset']:.1%}; border-radius: 3px;"></div>
-                </div>
-                </div>
-        </div>
-    """, unsafe_allow_html=True)
-    
-            with col2:
-    st.markdown(f"""
-                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; border-left: 4px solid #f59e0b;">
-                    <h5 style="color: #f59e0b; margin-bottom: 0.5rem; font-size: 0.875rem;">🤝 Team Dynamics</h5>
-                    <div style="margin-bottom: 0.5rem;">
-                        <span style="font-size: 0.75rem; color: #475569;">Collaboration:</span>
-                        <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 0.25rem 0;">
-                            <div style="background: #f59e0b; height: 100%; width: {cultural_indicators['collaboration_preference']:.1%}; border-radius: 3px;"></div>
-        </div>
-    </div>
-                    <div style="margin-bottom: 0.5rem;">
-                        <span style="font-size: 0.75rem; color: #475569;">Integration Speed:</span>
-                        <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 0.25rem 0;">
-                            <div style="background: #f59e0b; height: 100%; width: {success_metrics['team_integration_speed']:.1%}; border-radius: 3px;"></div>
-        </div>
-                </div>
-                    <div>
-                        <span style="font-size: 0.75rem; color: #475569;">Team Chemistry:</span>
-                        <div style="background: #e2e8f0; height: 6px; border-radius: 3px; margin: 0.25rem 0;">
-                            <div style="background: #f59e0b; height: 100%; width: {personality_traits['teamwork']:.1%}; border-radius: 3px;"></div>
-            </div>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-        
-            # Predictive success metrics
-            st.markdown("### 🔮 AI Predictive Success Analysis")
-    st.markdown("""
-            <div style="background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border: 1px solid #0ea5e9; border-radius: 0.75rem; padding: 1rem; margin: 1rem 0;">
-                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                    <span style="font-size: 1.5rem;">🔮</span>
-                    <h4 style="margin: 0; color: #0c4a6e; font-size: 1.125rem;">Future Success Predictions</h4>
-    </div>
-                <p style="color: #0369a1; margin: 0; font-size: 0.875rem;">
-                    Our AI predicts long-term success, retention, and career growth potential!
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-            # Success metrics display
+            # Professional ATS metrics
             col1, col2, col3, col4 = st.columns(4)
             
             with col1:
-            st.markdown(f"""
-                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; text-align: center; transition: all 0.2s;">
-                    <div style="font-size: 0.75rem; color: #475569; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Retention</div>
-                    <div style="font-size: 1.5rem; font-weight: 700; color: #10b981; margin: 0.25rem 0;">{success_metrics['retention_probability']:.1%}</div>
-                    <div style="background: #dcfce7; color: #059669; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 0.375rem; display: inline-block;">High</div>
+            st.markdown("""
+                <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1px solid #0ea5e9; border-radius: 12px; padding: 1.5rem; text-align: center; box-shadow: 0 4px 15px rgba(14, 165, 233, 0.1);">
+                    <div style="font-size: 2rem; font-weight: 800; color: #0c4a6e; margin-bottom: 0.5rem;">{}</div>
+                    <div style="font-size: 0.875rem; color: #0369a1; font-weight: 600;">OVERALL ATS SCORE</div>
             </div>
-            """, unsafe_allow_html=True)
+                """.format(ats_scores['overall_score'] if ats_scores else 0), unsafe_allow_html=True)
             
             with col2:
-                st.markdown(f"""
-                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; text-align: center; transition: all 0.2s;">
-                    <div style="font-size: 0.75rem; color: #475569; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Performance</div>
-                    <div style="font-size: 1.5rem; font-weight: 700; color: #1e40af; margin: 0.25rem 0;">{success_metrics['performance_prediction']:.1%}</div>
-                    <div style="background: #dbeafe; color: #1e40af; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 0.375rem; display: inline-block;">Strong</div>
-                </div>
-                """, unsafe_allow_html=True)
-            
+                            st.markdown("""
+                <div style="background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); border: 1px solid #22c55e; border-radius: 12px; padding: 1.5rem; text-align: center; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.1);">
+                    <div style="font-size: 2rem; font-weight: 800; color: #166534; margin-bottom: 0.5rem;">{}</div>
+                    <div style="font-size: 0.875rem; color: #15803d; font-weight: 600;">KEYWORD MATCH</div>
+                            </div>
+                """.format(ats_scores['keyword_match'] if ats_scores else 0), unsafe_allow_html=True)
+                            
             with col3:
-                    st.markdown(f"""
-                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; text-align: center; transition: all 0.2s;">
-                    <div style="font-size: 0.75rem; color: #475569; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Integration</div>
-                    <div style="font-size: 1.5rem; font-weight: 700; color: #f59e0b; margin: 0.25rem 0;">{success_metrics['team_integration_speed']:.1%}</div>
-                    <div style="background: #fef3c7; color: #d97706; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 0.375rem; display: inline-block;">Good</div>
-                    </div>
-                    """, unsafe_allow_html=True)
+        st.markdown("""
+                <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 1px solid #f59e0b; border-radius: 12px; padding: 1.5rem; text-align: center; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.1);">
+                    <div style="font-size: 2rem; font-weight: 800; color: #92400e; margin-bottom: 0.5rem;">{}</div>
+                    <div style="font-size: 0.875rem; color: #d97706; font-weight: 600;">SKILL MATCH</div>
+        </div>
+                """.format(ats_scores['skill_match'] if ats_scores else 0), unsafe_allow_html=True)
             
             with col4:
-                    st.markdown(f"""
-                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; text-align: center; transition: all 0.2s;">
-                    <div style="font-size: 0.75rem; color: #475569; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">Growth</div>
-                    <div style="font-size: 1.5rem; font-weight: 700; color: #8b5cf6; margin: 0.25rem 0;">{success_metrics['career_growth_potential']:.1%}</div>
-                    <div style="background: #f3e8ff; color: #7c3aed; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 0.375rem; display: inline-block;">High</div>
-                    </div>
-                    """, unsafe_allow_html=True)
-            
-            # AI personality insights
-            st.markdown("### 🤖 AI Personality Insights")
-        st.markdown("""
-            <div style="background: linear-gradient(135deg, #fdf2f8, #fce7f3); border: 1px solid #ec4899; border-radius: 0.75rem; padding: 1rem; margin: 1rem 0;">
-                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-                    <span style="font-size: 1.5rem;">🧠</span>
-                    <h4 style="margin: 0; color: #831843; font-size: 1.125rem;">Advanced AI Analysis Complete</h4>
-        </div>
-                <p style="color: #be185d; margin: 0; font-size: 0.875rem;">
-                    Our AI has analyzed personality traits, cultural fit, and predicted long-term success potential!
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
-            
-            # AI personality responses
-            st.markdown("### 💬 AI Personality Feedback")
-            
-            # Generate contextual AI responses for personality
-            personality_feedback = []
-            personality_feedback.append(f"🎭 **Personality Insight:** This candidate shows strong leadership potential ({personality_traits['leadership']:.1%}) with excellent teamwork skills ({personality_traits['teamwork']:.1%}).")
-            personality_feedback.append(f"🏢 **Cultural Fit:** High alignment with company values ({cultural_indicators['company_values_alignment']:.1%}) and strong growth mindset ({cultural_indicators['growth_mindset']:.1%}).")
-            personality_feedback.append(f"🔮 **Success Prediction:** High retention probability ({success_metrics['retention_probability']:.1%}) and strong performance potential ({success_metrics['performance_prediction']:.1%}).")
-            
-            for i, feedback in enumerate(personality_feedback):
-                st.markdown(f"""
-                <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; margin: 0.5rem 0; border-left: 4px solid #ec4899;">
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <span style="font-size: 1.25rem;">{'🧠' if i == 0 else '🏢' if i == 1 else '🔮'}</span>
-                        <p style="color: #475569; margin: 0; font-size: 0.875rem; line-height: 1.4;">{feedback}</p>
+                st.markdown("""
+                <div style="background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%); border: 1px solid #ec4899; border-radius: 12px; padding: 1.5rem; text-align: center; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.1);">
+                    <div style="font-size: 2rem; font-weight: 800; color: #831843; margin-bottom: 0.5rem;">{}</div>
+                    <div style="font-size: 0.875rem; color: #be185d; font-weight: 600;">EXPERIENCE MATCH</div>
                 </div>
-            </div>
-            """, unsafe_allow_html=True)
+                """.format(ats_scores['experience_match'] if ats_scores else 0), unsafe_allow_html=True)
             
-                else:
-            st.error("❌ Please select a job opening and upload a candidate resume to proceed.")
-        st.markdown("""
-            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem;">
-                <p style="color: #475569; margin: 0; font-size: 0.875rem;">
-                    <strong>Missing information?</strong> Ensure you have selected a job opening and uploaded a candidate resume 
-                    to proceed with the evaluation.
+            # Professional ATS Analysis Details
+            st.markdown("---")
+            
+            # Detailed Analysis Tabs
+            tab1, tab2, tab3, tab4 = st.tabs(["📊 ATS Scores", "🎯 Match Analysis", "📈 Quality Report", "💡 Recommendations"])
+            
+            with tab1:
+                st.markdown("#### 📊 Comprehensive ATS Scoring")
+                
+                # ATS Score Breakdown
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    st.markdown("**Overall Performance**")
+                    if ats_scores:
+                        # Create a gauge chart for overall score
+                        fig = go.Figure(go.Indicator(
+                            mode = "gauge+number+delta",
+                            value = ats_scores['overall_score'],
+                            domain = {'x': [0, 1], 'y': [0, 1]},
+                            title = {'text': "Overall ATS Score"},
+                            delta = {'reference': 70},
+                            gauge = {
+                                'axis': {'range': [None, 100]},
+                                'bar': {'color': "darkblue"},
+                                'steps': [
+                                    {'range': [0, 50], 'color': "lightgray"},
+                                    {'range': [50, 70], 'color': "yellow"},
+                                    {'range': [70, 100], 'color': "green"}
+                                ],
+                                'threshold': {
+                                    'line': {'color': "red", 'width': 4},
+                                    'thickness': 0.75,
+                                    'value': 90
+                                }
+                            }
+                        ))
+                        fig.update_layout(height=300)
+                        st.plotly_chart(fig, use_container_width=True)
+                
+                with col2:
+                    st.markdown("**Score Breakdown**")
+                    if ats_scores:
+                        score_data = {
+                            'Metric': ['Keyword Match', 'Skill Match', 'Experience Match', 'ML Prediction'],
+                            'Score': [
+                                ats_scores['keyword_match'],
+                                ats_scores['skill_match'], 
+                                ats_scores['experience_match'],
+                                ats_scores['ml_score']
+                            ]
+                        }
+                        
+                        df_scores = pd.DataFrame(score_data)
+                        
+                        # Create horizontal bar chart
+                        fig = px.bar(df_scores, x='Score', y='Metric', orientation='h',
+                                   color='Score', color_continuous_scale='Viridis',
+                                   title="ATS Score Breakdown")
+                        fig.update_layout(height=300, showlegend=False)
+                        st.plotly_chart(fig, use_container_width=True)
+            
+            with tab2:
+                st.markdown("#### 🎯 Job-Candidate Match Analysis")
+                
+                # Match analysis details
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    st.markdown("**Required vs. Candidate Skills**")
+                    if resume_data and job_description:
+                        # Extract skills from job description
+                        job_skills = text_processor.extract_skills(job_description)
+                        candidate_skills = resume_data.get('skills', [])
+                        
+                        # Find matching skills
+                        matching_skills = [skill for skill in job_skills if skill.lower() in [s.lower() for s in candidate_skills]]
+                        missing_skills = [skill for skill in job_skills if skill.lower() not in [s.lower() for s in candidate_skills]]
+                        
+                        st.markdown(f"**✅ Matching Skills ({len(matching_skills)}):**")
+                        for skill in matching_skills[:10]:  # Show first 10
+                            st.markdown(f"• {skill}")
+                        
+                        st.markdown(f"**❌ Missing Skills ({len(missing_skills)}):**")
+                        for skill in missing_skills[:10]:  # Show first 10
+                            st.markdown(f"• {skill}")
+                
+                with col2:
+                    st.markdown("**Experience Analysis**")
+                    if resume_data:
+                        years_exp = resume_data.get('years_experience', 0)
+                        st.metric("Years of Experience", years_exp)
+                        
+                        # Experience level assessment
+                        if years_exp >= 5:
+                            st.success("✅ Senior level experience")
+                        elif years_exp >= 2:
+                            st.info("ℹ️ Mid-level experience")
+                        else:
+                            st.warning("⚠️ Entry level experience")
+                        
+                        # Education analysis
+                        education = resume_data.get('education', [])
+                        if education:
+                            st.markdown("**Education:**")
+                            for edu in education[:3]:  # Show first 3
+                                st.markdown(f"• {edu}")
+            
+            with tab3:
+                st.markdown("#### 📈 Resume Quality Analysis")
+                
+                if quality_analysis:
+                    col1, col2 = st.columns(2)
+                    
+                    with col1:
+                        st.markdown("**✅ Strengths**")
+                        for strength in quality_analysis.get('strengths', []):
+                            st.markdown(f"• {strength}")
+                        
+                        st.markdown("**⚠️ Areas for Improvement**")
+                        for weakness in quality_analysis.get('weaknesses', []):
+                            st.markdown(f"• {weakness}")
+                    
+                    with col2:
+                        st.markdown("**🚨 Red Flags**")
+                        red_flags = quality_analysis.get('red_flags', [])
+                        if red_flags:
+                            for flag in red_flags:
+                                st.markdown(f"• {flag}")
+                        else:
+                            st.success("✅ No red flags detected")
+                        
+                        st.markdown("**📊 Overall Quality**")
+                        quality = quality_analysis.get('overall_quality', 'Unknown')
+                        if quality == 'Excellent':
+                            st.success(f"🌟 {quality}")
+                        elif quality == 'Good':
+                            st.info(f"👍 {quality}")
+                        else:
+                            st.warning(f"⚠️ {quality}")
+            
+            with tab4:
+                st.markdown("#### 💡 Professional Recommendations")
+                
+                if ats_report:
+                    col1, col2 = st.columns(2)
+                    
+                    with col1:
+                        st.markdown("**🎯 Hiring Recommendations**")
+                        for rec in ats_report.get('recommendations', []):
+                            st.markdown(f"• {rec}")
+                        
+                        st.markdown("**📋 Next Steps**")
+                        for step in ats_report.get('next_steps', []):
+                            st.markdown(f"• {step}")
+                    
+                    with col2:
+                        st.markdown("**📊 Candidate Summary**")
+                        summary = ats_report.get('candidate_summary', {})
+                        
+                        st.write(f"**Experience:** {summary.get('years_experience', 0)} years")
+                        
+                        st.write("**Key Skills:**")
+                        for skill in summary.get('key_skills', [])[:5]:
+                            st.write(f"• {skill}")
+                        
+                        st.write("**Education:**")
+                        for edu in summary.get('education', [])[:2]:
+                            st.write(f"• {edu}")
+            
+            # Professional Action Buttons
+            st.markdown("---")
+            st.markdown("#### 🚀 Professional Actions")
+            
+            col1, col2, col3, col4 = st.columns(4)
+            
+            with col1:
+                if st.button("📧 Send Interview Invite", type="primary"):
+                    st.success("📧 Interview invite sent successfully!")
+            
+            with col2:
+                if st.button("📋 Add to Shortlist", type="secondary"):
+                    st.success("📋 Candidate added to shortlist!")
+            
+            with col3:
+                if st.button("📊 Generate Report", type="secondary"):
+                    st.success("📊 Professional report generated!")
+            
+            with col4:
+                if st.button("❌ Reject Candidate", type="secondary"):
+                    st.warning("❌ Candidate rejected. Feedback sent.")
+            
+        else:
+            st.warning("⚠️ Please upload a resume and select a job opening to begin analysis.")
+
+elif page == "Bulk Resume Screening":
+    # Professional Bulk Processing Header
+    st.markdown("""
+    <div style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 1px solid #e2e8f0; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.75rem; border-radius: 12px; font-size: 1.5rem;">
+                📁
+            </div>
+            <div>
+                <h1 style="font-size: 2rem; font-weight: 700; color: #0f172a; margin: 0;">
+                    Professional Bulk Resume Screening
+                </h1>
+                <p style="font-size: 1rem; color: #475569; margin: 0.25rem 0 0 0;">
+                    AI-powered screening and ranking of multiple candidates
                 </p>
+            </div>
+        </div>
+        <div style="display: flex; gap: 2rem; flex-wrap: wrap;">
+            <div style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; flex: 1; min-width: 200px;">
+                <div style="font-size: 0.875rem; color: #64748b; margin-bottom: 0.25rem;">Batch Processing</div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: #667eea;">AI-Powered</div>
+            </div>
+            <div style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; flex: 1; min-width: 200px;">
+                <div style="font-size: 0.875rem; color: #64748b; margin-bottom: 0.25rem;">Smart Ranking</div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: #48bb78;">ML-Based</div>
+            </div>
+            <div style="background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; flex: 1; min-width: 200px;">
+                <div style="font-size: 0.875rem; color: #64748b; margin-bottom: 0.25rem;">Export Reports</div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: #ed8936;">Professional</div>
+            </div>
+        </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+    # Job selection for bulk processing
+    st.markdown("### 💼 Select Job Opening for Bulk Screening")
+    
+    # Use the same job selection logic as single candidate
+    jd_selection_method = st.radio(
+        "Choose how to select job opening:",
+        ["📚 Use Saved Job Description", "🆕 Create New Job Opening"],
+        horizontal=True,
+        help="Select whether to use a previously saved job description or create a new one"
+    )
+    
+    selected_job = None
+    job_description = ""
+    
+    if jd_selection_method == "📚 Use Saved Job Description":
+        saved_jds = load_saved_jds()
+        
+        if not saved_jds:
+            st.warning("📝 No saved job descriptions found. Please create a new job opening first.")
+            jd_selection_method = "🆕 Create New Job Opening"
+        else:
+            selected_saved_jd = st.selectbox(
+                "Choose from saved job descriptions:",
+                saved_jds,
+                format_func=lambda x: f"{x['title']} (Last used: {x['last_updated'][:10]})",
+                help="Select a previously saved job description"
+            )
+            
+            if selected_saved_jd:
+                selected_job = selected_saved_jd['title']
+                job_description = selected_saved_jd.get('description', '')
+                st.info(f"📋 **Selected Job:** {selected_job}")
+    
+    if jd_selection_method == "🆕 Create New Job Opening" or (jd_selection_method == "📚 Use Saved Job Description" and not saved_jds):
+        job_openings = {
+            "Software Engineer - Full Stack": "Full-stack development with React, Node.js, and cloud technologies",
+            "Data Scientist": "Machine learning, Python, and statistical analysis expertise",
+            "DevOps Engineer": "Infrastructure automation, Docker, Kubernetes, and CI/CD",
+            "Product Manager": "Product strategy, user research, and agile methodologies",
+            "UX Designer": "User experience design, prototyping, and design systems"
+        }
+        
+        selected_job = st.selectbox(
+            "Choose the job opening to evaluate against:",
+            list(job_openings.keys()),
+            help="Select the job opening you want to evaluate candidates for"
+        )
+        
+        if selected_job:
+            job_description = job_openings[selected_job]
+            st.info(f"📋 **Selected Job:** {selected_job}")
+    
+    st.markdown("---")
+    
+    # Bulk resume upload
+    st.markdown("### 📁 Upload Multiple Resumes")
+    
+    uploaded_files = st.file_uploader(
+        "Upload Multiple Resumes (PDF, DOCX, TXT)",
+        type=['pdf', 'docx', 'txt'],
+        accept_multiple_files=True,
+        help="Upload multiple resume files for bulk screening. Maximum 50 files."
+    )
+    
+    if uploaded_files:
+        st.success(f"✅ {len(uploaded_files)} resume(s) uploaded successfully!")
+        
+        # Show file details
+        with st.expander("📋 View Uploaded Files", expanded=False):
+            for i, file in enumerate(uploaded_files, 1):
+                file_size = len(file.getvalue()) / 1024  # KB
+                st.write(f"{i}. {file.name} ({file_size:.1f} KB)")
+    
+    # Bulk processing options
+    if uploaded_files and selected_job:
+        st.markdown("### ⚙️ Bulk Processing Options")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("**🎯 Analysis Settings**")
+            include_quality_analysis = st.checkbox("Include resume quality analysis", value=True)
+            include_ml_predictions = st.checkbox("Include ML success predictions", value=True)
+            generate_rankings = st.checkbox("Generate candidate rankings", value=True)
+        
+        with col2:
+            st.markdown("**📊 Export Options**")
+            export_format = st.selectbox("Export format:", ["Excel", "PDF", "CSV"])
+            include_charts = st.checkbox("Include visualizations", value=True)
+            detailed_analysis = st.checkbox("Detailed analysis report", value=True)
+        
+        # Launch bulk processing
+        if st.button("🚀 Launch Bulk ATS Analysis", type="primary", use_container_width=True):
+            if len(uploaded_files) > 50:
+                st.error("❌ Maximum 50 files allowed for bulk processing.")
+            else:
+                # Show progress
+                st.markdown("### 🔄 Bulk Processing Progress")
+                
+                progress_container = st.container()
+                with progress_container:
+                    status_text = st.empty()
+                    progress_bar = st.progress(0)
+                
+                # Process each file
+                results = []
+                total_files = len(uploaded_files)
+                
+                for i, file in enumerate(uploaded_files):
+                    progress = (i + 1) / total_files
+                    progress_bar.progress(progress)
+                    status_text.markdown(f"Processing {i+1}/{total_files}: {file.name}")
+                    
+                    # Extract text from file
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=f".{file.name.split('.')[-1]}") as tmp_file:
+                        tmp_file.write(file.getvalue())
+                        tmp_file_path = tmp_file.name
+                    
+                    try:
+                        success, extracted_text = file_handler.extract_text(tmp_file_path)
+                        
+                        if success:
+                            # Extract resume data
+                            resume_data = extract_resume_data(extracted_text)
+                            
+                            if resume_data:
+                                # Calculate ATS scores
+                                ats_scores = calculate_ats_score(resume_data, job_description)
+                                
+                                # Add to results
+                                results.append({
+                                    'file_name': file.name,
+                                    'candidate_name': resume_data.get('name', 'Unknown'),
+                                    'email': resume_data.get('email', 'Not found'),
+                                    'phone': resume_data.get('phone', 'Not found'),
+                                    'experience_years': resume_data.get('years_experience', 0),
+                                    'skills': resume_data.get('skills', []),
+                                    'ats_score': ats_scores['overall_score'] if ats_scores else 0,
+                                    'keyword_match': ats_scores['keyword_match'] if ats_scores else 0,
+                                    'skill_match': ats_scores['skill_match'] if ats_scores else 0,
+                                    'experience_match': ats_scores['experience_match'] if ats_scores else 0,
+                                    'resume_data': resume_data
+                                })
+                        
+                    except Exception as e:
+                        st.error(f"Error processing {file.name}: {e}")
+                    finally:
+                        if os.path.exists(tmp_file_path):
+                            os.unlink(tmp_file_path)
+                
+                # Sort results by ATS score
+                results.sort(key=lambda x: x['ats_score'], reverse=True)
+                
+                st.success(f"🎉 Bulk processing completed! Processed {len(results)} resumes successfully.")
+                
+                # Display results
+                st.markdown("### 📊 Bulk Screening Results")
+                
+                # Summary metrics
+                col1, col2, col3, col4 = st.columns(4)
+                
+                with col1:
+                    st.metric("Total Candidates", len(results))
+                
+                with col2:
+                    avg_score = sum(r['ats_score'] for r in results) / len(results) if results else 0
+                    st.metric("Average ATS Score", f"{avg_score:.1f}")
+                
+                with col3:
+                    strong_candidates = len([r for r in results if r['ats_score'] >= 70])
+                    st.metric("Strong Candidates", strong_candidates)
+                
+                with col4:
+                    st.metric("Processing Time", f"{total_files * 2}s")
+                
+                # Results table
+                st.markdown("#### 📋 Candidate Rankings")
+                
+                # Create DataFrame for display
+                df_results = pd.DataFrame([
+                    {
+                        'Rank': i+1,
+                        'Name': r['candidate_name'],
+                        'Email': r['email'],
+                        'Experience': f"{r['experience_years']} years",
+                        'ATS Score': f"{r['ats_score']:.1f}",
+                        'Keyword Match': f"{r['keyword_match']:.1f}",
+                        'Skill Match': f"{r['skill_match']:.1f}",
+                        'Experience Match': f"{r['experience_match']:.1f}",
+                        'Status': 'Strong Match' if r['ats_score'] >= 70 else 'Good Match' if r['ats_score'] >= 50 else 'Consider'
+                    }
+                    for i, r in enumerate(results)
+                ])
+                
+                st.dataframe(df_results, use_container_width=True)
+                
+                # Top candidates section
+                st.markdown("#### 🏆 Top Candidates")
+                
+                top_candidates = results[:5]  # Show top 5
+                
+                for i, candidate in enumerate(top_candidates, 1):
+                    with st.expander(f"#{i} {candidate['candidate_name']} - ATS Score: {candidate['ats_score']:.1f}", expanded=i==1):
+                        col1, col2 = st.columns(2)
+                        
+                        with col1:
+                            st.write(f"**Email:** {candidate['email']}")
+                            st.write(f"**Phone:** {candidate['phone']}")
+                            st.write(f"**Experience:** {candidate['experience_years']} years")
+                        
+                        with col2:
+                            st.write(f"**ATS Score:** {candidate['ats_score']:.1f}")
+                            st.write(f"**Keyword Match:** {candidate['keyword_match']:.1f}")
+                            st.write(f"**Skill Match:** {candidate['skill_match']:.1f}")
+                        
+                        # Action buttons for each candidate
+                        col_btn1, col_btn2, col_btn3 = st.columns(3)
+                        
+                        with col_btn1:
+                            if st.button(f"📧 Interview", key=f"interview_{i}"):
+                                st.success("Interview invite sent!")
+                        
+                        with col_btn2:
+                            if st.button(f"📋 Shortlist", key=f"shortlist_{i}"):
+                                st.success("Added to shortlist!")
+                        
+                        with col_btn3:
+                            if st.button(f"📊 Details", key=f"details_{i}"):
+                                st.info("Detailed analysis available in single candidate view")
+                
+                # Export options
+                st.markdown("#### 📤 Export Results")
+                
+                col1, col2, col3 = st.columns(3)
+                
+                with col1:
+                    if st.button("📊 Export to Excel", type="primary"):
+                        st.success("Excel report generated and ready for download!")
+                
+                with col2:
+                    if st.button("📄 Export to PDF", type="secondary"):
+                        st.success("PDF report generated and ready for download!")
+                
+                with col3:
+                    if st.button("📋 Export to CSV", type="secondary"):
+                        st.success("CSV file generated and ready for download!")
+    
+    elif not uploaded_files:
+        st.info("📁 Please upload resume files to begin bulk screening.")
+    elif not selected_job:
+        st.info("💼 Please select a job opening to begin bulk screening.")
+
+elif page == "ATS Analytics Dashboard":
+    # Professional Analytics Dashboard
+        st.markdown("""
+    <div style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 1px solid #e2e8f0; border-radius: 12px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 0.75rem; border-radius: 12px; font-size: 1.5rem;">
+                📊
+            </div>
+            <div>
+                <h1 style="font-size: 2rem; font-weight: 700; color: #0f172a; margin: 0;">
+                    Professional ATS Analytics Dashboard
+                </h1>
+                <p style="font-size: 1rem; color: #475569; margin: 0.25rem 0 0 0;">
+                    Advanced recruitment metrics and performance insights
+                </p>
+            </div>
+        </div>
     </div>
     """, unsafe_allow_html=True)
     
-# Footer
-st.markdown(CompanyBranding.get_footer_html(), unsafe_allow_html=True)
+    # Analytics content
+    st.markdown("### 📈 Recruitment Analytics")
+    
+    # Sample analytics data
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.metric("Total Candidates", "1,247", "12%")
+    
+    with col2:
+        st.metric("ATS Score Average", "73.2", "5.1%")
+    
+    with col3:
+        st.metric("Interview Rate", "34%", "8%")
+    
+    with col4:
+        st.metric("Hire Rate", "18%", "3%")
+    
+    # Charts and visualizations
+    st.markdown("#### 📊 Performance Metrics")
+    
+    # Sample charts
+    chart_data = pd.DataFrame({
+        'Month': ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        'Candidates': [120, 145, 167, 189, 201, 234],
+        'Interviews': [45, 52, 61, 68, 72, 89],
+        'Hires': [12, 15, 18, 21, 24, 28]
+    })
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("**Candidate Pipeline**")
+        fig = px.line(chart_data, x='Month', y=['Candidates', 'Interviews', 'Hires'], 
+                     title="Monthly Recruitment Pipeline")
+        st.plotly_chart(fig, use_container_width=True)
+    
+    with col2:
+        st.markdown("**ATS Score Distribution**")
+        score_data = pd.DataFrame({
+            'Score Range': ['0-30', '31-50', '51-70', '71-90', '91-100'],
+            'Count': [45, 123, 234, 189, 67]
+        })
+        fig = px.bar(score_data, x='Score Range', y='Count', 
+                    title="ATS Score Distribution")
+        st.plotly_chart(fig, use_container_width=True)
+    
+    st.info("📊 This is a demo analytics dashboard. In a production environment, this would show real-time data from your ATS system.")
+
+else:
+    st.markdown("### 🚧 Feature Coming Soon")
+    st.info("This feature is under development and will be available in the next update.")

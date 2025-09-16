@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Software Engineer - Full Stack",
+    "description": "Full-stack development with React, Node.js, Python, and cloud technologies. Experience with microservices and CI/CD required.",
+    "requirements": "React, Node.js, Python, AWS, Docker, Kubernetes, CI/CD",
+    "category": "Engineering",
+    "id": 1,
+    "created_date": "2025-08-29T10:36:10.525362",
+    "last_updated": "2025-08-29T10:36:10.610269",
+    "usage_count": 2
+  },
+  {
+    "title": "Product Manager",
+    "description": "Product strategy, user research, and agile methodologies",
+    "requirements": "Product Strategy, User Research, Agile, Analytics",
+    "category": "Product",
+    "id": 2,
+    "created_date": "2025-08-29T10:36:10.578577",
+    "last_updated": "2025-08-29T10:36:10.578577",
+    "usage_count": 1
+  }
+]
