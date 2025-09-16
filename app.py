@@ -91,58 +91,348 @@ def delete_saved_jd(jd_id):
         st.error(f"Error deleting job description: {e}")
         return False
 
-# Page configuration for HR professionals
+# Page configuration for HR professionals with modern settings
 st.set_page_config(
-    page_title="IKF - HR Candidate Screening",
-    page_icon="👥",
+    page_title="IKF HR - Smart Resume Screening",
+    page_icon="🎯",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="expanded",
+    menu_items={
+        'Get Help': 'https://github.com/surajikf/ATS',
+        'Report a bug': 'https://github.com/surajikf/ATS/issues',
+        'About': "IKF HR - AI-Powered Resume Screening Platform"
+    }
 )
 
 # Apply optimized styling
 st.markdown(CompanyBranding.get_css_styles(), unsafe_allow_html=True)
 
-# HR-focused header
+# Add modern UI/UX styling
 st.markdown("""
-<div style="background: linear-gradient(135deg, #1e40af, #1e3a8a); color: white; padding: 2rem; border-radius: 0.75rem; margin-bottom: 2rem;">
-    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-        <div style="font-size: 3rem;">👥</div>
+<style>
+    /* Import modern fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    
+    /* Global styles */
+    .main {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+    
+    /* Custom header styling */
+    .main-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 3rem 2rem;
+        border-radius: 20px;
+        margin-bottom: 2rem;
+        text-align: center;
+        color: white;
+        box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+    }
+    
+    .main-header h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+    
+    .main-header p {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        font-weight: 400;
+    }
+    
+    /* Modern card styling */
+    .modern-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border: 1px solid rgba(0,0,0,0.05);
+        margin-bottom: 2rem;
+        transition: all 0.3s ease;
+    }
+    
+    .modern-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    }
+    
+    /* Section headers */
+    .section-header {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .section-header i {
+        color: #667eea;
+        font-size: 1.25rem;
+    }
+    
+    /* Modern buttons */
+    .stButton > button {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+    
+    /* Modern text areas */
+    .stTextArea > div > div > textarea {
+        border-radius: 12px;
+        border: 2px solid #e2e8f0;
+        padding: 1rem;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .stTextArea > div > div > textarea:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    /* Modern selectbox */
+    .stSelectbox > div > div {
+        border-radius: 12px;
+        border: 2px solid #e2e8f0;
+    }
+    
+    /* Modern radio buttons */
+    .stRadio > div {
+        gap: 1rem;
+    }
+    
+    .stRadio > div > label > div[data-testid="stMarkdownContainer"] > p {
+        font-weight: 500;
+        color: #4a5568;
+    }
+    
+    /* Modern file uploader */
+    .stFileUploader > div {
+        border: 2px dashed #cbd5e0;
+        border-radius: 12px;
+        padding: 2rem;
+        background: #f7fafc;
+        transition: all 0.3s ease;
+    }
+    
+    .stFileUploader > div:hover {
+        border-color: #667eea;
+        background: #edf2f7;
+    }
+    
+    /* Success/Error messages */
+    .stSuccess {
+        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        color: white;
+        border-radius: 12px;
+        padding: 1rem;
+        border: none;
+    }
+    
+    .stError {
+        background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+        color: white;
+        border-radius: 12px;
+        padding: 1rem;
+        border: none;
+    }
+    
+    .stInfo {
+        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+        color: white;
+        border-radius: 12px;
+        padding: 1rem;
+        border: none;
+    }
+    
+    /* Sidebar styling */
+    .css-1d391kg {
+        background: linear-gradient(180deg, #f7fafc 0%, #edf2f7 100%);
+    }
+    
+    /* Hide default Streamlit elements */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    
+    /* Custom metrics styling */
+    .metric-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        border: 1px solid rgba(0,0,0,0.05);
+        text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+    
+    .metric-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #667eea;
+        margin-bottom: 0.5rem;
+    }
+    
+    .metric-label {
+        font-size: 0.9rem;
+        color: #718096;
+        font-weight: 500;
+    }
+    
+    /* Progress bars */
+    .progress-container {
+        background: #e2e8f0;
+        border-radius: 10px;
+        height: 8px;
+        overflow: hidden;
+        margin: 0.5rem 0;
+    }
+    
+    .progress-bar {
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        height: 100%;
+        border-radius: 10px;
+        transition: width 0.3s ease;
+    }
+    
+    /* Loading animation */
+    .loading-spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #667eea;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .main-header h1 {
+            font-size: 2rem;
+        }
+        
+        .main-header p {
+            font-size: 1rem;
+        }
+        
+        .modern-card {
+            padding: 1.5rem;
+        }
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# Modern HR-focused header
+st.markdown("""
+<div class="main-header">
+    <div style="display: flex; align-items: center; justify-content: center; gap: 1.5rem; margin-bottom: 2rem;">
+        <div style="font-size: 4rem; animation: pulse 2s infinite;">🎯</div>
         <div>
-            <h1 style="margin: 0; font-size: 2.5rem; font-weight: 700;">IKF HR Candidate Screening</h1>
-            <p style="margin: 0; font-size: 1.125rem; opacity: 0.9;">Professional AI-powered candidate evaluation for HR teams</p>
+            <h1>IKF HR - Smart Resume Screening</h1>
+            <p>AI-powered candidate evaluation and recruitment platform</p>
         </div>
     </div>
-    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-        <span style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem;">🎯 Smart Matching</span>
-        <span style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem;">⚡ Fast Screening</span>
-        <span style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem;">📊 Data-Driven</span>
-        <span style="background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.875rem;">🤖 AI-Powered</span>
+    <div style="display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center;">
+        <div style="background: rgba(255,255,255,0.15); padding: 1.5rem 2rem; border-radius: 16px; backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s ease;">
+            <div style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">🎯</div>
+            <div style="font-size: 1rem; font-weight: 600;">Smart Matching</div>
+            <div style="font-size: 0.85rem; opacity: 0.8; margin-top: 0.25rem;">AI-powered candidate-job matching</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.15); padding: 1.5rem 2rem; border-radius: 16px; backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s ease;">
+            <div style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">⚡</div>
+            <div style="font-size: 1rem; font-weight: 600;">Fast Processing</div>
+            <div style="font-size: 0.85rem; opacity: 0.8; margin-top: 0.25rem;">Process resumes in seconds</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.15); padding: 1.5rem 2rem; border-radius: 16px; backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s ease;">
+            <div style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">📊</div>
+            <div style="font-size: 1rem; font-weight: 600;">Analytics</div>
+            <div style="font-size: 0.85rem; opacity: 0.8; margin-top: 0.25rem;">Detailed insights & reports</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.15); padding: 1.5rem 2rem; border-radius: 16px; backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.2); transition: all 0.3s ease;">
+            <div style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">🔒</div>
+            <div style="font-size: 1rem; font-weight: 600;">Secure</div>
+            <div style="font-size: 0.85rem; opacity: 0.8; margin-top: 0.25rem;">Enterprise-grade security</div>
         </div>
     </div>
-    """, unsafe_allow_html=True)
+</div>
+
+<style>
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+</style>
+""", unsafe_allow_html=True)
     
 # Welcome message for HR users
 if 'first_visit' not in st.session_state:
     st.session_state.first_visit = True
     st.success("🎉 Welcome to IKF HR Candidate Screening Platform - Your AI-powered recruitment assistant!")
 
-# HR-focused sidebar
+# Modern HR-focused sidebar
 with st.sidebar:
     st.markdown("""
-    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1rem;">
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 16px; padding: 2rem; margin-bottom: 1.5rem; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);">
         <div style="text-align: center; margin-bottom: 1rem;">
-            <div style="font-size: 2rem; margin-bottom: 0.5rem;">👔</div>
-            <h3 style="margin: 0; color: #0f172a; font-size: 1.125rem;">HR Dashboard</h3>
-            <p style="margin: 0; color: #64748b; font-size: 0.875rem;">Candidate Evaluation Tools</p>
+            <div style="font-size: 3rem; margin-bottom: 0.75rem; animation: bounce 2s infinite;">👔</div>
+            <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700;">HR Dashboard</h3>
+            <p style="margin: 0; font-size: 0.9rem; opacity: 0.9; margin-top: 0.25rem;">AI-Powered Candidate Evaluation</p>
+        </div>
+        <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 1rem; backdrop-filter: blur(10px);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                <span style="font-size: 0.85rem; opacity: 0.8;">Active Sessions</span>
+                <span style="font-weight: 600; color: #48bb78;">Online</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 0.85rem; opacity: 0.8;">Last Activity</span>
+                <span style="font-size: 0.85rem; opacity: 0.8;">Just now</span>
+            </div>
         </div>
     </div>
+    
+    <style>
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+        40% { transform: translateY(-10px); }
+        60% { transform: translateY(-5px); }
+    }
+    </style>
     """, unsafe_allow_html=True)
     
     st.markdown("---")
     
     st.markdown("### 🎯 HR Workflows")
     
-    # HR-focused navigation
+    # Modern HR-focused navigation
     navigation_options = {
         "📋 Single Candidate Evaluation": "Evaluate individual candidate against job opening", 
         "📁 Bulk Candidate Screening": "Screen multiple candidates for job openings",
@@ -156,8 +446,16 @@ with st.sidebar:
         help="Choose the HR workflow you want to use"
     )
     
-    # Show description for selected page
-    st.markdown(f'<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem; margin-bottom: 1rem;">{navigation_options[page_display]}</div>', unsafe_allow_html=True)
+    # Modern description card for selected page
+    st.markdown(f"""
+    <div style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.25rem; margin-bottom: 1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+        <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem;">
+            <div style="font-size: 1.25rem;">{page_display.split(' ', 1)[0]}</div>
+            <div style="font-weight: 600; color: #2d3748;">{page_display.split(' ', 1)[1]}</div>
+        </div>
+        <p style="margin: 0; color: #4a5568; font-size: 0.9rem; line-height: 1.5;">{navigation_options[page_display]}</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Extract actual page name
     page = page_display.split(" ", 1)[1] if " " in page_display else page_display
