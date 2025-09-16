@@ -337,13 +337,96 @@
         <div class="screening-form">
             <div class="form-section">
                 <h3><i class="fas fa-briefcase"></i> Job Description</h3>
-                <div class="file-upload-area" onclick="triggerFileUpload('jobDescriptionFile')">
-                    <i class="fas fa-file-alt"></i>
-                    <p>Upload Job Description</p>
-                    <small>PDF, DOC, DOCX, or TXT files accepted</small>
-                    <input type="file" id="jobDescriptionFile" accept=".pdf,.doc,.docx,.txt" onchange="updateJobFileInfo()">
+                
+                <!-- Input Method Selection -->
+                <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px; border: 1px solid #e9ecef;">
+                    <h4 style="margin: 0 0 15px 0; color: #495057; font-size: 1rem;">
+                        <i class="fas fa-cog"></i> Choose Input Method
+                    </h4>
+                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                        <label style="display: flex; align-items: center; cursor: pointer; padding: 8px 12px; background: white; border: 2px solid #e9ecef; border-radius: 8px; transition: all 0.3s ease;">
+                            <input type="radio" name="jdInputMethod" value="file" checked onchange="toggleJobDescriptionInput()" style="margin-right: 8px;">
+                            <i class="fas fa-upload" style="margin-right: 5px; color: #667eea;"></i>
+                            Upload File
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer; padding: 8px 12px; background: white; border: 2px solid #e9ecef; border-radius: 8px; transition: all 0.3s ease;">
+                            <input type="radio" name="jdInputMethod" value="paste" onchange="toggleJobDescriptionInput()" style="margin-right: 8px;">
+                            <i class="fas fa-paste" style="margin-right: 5px; color: #667eea;"></i>
+                            Paste Text
+                        </label>
+                    </div>
                 </div>
-                <div id="jobFileInfo" style="margin-top: 10px; font-size: 0.9rem; color: #48bb78;"></div>
+                
+                <!-- Quick Select from Saved JDs -->
+                <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px; border: 1px solid #e9ecef;">
+                    <h4 style="margin: 0 0 10px 0; color: #495057; font-size: 1rem;">
+                        <i class="fas fa-clock"></i> Quick Select from Previous Uploads
+                    </h4>
+                    <select id="quickSelectJD" onchange="selectSavedJD()" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px; background: white;">
+                        <option value="">-- Select a previously uploaded Job Description --</option>
+                    </select>
+                    <small style="color: #6c757d; display: block; margin-top: 5px;">
+                        Choose from your saved job descriptions to avoid re-uploading
+                        <button onclick="populateQuickSelectDropdown()" style="background: #667eea; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; margin-left: 10px;">
+                            🔄 Refresh
+                        </button>
+                    </small>
+                </div>
+                
+                <!-- File Upload Section -->
+                <div id="fileUploadSection">
+                    <div class="file-upload-area" onclick="triggerFileUpload('jobDescriptionFile')">
+                        <i class="fas fa-file-alt"></i>
+                        <p>Upload New Job Description</p>
+                        <small>PDF, DOC, DOCX, or TXT files accepted</small>
+                        <input type="file" id="jobDescriptionFile" accept=".pdf,.doc,.docx,.txt" onchange="updateJobFileInfo()">
+                    </div>
+                    <div id="jobFileInfo" style="margin-top: 10px; font-size: 0.9rem; color: #48bb78;"></div>
+                </div>
+
+                <!-- Paste Text Section -->
+                <div id="pasteTextSection" style="display: none;">
+                    <div style="background: white; border: 2px dashed #667eea; border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 15px;">
+                        <i class="fas fa-paste" style="font-size: 2rem; color: #667eea; margin-bottom: 10px;"></i>
+                        <h4 style="margin: 0 0 10px 0; color: #495057;">Paste Job Description</h4>
+                        <p style="margin: 0; color: #6c757d; font-size: 0.9rem;">
+                            Copy your job description from any source (PDF, Word, website, etc.) and paste it below
+                        </p>
+                    </div>
+                    
+                    <textarea id="pastedJobDescription" placeholder="Paste your complete job description here...
+
+Example:
+• Job Title: Software Engineer
+• Company: Tech Corp
+• Location: Remote
+• Requirements:
+  - 3+ years Python experience
+  - React/Node.js knowledge
+  - Cloud experience preferred
+• Responsibilities:
+  - Develop web applications
+  - Collaborate with team
+  - Maintain code quality" 
+                    style="width: 100%; height: 200px; padding: 15px; border: 1px solid #ced4da; border-radius: 8px; font-size: 14px; font-family: 'Inter', sans-serif; resize: vertical; margin-bottom: 15px;"></textarea>
+                    
+                    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                        <button onclick="processPastedJobDescription()" style="background: #48bb78; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 5px;">
+                            <i class="fas fa-check"></i> Use Pasted Description
+                        </button>
+                        <button onclick="clearPastedJobDescription()" style="background: #e53e3e; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 14px; display: flex; align-items: center; gap: 5px;">
+                            <i class="fas fa-times"></i> Clear
+                        </button>
+                    </div>
+                    
+                    <div id="pastePreview" style="display: none; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 15px; margin-top: 15px;">
+                        <h5 style="margin: 0 0 10px 0; color: #495057; display: flex; align-items: center; gap: 5px;">
+                            <i class="fas fa-eye"></i> Preview
+                        </h5>
+                        <div id="pastePreviewContent" style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #dee2e6; max-height: 150px; overflow-y: auto; font-size: 13px; line-height: 1.4;"></div>
+                        <small id="pasteCharCount" style="color: #6c757d; margin-top: 5px; display: block;"></small>
+                    </div>
+                </div>
             </div>
 
             <div class="form-section">
@@ -381,6 +464,9 @@
                 </button>
                 <button onclick="clearCurrentJobDescription()" style="background: #e53e3e; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin: 0 10px;">
                     <i class="fas fa-trash"></i> Clear Current JD
+                </button>
+                <button onclick="clearAllSavedData()" style="background: #f56565; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin: 0 10px;">
+                    <i class="fas fa-broom"></i> Clear All Data
                 </button>
             </div>
         </div>
@@ -429,13 +515,91 @@
             }
         }
 
+        // Job Description Paste Functionality
+        function toggleJobDescriptionInput() {
+            const fileSection = document.getElementById('fileUploadSection');
+            const pasteSection = document.getElementById('pasteTextSection');
+            const selectedMethod = document.querySelector('input[name="jdInputMethod"]:checked').value;
+            
+            if (selectedMethod === 'file') {
+                fileSection.style.display = 'block';
+                pasteSection.style.display = 'none';
+                // Clear paste content when switching to file upload
+                clearPastedJobDescription();
+            } else {
+                fileSection.style.display = 'none';
+                pasteSection.style.display = 'block';
+                // Clear file selection when switching to paste
+                document.getElementById('jobDescriptionFile').value = '';
+                document.getElementById('jobFileInfo').textContent = '';
+            }
+        }
+
+        function processPastedJobDescription() {
+            const pastedText = document.getElementById('pastedJobDescription').value.trim();
+            
+            if (!pastedText) {
+                alert('Please paste some job description text first.');
+                return;
+            }
+            
+            // Store the pasted job description globally
+            window.currentJobDescription = pastedText;
+            localStorage.setItem('currentJobDescription', pastedText);
+            
+            // Save to saved job descriptions
+            saveJobDescription(pastedText, 'Pasted Job Description');
+            
+            // Show preview
+            showPastePreview(pastedText);
+            
+            // Show success message
+            alert('✅ Job description pasted and saved successfully! You can now proceed with resume screening.');
+            
+            console.log('Pasted job description processed:', pastedText.length, 'characters');
+        }
+
+        function clearPastedJobDescription() {
+            document.getElementById('pastedJobDescription').value = '';
+            document.getElementById('pastePreview').style.display = 'none';
+        }
+
+        function showPastePreview(text) {
+            const preview = document.getElementById('pastePreview');
+            const previewContent = document.getElementById('pastePreviewContent');
+            const charCount = document.getElementById('pasteCharCount');
+            
+            // Show first 500 characters
+            const previewText = text.length > 500 ? text.substring(0, 500) + '...' : text;
+            previewContent.textContent = previewText;
+            charCount.textContent = `Character count: ${text.length}`;
+            
+            preview.style.display = 'block';
+        }
+
+        // Auto-save pasted content as user types
+        document.addEventListener('DOMContentLoaded', function() {
+            const pastedTextarea = document.getElementById('pastedJobDescription');
+            if (pastedTextarea) {
+                pastedTextarea.addEventListener('input', function() {
+                    const text = this.value.trim();
+                    if (text.length > 50) { // Only show preview for substantial content
+                        showPastePreview(text);
+                    } else {
+                        document.getElementById('pastePreview').style.display = 'none';
+                    }
+                });
+            }
+        });
+
         function startScreening() {
             const jobFile = document.getElementById('jobDescriptionFile').files[0];
             const resumeFiles = document.getElementById('resumeFiles').files;
+            const pastedText = document.getElementById('pastedJobDescription').value.trim();
 
-            // Check if we have a job description (either uploaded or saved)
-            if (!jobFile && !window.currentJobDescription) {
-                alert('Please upload a job description first or use a saved one.');
+            // Check if we have a job description (either uploaded, pasted, or saved)
+            if (!jobFile && !window.currentJobDescription && !pastedText) {
+                alert('Please upload a job description, paste text, or use a saved one.');
                 return;
             }
 
@@ -444,7 +608,12 @@
                 return;
             }
 
-            console.log('Starting screening with:', { jobFile: jobFile.name, resumeCount: resumeFiles.length });
+            console.log('Starting screening with:', { 
+                jobFile: jobFile?.name, 
+                resumeCount: resumeFiles.length,
+                hasPastedText: !!pastedText,
+                hasCurrentJD: !!window.currentJobDescription
+            });
 
             // Show results section and loading
             document.getElementById('resultsSection').style.display = 'block';
@@ -457,12 +626,16 @@
             // Simulate AI processing (replace with actual backend call)
             setTimeout(() => {
                 console.log('Timeout completed, calling processScreeningResults');
-                processScreeningResults(jobFile, resumeFiles);
+                processScreeningResults(jobFile, resumeFiles, pastedText);
             }, 2000);
         }
 
-        async function processScreeningResults(jobFile, resumeFiles) {
-            console.log('processScreeningResults called with:', { jobFile: jobFile?.name, resumeCount: resumeFiles.length });
+        async function processScreeningResults(jobFile, resumeFiles, pastedText = '') {
+            console.log('processScreeningResults called with:', { 
+                jobFile: jobFile?.name, 
+                resumeCount: resumeFiles.length,
+                hasPastedText: !!pastedText
+            });
             
             try {
                 // Hide loading, show results
@@ -472,7 +645,7 @@
 
                 console.log('Loading hidden, results content shown');
 
-                // Get job description (either from uploaded file or saved)
+                // Get job description (either from uploaded file, pasted text, or saved)
                 let jobDescription;
                 if (jobFile) {
                     // Parse uploaded job description
@@ -482,6 +655,14 @@
                     // Store job description globally and save it
                     window.currentJobDescription = jobDescription;
                     saveJobDescription(jobDescription, jobFile.name);
+                } else if (pastedText) {
+                    // Use pasted job description
+                    jobDescription = pastedText;
+                    console.log('Using pasted job description, length:', jobDescription.length);
+                    
+                    // Store job description globally and save it
+                    window.currentJobDescription = jobDescription;
+                    saveJobDescription(jobDescription, 'Pasted Job Description');
                 } else {
                     // Use saved job description
                     jobDescription = window.currentJobDescription;
@@ -848,17 +1029,24 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     try {
-                        const content = e.target.result;
+                        let content = e.target.result;
                         
-                        // If it's a PDF, try to extract text content
+                        // Handle different file types properly
                         if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
-                            // For PDFs, we'll try to extract readable text
-                            const cleanContent = extractPDFText(content);
-                            resolve(cleanContent);
-                        } else {
+                            // For PDFs, show message about server-side processing
+                            content = `[PDF File: ${file.name}]\n\nText extraction requires server-side processing.\n\nFor proper PDF text extraction, please use the Python Streamlit app (streamlit run app.py) which has working PDF text extraction.\n\nThis HTML interface can only handle text files directly.`;
+                        } else if (file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
+                                   file.name.toLowerCase().endsWith('.docx')) {
+                            // For DOCX files, show message about server-side processing
+                            content = `[DOCX File: ${file.name}]\n\nText extraction requires server-side processing.\n\nFor proper DOCX text extraction, please use the Python Streamlit app (streamlit run app.py) which has working DOCX text extraction.\n\nThis HTML interface can only handle text files directly.`;
+                        } else if (file.type === 'text/plain' || file.name.toLowerCase().endsWith('.txt')) {
                             // For text files, use as is
-                            resolve(content);
+                            content = e.target.result;
+                        } else {
+                            content = `[Unsupported file type: ${file.name}]\n\nPlease use PDF, DOCX, or TXT files.\n\nFor PDF and DOCX files, use the Python app for proper text extraction.`;
                         }
+                        
+                        resolve(content);
                     } catch (error) {
                         console.warn('Error parsing file content:', error);
                         resolve('File content could not be parsed');
@@ -866,63 +1054,12 @@
                 };
                 reader.onerror = () => resolve('File could not be read');
                 
-                // For PDFs, read as ArrayBuffer to handle binary content
-                if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
-                    reader.readAsArrayBuffer(file);
-                } else {
-                    reader.readAsText(file);
-                }
+                // Always read as text to avoid binary data issues
+                reader.readAsText(file);
             });
         }
 
-        function extractPDFText(pdfContent) {
-            try {
-                // Convert ArrayBuffer to string and extract readable text
-                const decoder = new TextDecoder('utf-8');
-                const content = decoder.decode(pdfContent);
-                
-                // Remove PDF metadata and extract actual text content
-                // Look for text between parentheses and brackets
-                const textMatches = content.match(/\(([^)]+)\)/g) || [];
-                const bracketMatches = content.match(/\[([^\]]+)\]/g) || [];
-                
-                // Extract meaningful text content
-                let extractedText = '';
-                
-                // Add text from parentheses
-                textMatches.forEach(match => {
-                    const text = match.replace(/[()]/g, '').trim();
-                    if (text.length > 3 && !text.includes('obj') && !text.includes('R')) {
-                        extractedText += text + ' ';
-                    }
-                });
-                
-                // Add text from brackets
-                bracketMatches.forEach(match => {
-                    const text = match.replace(/[\[\]]/g, '').trim();
-                    if (text.length > 3 && !text.includes('obj') && !text.includes('R')) {
-                        extractedText += text + ' ';
-                    }
-                });
-                
-                // If we have extracted text, return it
-                if (extractedText.trim().length > 0) {
-                    return extractedText.trim();
-                }
-                
-                // Fallback: try to extract any readable text
-                const readableText = content
-                    .replace(/[^\x20-\x7E\n]/g, ' ') // Remove non-printable characters
-                    .replace(/\s+/g, ' ') // Normalize whitespace
-                    .trim();
-                
-                return readableText || 'PDF content could not be extracted';
-                
-            } catch (error) {
-                console.warn('Error extracting PDF text:', error);
-                return 'PDF content could not be extracted';
-            }
-        }
+
 
 
 
@@ -2349,6 +2486,9 @@ This analysis is based on AI-powered resume screening technology.`;
             // Update global variable
             window.currentJobDescription = jobDescription;
             
+            // Refresh the quick select dropdown
+            populateQuickSelectDropdown();
+            
             console.log('Job description saved:', jobData);
         }
 
@@ -2358,6 +2498,8 @@ This analysis is based on AI-powered resume screening technology.`;
                 savedJobDescriptions = JSON.parse(saved);
                 console.log('Loaded saved job descriptions:', savedJobDescriptions);
             }
+            // Populate the quick select dropdown
+            populateQuickSelectDropdown();
         }
 
         function displaySavedJobDescriptions() {
@@ -2439,6 +2581,8 @@ This analysis is based on AI-powered resume screening technology.`;
                     }
                     
                     displaySavedJobDescriptions();
+                    // Refresh the quick select dropdown
+                    populateQuickSelectDropdown();
                     alert('Job description deleted successfully');
                 }
             }
@@ -2486,6 +2630,25 @@ This analysis is based on AI-powered resume screening technology.`;
             }
         }
 
+        function clearAllSavedData() {
+            if (confirm('Are you sure you want to clear ALL saved data? This will remove all saved job descriptions and cannot be undone.')) {
+                // Clear all saved data
+                savedJobDescriptions = [];
+                window.currentJobDescription = null;
+                
+                // Clear localStorage
+                localStorage.removeItem('savedJobDescriptions');
+                localStorage.removeItem('currentJobDescription');
+                
+                // Update displays
+                hideSavedJobDescription();
+                displaySavedJobDescriptions();
+                populateQuickSelectDropdown();
+                
+                alert('All saved data has been cleared successfully!');
+            }
+        }
+
         function showFullJobDescription() {
             if (window.currentJobDescription) {
                 const modal = document.createElement('div');
@@ -2518,6 +2681,79 @@ This analysis is based on AI-powered resume screening technology.`;
                 });
             }
         }
+
+        // Quick Select Dropdown Functions
+        function populateQuickSelectDropdown() {
+            const dropdown = document.getElementById('quickSelectJD');
+            if (!dropdown) {
+                console.error('Quick select dropdown not found!');
+                return;
+            }
+            
+            console.log('Populating quick select dropdown...');
+            console.log('Saved JDs count:', savedJobDescriptions.length);
+            
+            // Clear existing options except the first one
+            dropdown.innerHTML = '<option value="">-- Select a previously uploaded Job Description --</option>';
+            
+            if (savedJobDescriptions.length === 0) {
+                dropdown.innerHTML = '<option value="">-- No saved job descriptions available --</option>';
+                console.log('No saved JDs to populate');
+                return;
+            }
+            
+            // Add saved JDs to dropdown
+            savedJobDescriptions.forEach(job => {
+                const option = document.createElement('option');
+                option.value = job.id;
+                option.textContent = `${job.fileName} (Used ${job.usageCount} time${job.usageCount > 1 ? 's' : ''})`;
+                dropdown.appendChild(option);
+                console.log('Added option:', job.fileName);
+            });
+            
+            console.log('Dropdown populated with', savedJobDescriptions.length, 'options');
+        }
+
+        function selectSavedJD() {
+            const dropdown = document.getElementById('quickSelectJD');
+            const selectedId = dropdown.value;
+            
+            if (!selectedId) return;
+            
+            const selectedJob = savedJobDescriptions.find(job => job.id === parseInt(selectedId));
+            if (selectedJob) {
+                // Set as current job description
+                window.currentJobDescription = selectedJob.content;
+                localStorage.setItem('currentJobDescription', selectedJob.content);
+                
+                // Update usage count
+                selectedJob.usageCount++;
+                selectedJob.lastUsed = new Date().toISOString();
+                localStorage.setItem('savedJobDescriptions', JSON.stringify(savedJobDescriptions));
+                
+                // Update displays
+                displaySavedJobDescription();
+                displaySavedJobDescriptions();
+                
+                // Show success message
+                const jobFileInfo = document.getElementById('jobFileInfo');
+                if (jobFileInfo) {
+                    jobFileInfo.innerHTML = `
+                        <span style="color: #48bb78;">
+                            <i class="fas fa-check-circle"></i> 
+                            Selected: ${selectedJob.fileName} (Previously uploaded)
+                        </span>
+                    `;
+                }
+                
+                // Reset dropdown
+                dropdown.value = '';
+                
+                console.log('Quick selected job description:', selectedJob.fileName);
+            }
+        }
+
+
     </script>
 </body>
 </html>

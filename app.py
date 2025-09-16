@@ -19,9 +19,77 @@ import random
 from collections import Counter
 import warnings
 import time
+import json
+import os
+from datetime import datetime
+import tempfile
 warnings.filterwarnings('ignore')
 
 from branding import CompanyBranding
+from file_handler import FileHandler
+
+# Initialize file handler
+file_handler = FileHandler()
+
+# Job Description Storage Functions
+def load_saved_jds():
+    """Load saved job descriptions from JSON file"""
+    try:
+        if os.path.exists('saved_job_descriptions.json'):
+            with open('saved_job_descriptions.json', 'r', encoding='utf-8') as f:
+                return json.load(f)
+        return []
+    except Exception as e:
+        st.error(f"Error loading saved job descriptions: {e}")
+        return []
+
+def save_jd_to_storage(jd_data):
+    """Save a new job description to storage"""
+    try:
+        saved_jds = load_saved_jds()
+        
+        # Check if JD with same title already exists
+        existing_index = next((i for i, jd in enumerate(saved_jds) if jd['title'] == jd_data['title']), None)
+        
+        if existing_index is not None:
+            # Update existing JD
+            saved_jds[existing_index].update(jd_data)
+            saved_jds[existing_index]['last_updated'] = datetime.now().isoformat()
+            saved_jds[existing_index]['usage_count'] = saved_jds[existing_index].get('usage_count', 0) + 1
+        else:
+            # Add new JD
+            jd_data['id'] = len(saved_jds) + 1
+            jd_data['created_date'] = datetime.now().isoformat()
+            jd_data['last_updated'] = datetime.now().isoformat()
+            jd_data['usage_count'] = 1
+            saved_jds.append(jd_data)
+        
+        # Save to file
+        with open('saved_job_descriptions.json', 'w', encoding='utf-8') as f:
+            json.dump(saved_jds, f, indent=2, ensure_ascii=False)
+        
+        return True
+    except Exception as e:
+        st.error(f"Error saving job description: {e}")
+        return False
+
+def delete_saved_jd(jd_id):
+    """Delete a saved job description"""
+    try:
+        saved_jds = load_saved_jds()
+        saved_jds = [jd for jd in saved_jds if jd['id'] != jd_id]
+        
+        # Reassign IDs
+        for i, jd in enumerate(saved_jds):
+            jd['id'] = i + 1
+        
+        with open('saved_job_descriptions.json', 'w', encoding='utf-8') as f:
+            json.dump(saved_jds, f, indent=2, ensure_ascii=False)
+        
+        return True
+    except Exception as e:
+        st.error(f"Error deleting job description: {e}")
+        return False
 
 # Page configuration for HR professionals
 st.set_page_config(
@@ -35,7 +103,7 @@ st.set_page_config(
 st.markdown(CompanyBranding.get_css_styles(), unsafe_allow_html=True)
 
 # HR-focused header
-    st.markdown("""
+st.markdown("""
 <div style="background: linear-gradient(135deg, #1e40af, #1e3a8a); color: white; padding: 2rem; border-radius: 0.75rem; margin-bottom: 2rem;">
     <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
         <div style="font-size: 3rem;">👥</div>
@@ -59,7 +127,7 @@ if 'first_visit' not in st.session_state:
     st.success("🎉 Welcome to IKF HR Candidate Screening Platform - Your AI-powered recruitment assistant!")
 
 # HR-focused sidebar
-    with st.sidebar:
+with st.sidebar:
     st.markdown("""
     <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 1rem;">
         <div style="text-align: center; margin-bottom: 1rem;">
@@ -98,7 +166,7 @@ if 'first_visit' not in st.session_state:
     
     st.markdown("### 📚 HR Guidelines")
     with st.expander("🔧 How to Use", expanded=False):
-            st.markdown("""
+        st.markdown("""
         **Single Evaluation:**
         1. Upload candidate resume
         2. Select job opening
@@ -128,7 +196,7 @@ if 'first_visit' not in st.session_state:
     
     st.markdown("### 🏢 Company Information")
     company_info = CompanyBranding.get_company_info()
-        st.markdown(f"""
+    st.markdown(f"""
     <div style="background: white; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem;">
         <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.75rem;">
             <img src="{company_info['logo']}" alt="IKF Logo" style="height: 32px; width: auto; filter: brightness(0) invert(1);">
@@ -230,23 +298,176 @@ if page == "Single Candidate Evaluation":
     # Job opening selection first
     st.markdown("### 💼 Select Job Opening")
     
-    # Sample job openings (in real app, this would come from database)
-    job_openings = {
-        "Software Engineer - Full Stack": "Full-stack development with React, Node.js, and cloud technologies",
-        "Data Scientist": "Machine learning, Python, and statistical analysis expertise",
-        "DevOps Engineer": "Infrastructure automation, Docker, Kubernetes, and CI/CD",
-        "Product Manager": "Product strategy, user research, and agile methodologies",
-        "UX Designer": "User experience design, prototyping, and design systems"
-    }
-    
-    selected_job = st.selectbox(
-        "Choose the job opening to evaluate against:",
-        list(job_openings.keys()),
-        help="Select the job opening you want to evaluate the candidate for"
+    # First, check if user wants to use saved JD or create new one
+    jd_selection_method = st.radio(
+        "Choose how to select job opening:",
+        ["📚 Use Saved Job Description", "🆕 Create New Job Opening"],
+        horizontal=True,
+        help="Select whether to use a previously saved job description or create a new one"
     )
     
-    if selected_job:
-        st.info(f"📋 **Selected Job:** {selected_job}\n\n**Description:** {job_openings[selected_job]}")
+    selected_job = None
+    job_description = ""
+    
+    if jd_selection_method == "📚 Use Saved Job Description":
+        # Load saved job descriptions
+        saved_jds = load_saved_jds()
+        
+        if not saved_jds:
+            st.warning("📝 No saved job descriptions found. Please create a new job opening first.")
+            st.info("💡 Tip: After creating and using a job opening, it will be automatically saved for future use.")
+            jd_selection_method = "🆕 Create New Job Opening"
+        else:
+            # Display saved JDs with selection
+            st.markdown("#### 📚 Saved Job Descriptions")
+            
+            # Create columns for better layout
+            col1, col2 = st.columns([3, 1])
+            
+            with col1:
+                # Create a selectbox for saved JDs
+                saved_jd_options = [f"{jd['title']} (Last used: {jd['last_updated'][:10]})" for jd in saved_jds]
+                selected_saved_jd = st.selectbox(
+                    "Choose from saved job descriptions:",
+                    saved_jds,
+                    format_func=lambda x: f"{x['title']} (Last used: {x['last_updated'][:10]})",
+                    help="Select a previously saved job description"
+                )
+            
+            with col2:
+                if selected_saved_jd:
+                    # Show usage count and delete option
+                    st.metric("Usage Count", selected_saved_jd.get('usage_count', 0))
+                    if st.button("🗑️ Delete", key="delete_jd_btn"):
+                        if delete_saved_jd(selected_saved_jd['id']):
+                            st.success("Job description deleted successfully!")
+                            st.rerun()
+            
+            if selected_saved_jd:
+                selected_job = selected_saved_jd['title']
+                job_description = selected_saved_jd.get('description', '')
+                
+                # Display selected JD info
+                st.info(f"📋 **Selected Job:** {selected_job}\n\n**Description:** {selected_saved_jd.get('description', 'No description available')}")
+                
+                # Show JD details in expandable section
+                with st.expander("📋 View Full Job Description", expanded=False):
+                    st.markdown(f"**Title:** {selected_saved_jd['title']}")
+                    st.markdown(f"**Description:** {selected_saved_jd.get('description', 'No description')}")
+                    st.markdown(f"**Requirements:** {selected_saved_jd.get('requirements', 'No requirements specified')}")
+                    st.markdown(f"**Created:** {selected_saved_jd['created_date'][:10]}")
+                    st.markdown(f"**Last Updated:** {selected_saved_jd['last_updated'][:10]}")
+                    st.markdown(f"**Usage Count:** {selected_saved_jd.get('usage_count', 0)}")
+                
+                # Option to modify the saved job description
+                st.markdown("#### ✏️ Modify Job Description")
+                modify_option = st.radio(
+                    "Would you like to modify this job description?",
+                    ["✅ Use as-is", "📝 Edit Text", "📋 Paste New Description"],
+                    horizontal=True,
+                    help="Choose whether to use the saved description as-is or modify it"
+                )
+                
+                if modify_option == "📝 Edit Text":
+                    modified_jd = st.text_area(
+                        "Edit the job description:",
+                        value=job_description,
+                        height=150,
+                        help="Modify the job description as needed"
+                    )
+                    if modified_jd != job_description:
+                        job_description = modified_jd
+                        st.success("✅ Job description updated!")
+                
+                elif modify_option == "📋 Paste New Description":
+                    st.markdown("**📋 Paste New Job Description**")
+                    st.info("💡 **Tip:** Copy your new job description from any source and paste it below to replace the current one.")
+                    
+                    pasted_new_jd = st.text_area(
+                        "Paste your new job description here:",
+                        value="",
+                        height=200,
+                        placeholder="Paste your complete new job description here...",
+                        help="Paste the complete new job description from any source"
+                    )
+                    
+                    if pasted_new_jd.strip():
+                        with st.expander("👀 Preview New Content", expanded=True):
+                            st.markdown("**New pasted content:**")
+                            st.text(pasted_new_jd[:500] + ("..." if len(pasted_new_jd) > 500 else ""))
+                            st.caption(f"Character count: {len(pasted_new_jd)}")
+                        
+                        job_description = pasted_new_jd
+                        st.success("✅ New job description pasted and ready to use!")
+    
+    if jd_selection_method == "🆕 Create New Job Opening" or (jd_selection_method == "📚 Use Saved Job Description" and not saved_jds):
+        # Sample job openings (in real app, this would come from database)
+        job_openings = {
+            "Software Engineer - Full Stack": "Full-stack development with React, Node.js, and cloud technologies",
+            "Data Scientist": "Machine learning, Python, and statistical analysis expertise",
+            "DevOps Engineer": "Infrastructure automation, Docker, Kubernetes, and CI/CD",
+            "Product Manager": "Product strategy, user research, and agile methodologies",
+            "UX Designer": "User experience design, prototyping, and design systems"
+        }
+        
+        selected_job = st.selectbox(
+            "Choose the job opening to evaluate against:",
+            list(job_openings.keys()),
+            help="Select the job opening you want to evaluate the candidate for"
+        )
+        
+        if selected_job:
+            st.info(f"📋 **Selected Job:** {selected_job}\n\n**Description:** {job_openings[selected_job]}")
+            
+            # Allow user to add custom requirements or paste job description
+            st.markdown("#### 📝 Job Description Input")
+            
+            # Radio button to choose input method
+            input_method = st.radio(
+                "Choose how to provide job description:",
+                ["📝 Type/Edit Text", "📋 Paste from Clipboard"],
+                horizontal=True,
+                help="Select whether to type/edit the job description or paste it from clipboard"
+            )
+            
+            if input_method == "📝 Type/Edit Text":
+                custom_requirements = st.text_area(
+                    "Add custom requirements or modify job description:",
+                    value=job_openings[selected_job],
+                    height=120,
+                    help="Customize the job description with specific requirements"
+                )
+            else:
+                # Paste functionality
+                st.markdown("**📋 Paste Job Description**")
+                st.info("💡 **Tip:** Copy your job description from any source (PDF, Word, website, etc.) and paste it below. The system will automatically clean and format the text.")
+                
+                # Large text area for pasting
+                pasted_jd = st.text_area(
+                    "Paste your job description here:",
+                    value="",
+                    height=200,
+                    placeholder="Paste your complete job description here...\n\nExample:\n• Job Title: Software Engineer\n• Company: Tech Corp\n• Location: Remote\n• Requirements:\n  - 3+ years Python experience\n  - React/Node.js knowledge\n  - Cloud experience preferred\n• Responsibilities:\n  - Develop web applications\n  - Collaborate with team\n  - Maintain code quality",
+                    help="Paste the complete job description from any source. The system will automatically extract and format the content."
+                )
+                
+                if pasted_jd.strip():
+                    # Show preview of pasted content
+                    with st.expander("👀 Preview Pasted Content", expanded=True):
+                        st.markdown("**Raw pasted content:**")
+                        st.text(pasted_jd[:500] + ("..." if len(pasted_jd) > 500 else ""))
+                        
+                        # Show character count
+                        st.caption(f"Character count: {len(pasted_jd)}")
+                    
+                    custom_requirements = pasted_jd
+                else:
+                    custom_requirements = job_openings[selected_job]
+            
+            if custom_requirements != job_openings[selected_job]:
+                job_description = custom_requirements
+            else:
+                job_description = job_openings[selected_job]
     
     st.markdown("---")
     
@@ -271,13 +492,42 @@ if page == "Single Candidate Evaluation":
     st.markdown("### 📁 Candidate Resume Upload")
     col1, col2 = st.columns(2)
         
-        with col1:
+    with col1:
         st.markdown("#### Candidate Resume")
         resume_file = st.file_uploader(
             "Upload Candidate Resume (PDF, DOCX, TXT)",
             type=['pdf', 'docx', 'txt'],
             key="resume_upload"
         )
+        
+        # Show resume text if uploaded
+        if resume_file:
+            st.markdown("#### 📋 Resume Content Preview")
+            
+            # Create temporary file and extract text
+            with tempfile.NamedTemporaryFile(delete=False, suffix=f".{resume_file.name.split('.')[-1]}") as tmp_file:
+                tmp_file.write(resume_file.getvalue())
+                tmp_file_path = tmp_file.name
+            
+            try:
+                # Extract text using file handler
+                success, extracted_resume_text = file_handler.extract_text(tmp_file_path)
+                
+                if success:
+                    st.success(f"✅ Successfully extracted text from {resume_file.name}")
+                    
+                    # Show extracted text in expandable section
+                    with st.expander("📋 View Resume Content", expanded=False):
+                        st.text_area("Resume Text:", value=extracted_resume_text, height=200, disabled=True)
+                else:
+                    st.error(f"❌ Failed to extract text from {resume_file.name}: {extracted_resume_text}")
+                    
+            except Exception as e:
+                st.error(f"❌ Error processing resume file: {str(e)}")
+            finally:
+                # Clean up temporary file
+                if os.path.exists(tmp_file_path):
+                    os.unlink(tmp_file_path)
     
     with col2:
         st.markdown("#### Additional Job Details")
@@ -290,17 +540,87 @@ if page == "Single Candidate Evaluation":
     # Manual job description input
     if not job_desc_file:
         st.markdown("### 📝 Additional Job Requirements")
-                job_description = st.text_area(
+        job_description = st.text_area(
             "Add specific requirements or criteria:",
             height=150,
             placeholder="Add specific skills, experience levels, or requirements for this job opening..."
-                )
+        )
+    else:
+        # Extract text from uploaded job description file
+        st.markdown("### 📝 Job Description from File")
+        
+        # Create temporary file and extract text
+        with tempfile.NamedTemporaryFile(delete=False, suffix=f".{job_desc_file.name.split('.')[-1]}") as tmp_file:
+            tmp_file.write(job_desc_file.getvalue())
+            tmp_file_path = tmp_file.name
+        
+        try:
+            # Extract text using file handler
+            success, extracted_text = file_handler.extract_text(tmp_file_path)
+            
+            if success:
+                job_description = extracted_text
+                st.success(f"✅ Successfully extracted text from {job_desc_file.name}")
+                
+                # Show extracted text in expandable section
+                with st.expander("📋 View Extracted Job Description", expanded=False):
+                    st.text_area("Extracted Text:", value=extracted_text, height=200, disabled=True)
             else:
-                        job_description = ""
+                st.error(f"❌ Failed to extract text from {job_desc_file.name}: {extracted_text}")
+                job_description = ""
+                
+        except Exception as e:
+            st.error(f"❌ Error processing file: {str(e)}")
+            job_description = ""
+        finally:
+            # Clean up temporary file
+            if os.path.exists(tmp_file_path):
+                os.unlink(tmp_file_path)
                     
+    # Save job description option (only show if not using saved JD)
+    if jd_selection_method == "🆕 Create New Job Opening" and selected_job and job_description:
+        st.markdown("### 💾 Save Job Description")
+        save_jd = st.checkbox(
+            "💾 Save this job description for future use",
+            help="Save this job description so you can reuse it later without re-typing"
+        )
+        
+        if save_jd:
+            jd_title = st.text_input(
+                "Job Description Title:",
+                value=selected_job,
+                help="Give this job description a memorable title"
+            )
+            
+            if st.button("💾 Save Job Description", type="secondary"):
+                jd_data = {
+                    'title': jd_title,
+                    'description': job_description,
+                    'requirements': job_description,
+                    'category': 'Custom'
+                }
+                
+                if save_jd_to_storage(jd_data):
+                    st.success(f"✅ Job description '{jd_title}' saved successfully!")
+                    st.info("💡 You can now select 'Use Saved Job Description' to reuse this in the future.")
+                else:
+                    st.error("❌ Failed to save job description. Please try again.")
+    
+    st.markdown("---")
+    
     # Evaluation button
     if st.button("🚀 Launch Evaluation", type="primary", use_container_width=True):
         if resume_file and selected_job:
+            # Save job description if it's new and not already saved
+            if jd_selection_method == "🆕 Create New Job Opening" and job_description:
+                jd_data = {
+                    'title': selected_job,
+                    'description': job_description,
+                    'requirements': job_description,
+                    'category': 'Template'
+                }
+                save_jd_to_storage(jd_data)
+            
             # Show progress
             st.markdown("### 🔄 Evaluation Progress")
             
